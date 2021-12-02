@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:golden_goblin/src/views/ledger_view/ledger_edit_view.dart';
 
 import 'themes.dart';
 import 'views/ledger_view/ledger_view.dart';
@@ -70,8 +71,11 @@ class MyApp extends StatelessWidget {
                   case SettingsView.routeName:
                     return SettingsView(controller: settingsController);
                   case LedgerView.routeName:
-                  default:
                     return const LedgerView();
+                  case LedgerEditView.routeName:
+                  default:
+                    return const LedgerEditView();
+
                 }
               },
             );
