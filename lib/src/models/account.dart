@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class Book {
+class Account {
   // props
   final int id;
   final String name;
@@ -8,7 +8,7 @@ class Book {
   final Color iconColor;
 
   // construct
-  Book({
+  Account({
     required this.id,
     required this.name,
     required this.icon,
@@ -25,9 +25,9 @@ class Book {
     };
   }
 
-  // Implement toString to make Book easier to use the print statement.
+  // Implement toString to make Account easier to use the print statement.
   @override
   String toString() {
-    return 'Book{id: $id, name: $name, icon: $icon, iconColor: $iconColor}';
+    return 'Account{id: $id, name: $name, icon: $icon, iconColor: $iconColor}';
   }
 }
