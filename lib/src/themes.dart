@@ -13,6 +13,7 @@ class GoldenGoblinThemes {
       );
 
   static ThemeData get light => ThemeData.light().copyWith(
+        scaffoldBackgroundColor: const Color(0xFFF4F4F4),
         appBarTheme: _customAppBarTheme,
         primaryColor: const Color(0xFFFFD344),
       );
