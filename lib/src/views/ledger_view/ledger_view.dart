@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
 import '../common/sidebar.dart';
+import 'ledger_edit_view.dart';
 
 class LedgerView extends StatelessWidget {
   const LedgerView({Key? key}) : super(key: key);
@@ -36,7 +37,9 @@ class LedgerView extends StatelessWidget {
         backgroundColor: const Color(0xFF000000),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         child: const Icon(Icons.add),
-        onPressed: () {},
+        onPressed: () {
+          Navigator.pushNamed(context, LedgerEditView.routeName);
+        },
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
