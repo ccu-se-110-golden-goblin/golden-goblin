@@ -1,13 +1,13 @@
-enum Type { icoming, expenses }
+enum Type { income, expenses }
 
-class Catagory {
+class Category {
   // basic props
   final int id;
   final String name;
   final Type type;
 
   // construct
-  Catagory({
+  Category({
     required this.id,
     required this.name,
     required this.type,
@@ -22,7 +22,7 @@ class Catagory {
     };
   }
 
-  // Implement toString to make Catagory easier to use the print statement.
+  // Implement toString to make Category easier to use the print statement.
   @override
   String toString() {
     return 'Transaction{id: $id, name: $name, type: $type}';
