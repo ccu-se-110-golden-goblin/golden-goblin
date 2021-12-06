@@ -17,7 +17,6 @@ class Sidebar extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: SizedBox(
-        width: 150,
         child: Drawer(
           child: Column(
             children: [
