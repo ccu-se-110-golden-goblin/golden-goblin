@@ -19,7 +19,16 @@ class LedgerEditView extends StatelessWidget {
               Navigator.pop(context);
             },
           );
+
         }),
+        actions: <Widget>[
+          Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                IconButton(icon: const Icon(Icons.transform), onPressed: () {}),
+                // Text("轉帳" ,style: TextStyle(fontSize: 8)),
+          ]),
+        ],
       ),
 
       body: Container(
@@ -43,7 +52,7 @@ class LedgerEditView extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Text("NTD"),
+                  const Text("NTD"),
                 ],
 
               ),
@@ -76,8 +85,7 @@ class LedgerEditView extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: const [
-                    Text("類別:", style: TextStyle(fontSize: 15)),
-
+                      Text("類別:", style: TextStyle(fontSize: 15)),
                   ],
                 )
             ),
@@ -103,7 +111,7 @@ class LedgerEditView extends StatelessWidget {
 
           ElevatedButton(
               onPressed: (){},
-              child: Text("完成"),
+              child: const Text("完成"),
               style: ButtonStyle(
 
                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -161,7 +169,7 @@ class _DatePickerState extends State<DatePicker> {
             children: <Widget>[
               const Icon(Icons.event),
               Text( DateFormat('MM / dd / yyyy').format(date).toString(), style: TextStyle(fontSize: 25)),
-              Icon(Icons.expand_more),
+              const Icon(Icons.expand_more),
             ],
           ),
         ),
@@ -191,15 +199,15 @@ class _AccountPickerState extends State<AccountPicker> {
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              const Icon(Icons.account_balance_wallet_outlined),
+            children: const <Widget>[
+              Icon(Icons.account_balance_wallet_outlined),
               Text("帳戶"),
               Icon(Icons.expand_more),
             ],
           ),
         ),
       ),
-    );;
+    );
   }
 }
 
