@@ -74,8 +74,7 @@ class MyApp extends StatelessWidget {
                     return const LedgerView();
                   case LedgerEditView.routeName:
                   default:
-                    return const LedgerEditView();
-
+                    return const LedgerView();
                 }
               },
             );
