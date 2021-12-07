@@ -24,41 +24,78 @@ class AssetHiddenSwitch extends StatelessWidget {
 }
 
 class ThemeSelector extends StatelessWidget {
-  const ThemeSelector({Key? key, required this.controller}) : super(key: key);
+  ThemeSelector({Key? key, required this.controller}) : super(key: key);
 
   final SettingsController controller;
 
+  final Dialog themeSelectDialog = Dialog(
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: const [
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+          child: Text(
+            '主題設定',
+            style: TextStyle(fontSize: 20),
+          ),
+        ),
+        Divider(height: 0),
+        Text(
+          '系統預設',
+          style: TextStyle(fontSize: 20),
+        )
+      ],
+    ),
+  );
+
   @override
   Widget build(BuildContext context) {
-    return ListTile(
+    AlertDialog dialog = AlertDialog(
       title: const Text('主題設定'),
-      subtitle: DropdownButton<ThemeMode>(
-
-          // Read the selected themeMode from the controller
-          value: controller.themeMode,
-          // Call the updateThemeMode method any time the user selects a theme.
-          onChanged: controller.updateThemeMode,
-          icon: const Icon(
-            Icons.arrow_drop_down,
-            color: Color(0xFFA1A1A1),
-          ),
-          iconSize: 20,
-          underline: const SizedBox(),
-          items: const [
-            DropdownMenuItem(
-              value: ThemeMode.system,
-              child: Text('系統預設'),
+      contentPadding: EdgeInsets.zero,
+      content: Padding(
+        padding: const EdgeInsets.only(bottom: 20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              onTap: () {
+                controller.updateThemeMode(ThemeMode.system);
+                Navigator.of(context).pop();
+              },
+              title: const Text('預設主題'),
+              contentPadding: const EdgeInsets.only(left: 40),
+              visualDensity: VisualDensity.compact,
             ),
-            DropdownMenuItem(
-              value: ThemeMode.light,
-              child: Text('明亮主題'),
+            ListTile(
+              onTap: () {
+                controller.updateThemeMode(ThemeMode.light);
+                Navigator.of(context).pop();
+              },
+              title: const Text('亮色主題'),
+              contentPadding: const EdgeInsets.only(left: 40),
+              visualDensity: VisualDensity.compact,
             ),
-            DropdownMenuItem(
-              value: ThemeMode.dark,
-              child: Text('黑暗主題'),
+            ListTile(
+              onTap: () {
+                controller.updateThemeMode(ThemeMode.dark);
+                Navigator.of(context).pop();
+              },
+              title: const Text('黑暗主題'),
+              contentPadding: const EdgeInsets.only(left: 40),
+              visualDensity: VisualDensity.compact,
             )
           ],
-          style: const TextStyle(color: Color(0xFFA1A1A1))),
+        ),
+      ),
+    );
+
+    return ListTile(
+      title: const Text('主題設定'),
+      subtitle: Text(controller.themeMode.toString()),
+      onTap: () {
+        showDialog(context: context, builder: (context) => dialog);
+      },
     );
   }
 }
@@ -77,13 +114,10 @@ class SettingsView extends StatelessWidget {
         title: const Text('一般設定'),
       ),
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        // padding: const EdgeInsets.symmetric(vertical: 16),
         children: [
           ThemeSelector(controller: controller),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8.0),
-            child: Divider(thickness: 2),
-          ),
+          const Divider(thickness: 0.5, height: 0),
           AssetHiddenSwitch(controller: controller)
         ],
       ),
