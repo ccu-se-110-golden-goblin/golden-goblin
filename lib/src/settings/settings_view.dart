@@ -24,77 +24,44 @@ class AssetHiddenSwitch extends StatelessWidget {
 }
 
 class ThemeSelector extends StatelessWidget {
-  ThemeSelector({Key? key, required this.controller}) : super(key: key);
+  const ThemeSelector({Key? key, required this.controller}) : super(key: key);
 
   final SettingsController controller;
 
-  final Dialog themeSelectDialog = Dialog(
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: const [
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-          child: Text(
-            '主題設定',
-            style: TextStyle(fontSize: 20),
-          ),
-        ),
-        Divider(height: 0),
-        Text(
-          '系統預設',
-          style: TextStyle(fontSize: 20),
-        )
-      ],
-    ),
-  );
-
   @override
   Widget build(BuildContext context) {
-    AlertDialog dialog = AlertDialog(
+    var themeModeToStr = {
+      ThemeMode.system: '預設主題',
+      ThemeMode.light: '亮色主題',
+      ThemeMode.dark: '黑暗主題',
+    };
+
+    AlertDialog themeSelectDialog = AlertDialog(
       title: const Text('主題設定'),
-      contentPadding: EdgeInsets.zero,
-      content: Padding(
-        padding: const EdgeInsets.only(bottom: 20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              onTap: () {
-                controller.updateThemeMode(ThemeMode.system);
-                Navigator.of(context).pop();
-              },
-              title: const Text('預設主題'),
-              contentPadding: const EdgeInsets.only(left: 40),
-              visualDensity: VisualDensity.compact,
-            ),
-            ListTile(
-              onTap: () {
-                controller.updateThemeMode(ThemeMode.light);
-                Navigator.of(context).pop();
-              },
-              title: const Text('亮色主題'),
-              contentPadding: const EdgeInsets.only(left: 40),
-              visualDensity: VisualDensity.compact,
-            ),
-            ListTile(
-              onTap: () {
-                controller.updateThemeMode(ThemeMode.dark);
-                Navigator.of(context).pop();
-              },
-              title: const Text('黑暗主題'),
-              contentPadding: const EdgeInsets.only(left: 40),
-              visualDensity: VisualDensity.compact,
+      contentPadding: const EdgeInsets.only(bottom: 20),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: ThemeMode.values
+            .map(
+              (e) => ListTile(
+                onTap: () {
+                  controller.updateThemeMode(e);
+                  Navigator.of(context).pop();
+                },
+                title: Text(themeModeToStr[e] ?? e.toString()),
+                contentPadding: const EdgeInsets.only(left: 40),
+                visualDensity: VisualDensity.compact,
+              ),
             )
-          ],
-        ),
+            .toList(),
       ),
     );
 
     return ListTile(
       title: const Text('主題設定'),
-      subtitle: Text(controller.themeMode.toString()),
+      subtitle: Text(themeModeToStr[controller.themeMode] ?? controller.themeMode.toString()),
       onTap: () {
-        showDialog(context: context, builder: (context) => dialog);
+        showDialog(context: context, builder: (context) => themeSelectDialog);
       },
     );
   }
