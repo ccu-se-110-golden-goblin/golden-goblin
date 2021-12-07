@@ -88,7 +88,7 @@ class TransactionProvider {
 
     await Future.delayed(const Duration(seconds: 3));
 
-    return dummyTransactions;
+    return transactions;
   }
 
   Future<void> addTransaction(Transaction transaction) async {
