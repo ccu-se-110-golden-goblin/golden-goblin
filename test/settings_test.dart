@@ -5,22 +5,42 @@ import 'package:golden_goblin/src/settings/settings_service.dart';
 
 void main() {
   group('Settings Controller', () {
-    test('should be able to get themeMode', () async {
-      var controller = SettingsController(SettingsService());
-      await controller.loadSettings();
+    group('themeMode', () {
+      test('should be able to get themeMode', () async {
+        var controller = SettingsController(SettingsService());
+        await controller.loadSettings();
 
-      expect(controller.themeMode, isA());
+        expect(controller.themeMode, isA());
+      });
+
+      test('should be able to update themeMode', () async {
+        var controller = SettingsController(SettingsService());
+        await controller.loadSettings();
+
+        await controller.updateThemeMode(ThemeMode.dark);
+        expect(controller.themeMode, ThemeMode.dark);
+
+        await controller.updateThemeMode(ThemeMode.light);
+        expect(controller.themeMode, ThemeMode.light);
+      });
     });
 
-    test('should be able to update themeMode', () async {
-      var controller = SettingsController(SettingsService());
-      await controller.loadSettings();
+    group('assetHidden', () {
+      test('should be able to get assetHidden', () async {
+        var controller = SettingsController(SettingsService());
+        await controller.loadSettings();
 
-      await controller.updateThemeMode(ThemeMode.dark);
-      expect(controller.themeMode, ThemeMode.dark);
+        expect(controller.assetHidden, isFalse);
+      });
 
-      await controller.updateThemeMode(ThemeMode.light);
-      expect(controller.themeMode, ThemeMode.light);
+      test('should be able to update assetHidden', () async {
+        var controller = SettingsController(SettingsService());
+        await controller.loadSettings();
+
+        controller.updateAssetHidden(true);
+
+        expect(controller.assetHidden, isTrue);
+      });
     });
   });
 }
