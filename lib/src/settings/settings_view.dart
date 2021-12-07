@@ -7,28 +7,28 @@ import 'settings_controller.dart';
 /// When a user changes a setting, the SettingsController is updated and
 /// Widgets that listen to the SettingsController are rebuilt.
 
-class AssetHidenSwitch extends StatefulWidget {
-  const AssetHidenSwitch({Key? key, required this.controller})
+class AssetHiddenSwitch extends StatefulWidget {
+  const AssetHiddenSwitch({Key? key, required this.controller})
       : super(key: key);
 
   final SettingsController controller;
 
   @override
-  State<AssetHidenSwitch> createState() => _AssetHidenSwitchState();
+  State<AssetHiddenSwitch> createState() => _AssetHiddenSwitchState();
 }
 
 /// This is the private State class that goes with MyStatefulWidget.
-class _AssetHidenSwitchState extends State<AssetHidenSwitch> {
-  bool _hiden = false;
+class _AssetHiddenSwitchState extends State<AssetHiddenSwitch> {
+  bool _hidden = false;
 
   @override
   Widget build(BuildContext context) {
     return SwitchListTile(
       title: const Text('隱藏總資產'),
-      value: _hiden,
+      value: _hidden,
       onChanged: (bool value) {
         setState(() {
-          _hiden = value;
+          _hidden = value;
         });
       },
     );
@@ -103,7 +103,7 @@ class SettingsView extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 8.0),
                 child: Divider(thickness: 2),
               ),
-              AssetHidenSwitch(controller: controller)
+              AssetHiddenSwitch(controller: controller)
             ],
           )),
     );
