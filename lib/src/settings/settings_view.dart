@@ -7,38 +7,24 @@ import 'settings_controller.dart';
 /// When a user changes a setting, the SettingsController is updated and
 /// Widgets that listen to the SettingsController are rebuilt.
 
-class AssetHiddenSwitch extends StatefulWidget {
+class AssetHiddenSwitch extends StatelessWidget {
   const AssetHiddenSwitch({Key? key, required this.controller})
       : super(key: key);
 
   final SettingsController controller;
 
   @override
-  State<AssetHiddenSwitch> createState() => _AssetHiddenSwitchState();
-}
-
-/// This is the private State class that goes with MyStatefulWidget.
-class _AssetHiddenSwitchState extends State<AssetHiddenSwitch> {
-  bool _hidden = false;
-
-  @override
   Widget build(BuildContext context) {
     return SwitchListTile(
       title: const Text('隱藏總資產'),
-      value: _hidden,
-      onChanged: (bool value) {
-        setState(() {
-          _hidden = value;
-        });
-      },
+      value: controller.assetHidden,
+      onChanged: controller.updateAssetHidden,
     );
   }
 }
 
 class ThemeSelector extends StatelessWidget {
   const ThemeSelector({Key? key, required this.controller}) : super(key: key);
-
-  static const routeName = '/settings';
 
   final SettingsController controller;
 
@@ -90,22 +76,17 @@ class SettingsView extends StatelessWidget {
       appBar: AppBar(
         title: const Text('一般設定'),
       ),
-      body: Padding(
-          padding: const EdgeInsets.all(16),
-          // Glue the SettingsController to the theme selection DropdownButton.
-          //
-          // When a user selects a theme from the dropdown list, the
-          // SettingsController is updated, which rebuilds the MaterialApp.
-          child: ListView(
-            children: [
-              ThemeSelector(controller: controller),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8.0),
-                child: Divider(thickness: 2),
-              ),
-              AssetHiddenSwitch(controller: controller)
-            ],
-          )),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          ThemeSelector(controller: controller),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8.0),
+            child: Divider(thickness: 2),
+          ),
+          AssetHiddenSwitch(controller: controller)
+        ],
+      ),
     );
   }
 }
