@@ -51,6 +51,7 @@ class TransferProvider {
     return transfers;
   }
 
+  // When insert into database, id will be ignore and replaced, use getAccounts to get new list with new id
   Future<void> addTransfer(Transfer transfer) async {
     dummyTransfers.add(transfer);
 
@@ -59,6 +60,20 @@ class TransferProvider {
 
   Future<void> deleteTransfer(int transferId) async {
     dummyTransfers.removeWhere((transfer) => transfer.id == transferId);
+
+    await Future.delayed(const Duration(seconds: 3));
+  }
+
+  Future<void> updateTransfer(int transferId, Transfer newTransfer) async {
+    dummyTransfers.removeWhere((transfer) => transfer.id == transferId);
+    dummyTransfers.add(Transfer(
+      id: transferId,
+      src: newTransfer.src,
+      dst: newTransfer.dst,
+      amount: newTransfer.amount,
+      date: newTransfer.date,
+      remark: newTransfer.remark,
+    ));
 
     await Future.delayed(const Duration(seconds: 3));
   }

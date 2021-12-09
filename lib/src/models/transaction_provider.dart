@@ -91,6 +91,7 @@ class TransactionProvider {
     return transactions;
   }
 
+  // When insert into database, id will be ignore and replaced, use getAccounts to get new list with new id
   Future<void> addTransaction(Transaction transaction) async {
     dummyTransactions.add(transaction);
 
@@ -100,6 +101,23 @@ class TransactionProvider {
   Future<void> deleteTransaction(int transactionId) async {
     dummyTransactions
         .removeWhere((transaction) => transaction.id == transactionId);
+
+    await Future.delayed(const Duration(seconds: 3));
+  }
+
+  Future<void> updateTransaction(
+      int transactionId, Transaction newTransaction) async {
+    dummyTransactions
+        .removeWhere((transaction) => transaction.id == transactionId);
+    dummyTransactions.add(Transaction(
+      id: transactionId,
+      amount: newTransaction.amount,
+      account: newTransaction.account,
+      category: newTransaction.category,
+      date: newTransaction.date,
+      remark: newTransaction.remark,
+      invoice: newTransaction.invoice,
+    ));
 
     await Future.delayed(const Duration(seconds: 3));
   }
