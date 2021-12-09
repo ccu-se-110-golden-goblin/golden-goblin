@@ -23,8 +23,6 @@ class AccountProvider {
         iconColor: Colors.orange,
       ),
     ];
-
-    await Future.delayed(const Duration(seconds: 3));
   }
 
   List<Account> get getAccounts => _accounts;

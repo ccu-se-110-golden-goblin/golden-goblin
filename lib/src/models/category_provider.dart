@@ -12,8 +12,6 @@ class CategoryProvider {
       Category(id: 2, name: "Cat 3", type: Type.income),
       Category(id: 3, name: "Cat 4", type: Type.expenses),
     ];
-
-    await Future.delayed(const Duration(seconds: 3));
   }
 
   List<Category> get getCategories => _categories;
