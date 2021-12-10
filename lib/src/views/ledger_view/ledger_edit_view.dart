@@ -1,10 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:golden_goblin/src/views/ledger_view/ledger_view.dart';
 import 'package:intl/intl.dart';
 
 class LedgerEditView extends StatelessWidget {
-  const LedgerEditView({Key? key}) : super(key: key);
+  LedgerEditView({Key? key}) : super(key: key);
 
   static const routeName = '/ledger_edit';
+  var dollar = "";
+  static DateTime date = DateTime.now();
+  var comment = "";
+
+  static List<String> accounts = ["錢包", "悠遊卡", "銀行"];
+  static List<IconData> icons = [
+    Icons.equalizer_rounded,
+    Icons.wifi_lock,
+    Icons.mail,
+  ];
+  static var account;
+  static var icon;
 
   @override
   Widget build(BuildContext context) {
@@ -102,6 +115,7 @@ class LedgerEditView extends StatelessWidget {
                       decoration: const InputDecoration(
                         border: UnderlineInputBorder(),
                         hintText: "無",
+
                       ),
                     ),
 
@@ -133,14 +147,11 @@ class LedgerEditView extends StatelessWidget {
 
 class DatePicker extends StatefulWidget {
   const DatePicker({Key? key}) : super(key: key);
-
-
   @override
   _DatePickerState createState() => _DatePickerState();
 }
 
 class _DatePickerState extends State<DatePicker> {
-  DateTime date = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
@@ -149,14 +160,14 @@ class _DatePickerState extends State<DatePicker> {
         onTap: () async{
           final newDate = await showDatePicker(
             context: context,
-            initialDate: date,
+            initialDate: LedgerEditView.date,
             firstDate: DateTime(DateTime.now().year - 5),
             lastDate: DateTime(DateTime.now().year + 1),
           );
 
           if (newDate == null) return;
 
-          setState(() => date = newDate);
+          setState(() => LedgerEditView.date = newDate);
         },
         child: Container(
           width: 260,
@@ -168,7 +179,7 @@ class _DatePickerState extends State<DatePicker> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               const Icon(Icons.event),
-              Text( DateFormat('MM / dd / yyyy').format(date).toString(), style: TextStyle(fontSize: 25)),
+              Text( DateFormat('MM / dd / yyyy').format(LedgerEditView.date).toString(), style: const TextStyle(fontSize: 20)),
               const Icon(Icons.expand_more),
             ],
           ),
@@ -180,17 +191,50 @@ class _DatePickerState extends State<DatePicker> {
 
 class AccountPicker extends StatefulWidget {
   const AccountPicker({Key? key}) : super(key: key);
-
   @override
   _AccountPickerState createState() => _AccountPickerState();
 }
 
 class _AccountPickerState extends State<AccountPicker> {
+  _AccountPickerState(){
+    LedgerEditView.account = LedgerEditView.accounts[0];
+    LedgerEditView.icon = LedgerEditView.icons[0];
+  }
   @override
   Widget build(BuildContext context) {
     return Center(
       child: InkWell(
-        onTap: () {}, //TODO: expand account
+        onTap: () {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text('選擇帳本'),
+                  content: Container(
+                    width: double.minPositive,
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: LedgerEditView.accounts.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return ListTile(
+                          title: Text(LedgerEditView.accounts[index]),
+                          leading: Icon(LedgerEditView.icons[index]),
+                          onTap: () {
+                            setState(() {
+                              LedgerEditView.account = LedgerEditView.accounts[index];
+                              LedgerEditView.icon = LedgerEditView.icons[index];
+                            });
+
+                            Navigator.pop(context, LedgerEditView.accounts[index]);
+
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                );
+              });
+        }, //TODO: expand account
         child: Container(
           width: 260,
           padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
@@ -199,9 +243,9 @@ class _AccountPickerState extends State<AccountPicker> {
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: const <Widget>[
-              Icon(Icons.account_balance_wallet_outlined),
-              Text("帳戶"),
+            children:<Widget>[
+              Icon(LedgerEditView.icon),
+              Text(LedgerEditView.account),
               Icon(Icons.expand_more),
             ],
           ),
