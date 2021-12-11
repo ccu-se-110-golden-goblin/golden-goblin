@@ -97,7 +97,9 @@ class CategoryView extends StatelessWidget {
           backgroundColor: const Color(0xFF000000),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           child: const Icon(Icons.add),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pushNamed(context, "/category_edit");
+          },
         ),
         body: Column(
           children: [
