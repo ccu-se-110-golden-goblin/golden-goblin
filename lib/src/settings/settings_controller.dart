@@ -58,4 +58,5 @@ class SettingsController with ChangeNotifier {
     // Important! Inform listeners a change has occurred.
     notifyListeners();
   }
+
 }

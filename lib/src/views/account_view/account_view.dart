@@ -32,6 +32,7 @@ class AccountView extends StatelessWidget {
 
         })
       ),
+      drawer: const Sidebar(currentRouteName: routeName),
       floatingActionButton: FloatingActionButton(
         foregroundColor: const Color(0xFF000000),
         backgroundColor: const Color(0xFFFFD344),
@@ -53,8 +54,7 @@ class AccountView extends StatelessWidget {
 
                 Container(
                   padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                  child: Text("\$NTD $total_asset", style: TextStyle(fontSize: 30, color: Color(
-                      0xFF78785D)))
+                  child: Text("\$NTD $total_asset", style: TextStyle(fontSize: 30))
                 ),
 
                 const Divider(
