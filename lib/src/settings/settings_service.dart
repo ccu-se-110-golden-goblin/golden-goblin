@@ -8,12 +8,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 class SettingsService {
 
   /// Loads the User's preferred ThemeMode from local or remote storage.
+  final themeModeArr = [ThemeMode.system, ThemeMode.light, ThemeMode.dark];
+  var modeInt = 0;
 
   Future<ThemeMode> themeMode() async {
-    // SharedPreferences prefs = await SharedPreferences.getInstance();
-    // final themeModeArr = [ThemeMode.system, ThemeMode.light, ThemeMode.dark];
-    // final modeInt = prefs.getInt("themeMode");
-    // return themeModeArr[modeInt];
+    WidgetsFlutterBinding.ensureInitialized();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    modeInt = prefs.getInt("themeMode") ?? 0;
+    print("ThemeMode get $modeInt");
+    return themeModeArr[modeInt];
     return ThemeMode.system;
   }
 
@@ -28,6 +31,8 @@ class SettingsService {
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setInt("themeMode", themeModeToInt[theme]!);
+    final intTheme = themeModeToInt[theme];
+    print("setSP with $intTheme",);
     // http package to persist settings over the network.
   }
 

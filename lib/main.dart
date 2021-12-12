@@ -11,6 +11,7 @@ void main() async {
 
   // Load the user's preferred theme while the splash screen is displayed.
   // This prevents a sudden theme change when the app is first displayed.
+
   await settingsController.loadSettings();
 
   // Run the app and pass in the SettingsController. The app listens to the
