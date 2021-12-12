@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:golden_goblin/src/views/account_view/account_view.dart';
 
 import '../../widgets/sidebar_tile.dart';
 
@@ -83,6 +84,8 @@ class Sidebar extends StatelessWidget {
                         onTap: () {
                           print("帳本管理 tapped");
                           Navigator.pop(context);
+                          Navigator.restorablePushNamed(
+                            context, AccountView.routeName);
                         },
                       ),
                       SidebarTile(
