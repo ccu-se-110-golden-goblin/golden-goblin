@@ -1,11 +1,32 @@
 import 'package:flutter/material.dart';
 
 import '../../themes.dart';
-class AccountEditView extends StatelessWidget {
+class AccountEditView extends StatefulWidget {
   const AccountEditView({Key? key}) : super(key: key);
 
   static const routeName = '/account_edit_view';
+  static List<IconData> icons = [
+    Icons.equalizer_rounded,
+    Icons.wifi_lock,
+    Icons.mail,
+  ];
+  static List<Color> colors = [
+    Colors.amberAccent,
+    Colors.blueAccent,
+    Colors.teal,
+  ];
+  static List<String> colorString = [
+    "黃色","藍色","綠色"
+  ];
+  static IconData icon = Icons.account_balance_wallet;
+  static Color color = Colors.grey;
+  static var accountName = "";
 
+  @override
+  State<AccountEditView> createState() => _AccountEditViewState();
+}
+
+class _AccountEditViewState extends State<AccountEditView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,6 +44,7 @@ class AccountEditView extends StatelessWidget {
 
         ),
 
+
         body: Container(
           padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 30.0),
           child: Column(
@@ -32,50 +54,50 @@ class AccountEditView extends StatelessWidget {
                 child: Column(
                   children: [
                     TextFormField(
-                      initialValue: "飲食",
+                      initialValue: AccountEditView.accountName,
                       decoration: InputDecoration(
-                        icon: CategoryIcon(
-                          iconData: Icons.restaurant,
-                          color: const Color(0xFF99D6EA),
-                        ),
-                        labelText: "類別名稱",
+                        icon: Icon(AccountEditView.icon, color: AccountEditView.color),
+                        labelText: "帳本名稱",
                       ),
                     ),
-                    DropdownButtonFormField(
-                      value: 2,
+                    DropdownButtonFormField<int>(
+                      value: 0,
                       decoration: const InputDecoration(
-                        labelText: "類別圖示",
+                        labelText: "帳本圖示",
                         border: OutlineInputBorder(),
                       ),
-                      onChanged: (v) {},
-                      items: const [
-                        DropdownMenuItem(
-                          child: Text("刀叉"),
-                          value: 1,
-                        ),
-                        DropdownMenuItem(
-                          child: Text("交通"),
-                          value: 2,
-                        ),
-                      ],
+                        onChanged: (int? v) {
+                          setState((){
+                            AccountEditView.icon =  AccountEditView.icons[v!];
+                          });
+
+                        },
+                        items: [for (var i = 0; i < AccountEditView.icons.length; i++) i].map((int val) {
+                          return DropdownMenuItem<int>(
+                            value: val,
+                            child: Icon(AccountEditView.icons[val]),
+                          );
+                        }).toList()
                     ),
-                    DropdownButtonFormField(
-                      value: 1,
+                    DropdownButtonFormField<int>(
+                      value: 0,
                       decoration: const InputDecoration(
                         labelText: "圖示顏色",
                         border: OutlineInputBorder(),
                       ),
-                      onChanged: (v) {},
-                      items: const [
-                        DropdownMenuItem(
-                          child: Text("藍色"),
-                          value: 1,
-                        ),
-                        DropdownMenuItem(
-                          child: Text("黃色"),
-                          value: 2,
-                        ),
-                      ],
+                      onChanged: (int? v) {
+                        setState((){
+                          AccountEditView.color =  AccountEditView.colors[v!];
+                        });
+
+                      },
+                      items: [for (var i = 0; i < AccountEditView.colorString.length; i++) i].map((int val) {
+                        return DropdownMenuItem<int>(
+                          value: val,
+                          child: Text(AccountEditView.colorString[val]),
+                        );
+                      }).toList(),
+
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
@@ -106,12 +128,10 @@ class AccountEditView extends StatelessWidget {
                         ),
                       ],
                     ),
-                  ]
-                      .map((e) => Padding(
+                  ].map((e) => Padding(
                     padding: const EdgeInsets.symmetric(vertical: 15),
                     child: e,
-                  ))
-                      .toList(),
+                  )).toList(),
                 ),
               ),
             ],
@@ -120,3 +140,6 @@ class AccountEditView extends StatelessWidget {
     );
   }
 }
+
+
+

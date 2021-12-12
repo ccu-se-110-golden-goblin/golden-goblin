@@ -12,6 +12,11 @@ class AccountView extends StatelessWidget {
     Icons.wifi_lock,
     Icons.mail,
   ];
+  static List<Color> colors = [
+    Colors.amberAccent,
+    Colors.blueAccent,
+    Colors.teal,
+  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,6 +32,15 @@ class AccountView extends StatelessWidget {
 
         })
       ),
+      floatingActionButton: FloatingActionButton(
+        foregroundColor: const Color(0xFF000000),
+        backgroundColor: const Color(0xFFFFD344),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        child: const Icon(Icons.add),
+        onPressed: () {
+          Navigator.pushNamed(context, AccountEditView.routeName);
+        },
+      ),
 
       body: Column(
         children: [
@@ -39,7 +53,8 @@ class AccountView extends StatelessWidget {
 
                 Container(
                   padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                  child: Text("\$NTD $total_asset", style: TextStyle(fontSize: 30, color: Color(0xFFBCC3A6)))
+                  child: Text("\$NTD $total_asset", style: TextStyle(fontSize: 30, color: Color(
+                      0xFF78785D)))
                 ),
 
                 const Divider(
@@ -58,7 +73,7 @@ class AccountView extends StatelessWidget {
               return Card(
                 child: ListTile(
                   title: Text(accounts[index]),
-                  leading: Icon(AccountView.icons[index]),
+                  leading: Icon(AccountView.icons[index], color: colors[index],),
                   onTap: () {
                     Navigator.pushNamed(context, AccountEditView.routeName);
 
