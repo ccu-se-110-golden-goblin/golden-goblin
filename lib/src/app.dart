@@ -3,6 +3,8 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:golden_goblin/src/views/account_view/account_edit_view.dart';
 import 'package:golden_goblin/src/views/account_view/account_view.dart';
+import 'package:golden_goblin/src/views/category_view/category_edit_view.dart';
+import 'package:golden_goblin/src/views/category_view/category_view.dart';
 import 'package:golden_goblin/src/views/ledger_view/ledger_edit_view.dart';
 
 import 'themes.dart';
@@ -80,6 +82,10 @@ class MyApp extends StatelessWidget {
                     return AccountView();
                   case AccountEditView.routeName:
                     return AccountEditView();
+                  case CategoryView.routeName:
+                    return const CategoryView();
+                  case CategoryEditView.routeName:
+                    return const CategoryEditView();
                   default:
                     return const LedgerView();
                 }
