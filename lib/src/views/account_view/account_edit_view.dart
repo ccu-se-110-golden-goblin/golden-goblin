@@ -18,6 +18,7 @@ class AccountEditView extends StatefulWidget {
   static List<String> colorString = [
     "黃色","藍色","綠色"
   ];
+  static List<String> accounts = ["錢包", "悠遊卡", "銀行"];
   static IconData icon = Icons.account_balance_wallet;
   static Color color = Colors.grey;
   static var accountName = "";
@@ -75,7 +76,13 @@ class _AccountEditViewState extends State<AccountEditView> {
                         items: [for (var i = 0; i < AccountEditView.icons.length; i++) i].map((int val) {
                           return DropdownMenuItem<int>(
                             value: val,
-                            child: Icon(AccountEditView.icons[val]),
+                            child: Row(
+                              children: [
+                                Icon(AccountEditView.icons[val]),
+                                const SizedBox(width: 30),
+                                Text(AccountEditView.accounts[val]),
+                              ],
+                            ),
                           );
                         }).toList()
                     ),

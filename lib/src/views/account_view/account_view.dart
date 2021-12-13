@@ -6,6 +6,7 @@ class AccountView extends StatelessWidget {
 
   static const routeName = '/account_view';
   final total_asset = 15550;
+  final List<int> assets = [518,30,99558];
   final List<String> accounts = ["錢包", "悠遊卡", "銀行"];
   static List<IconData> icons = [
     Icons.equalizer_rounded,
@@ -57,11 +58,7 @@ class AccountView extends StatelessWidget {
                   child: Text("\$NTD $total_asset", style: TextStyle(fontSize: 30))
                 ),
 
-                const Divider(
-                  height: 2.0,
-                  thickness: 2.0,
-                  color: Colors.black,
-                )
+                const Divider(thickness: 0.5, height: 0),
               ],
             )
           ),
@@ -70,14 +67,23 @@ class AccountView extends StatelessWidget {
             itemCount: accounts.length,
             
             itemBuilder: (BuildContext context, int index) {
-              return Card(
-                child: ListTile(
-                  title: Text(accounts[index]),
-                  leading: Icon(AccountView.icons[index], color: colors[index],),
-                  onTap: () {
-                    Navigator.pushNamed(context, AccountEditView.routeName);
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Card(
+                  child: ListTile(
+                    title:Row(
+                      
+                      children: [
+                        Expanded(child: Text(accounts[index])),
+                        SizedBox(width: 100,child: Text("\$NTD "+ assets[index].toString()))
+                      ],
+                    ),
+                    leading: Icon(AccountView.icons[index], color: colors[index],),
+                    onTap: () {
+                      Navigator.pushNamed(context, AccountEditView.routeName);
 
-                  },
+                    },
+                  ),
                 ),
               );
             },
