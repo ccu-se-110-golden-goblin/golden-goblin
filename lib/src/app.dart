@@ -75,7 +75,7 @@ class MyApp extends StatelessWidget {
                   case LedgerView.routeName:
                     return const LedgerView();
                   case LedgerEditView.routeName:
-                    return const LedgerEditView();
+                    return LedgerEditView();
                   case CategoryView.routeName:
                     return const CategoryView();
                   case CategoryEditView.routeName:
