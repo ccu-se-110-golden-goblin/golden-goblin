@@ -2,9 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:golden_goblin/src/settings/settings_controller.dart';
 import 'package:golden_goblin/src/settings/settings_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   group('Settings Controller', () {
+    setUp(() {
+      SharedPreferences.setMockInitialValues({});
+    });
+
     group('themeMode', () {
       test('should be able to get themeMode', () async {
         var controller = SettingsController(SettingsService());

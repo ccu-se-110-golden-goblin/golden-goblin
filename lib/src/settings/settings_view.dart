@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:golden_goblin/src/views/common/sidebar.dart';
 
 import 'settings_controller.dart';
 
@@ -59,7 +60,8 @@ class ThemeSelector extends StatelessWidget {
 
     return ListTile(
       title: const Text('主題設定'),
-      subtitle: Text(themeModeToStr[controller.themeMode] ?? controller.themeMode.toString()),
+      subtitle: Text(themeModeToStr[controller.themeMode] ??
+          controller.themeMode.toString()),
       onTap: () {
         showDialog(context: context, builder: (context) => themeSelectDialog);
       },
@@ -79,7 +81,16 @@ class SettingsView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('一般設定'),
+        leading: Builder(builder: (BuildContext context) {
+          return IconButton(
+            icon: const Icon(Icons.menu),
+            onPressed: () {
+              Scaffold.of(context).openDrawer();
+            },
+          );
+        }),
       ),
+      drawer: const Sidebar(currentRouteName: routeName),
       body: ListView(
         // padding: const EdgeInsets.symmetric(vertical: 16),
         children: [
