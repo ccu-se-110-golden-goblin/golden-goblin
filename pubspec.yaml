@@ -15,6 +15,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   percent_indicator: ^3.4.0
+  shared_preferences: ^2.0.8
 
 dev_dependencies:
   flutter_test:
