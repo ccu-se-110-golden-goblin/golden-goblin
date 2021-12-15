@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
-import 'package:provider/provider.dart';
 
 import '../../models/transaction_provider.dart';
 
@@ -31,10 +30,8 @@ class LedgerView extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.filter_list),
             onPressed: () {
-              context
-                  .read<TransactionProvider>()
-                  .getTransactions()
-                  .then((list) => print(list));
+              TransactionProvider.getTransactions()
+                  .then((result) => print(result));
             },
           )
         ],
