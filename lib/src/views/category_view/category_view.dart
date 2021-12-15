@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:golden_goblin/src/models/catagory.dart';
+import 'package:golden_goblin/src/models/category.dart';
 import 'package:golden_goblin/src/themes.dart';
 import 'package:golden_goblin/src/views/common/sidebar.dart';
 
