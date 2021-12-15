@@ -1,4 +1,4 @@
-import 'catagory.dart';
+import 'category.dart';
 
 import '../helpers/db_helper.dart';
 
