@@ -1,18 +1,12 @@
+import 'package:flutter/foundation.dart';
+
 import 'transfer.dart';
+import '../helpers/db_helper.dart';
 
 class TransferProvider {
-  List<Transfer> dummyTransfers = [
-    Transfer(
-      id: 0,
-      src: 0,
-      dst: 1,
-      amount: 100,
-      date: DateTime(2021, 9, 22),
-    ),
-  ];
-
   Future<List<Transfer>> getTransfers({
-    int? account,
+    List<int>? srcAccounts,
+    List<int>? dstAccounts,
     DateTime? startDate,
     DateTime? endDate,
     int? offset,
@@ -21,60 +15,120 @@ class TransferProvider {
     assert(offset == null || offset >= 0, "offset should be null or >= 0");
     assert(limit == null || limit >= 0, "limit should be null or >= 0");
 
-    List<Transfer> transfers = dummyTransfers;
+    bool hasAddWhere = false;
+    String queryString = "SELECT * FROM transfers";
 
-    if (account != null) {
-      transfers.retainWhere(
-          (transfer) => transfer.src == account || transfer.dst == account);
+    var db = await DBHelper.opendb();
+
+    if (srcAccounts != null) {
+      if (!hasAddWhere) {
+        queryString += " WHERE";
+        hasAddWhere = true;
+      } else {
+        queryString += " AND";
+      }
+
+      queryString += " src IN(";
+      queryString += srcAccounts.join(',');
+      queryString += ")";
+    }
+
+    if (dstAccounts != null) {
+      if (!hasAddWhere) {
+        queryString += " WHERE";
+        hasAddWhere = true;
+      } else {
+        queryString += " AND";
+      }
+
+      queryString += " dst IN(";
+      queryString += dstAccounts.join(',');
+      queryString += ")";
     }
 
     if (startDate != null) {
-      transfers.retainWhere((transfer) => !transfer.date.isBefore(startDate));
+      if (!hasAddWhere) {
+        queryString += " WHERE";
+        hasAddWhere = true;
+      } else {
+        queryString += " AND";
+      }
+
+      queryString += " date >= ${startDate.millisecondsSinceEpoch}";
     }
 
     if (endDate != null) {
-      transfers.retainWhere((transfer) => !transfer.date.isAfter(endDate));
+      if (!hasAddWhere) {
+        queryString += " WHERE";
+        hasAddWhere = true;
+      } else {
+        queryString += " AND";
+      }
+
+      queryString += " date <= ${endDate.millisecondsSinceEpoch}";
     }
 
-    transfers.sort((t1, t2) => t1.date.isAfter(t2.date) ? -1 : 1);
-
-    if (offset != null) {
-      transfers = transfers.skip(offset).toList();
-    }
+    queryString += " ORDER BY date DESC";
 
     if (limit != null) {
-      transfers = transfers.take(limit).toList();
+      queryString += " LIMIT $limit";
+    } else {
+      //without limit, offset is unusable
+      queryString += " LIMIT -1";
     }
 
-    await Future.delayed(const Duration(seconds: 3));
+    if (offset != null) {
+      queryString += " OFFSET $offset";
+    }
+
+    if (!kReleaseMode) {
+      print("queryString = $queryString");
+    }
+    List<Map> rawTransfers = await db.rawQuery(queryString);
+
+    List<Transfer> transfers = rawTransfers
+        .map((mapobj) => Transfer(
+              id: mapobj['id'],
+              amount: mapobj['amount'],
+              src: mapobj['src'],
+              dst: mapobj['dst'],
+              date: DateTime.fromMillisecondsSinceEpoch(mapobj['date'] as int),
+              remark: mapobj['remark'],
+            ))
+        .toList();
 
     return transfers;
   }
 
   // When insert into database, id will be ignore and replaced, use getAccounts to get new list with new id
-  Future<void> addTransfer(Transfer transfer) async {
-    dummyTransfers.add(transfer);
+  Future<int> addTransfer(Transfer transfer) async {
+    var db = await DBHelper.opendb();
 
-    await Future.delayed(const Duration(seconds: 3));
+    var transferMap = transfer.toMap();
+    transferMap.remove('id');
+    transferMap['date'] =
+        (transferMap['date'] as DateTime).millisecondsSinceEpoch;
+
+    var recordid = await db.insert('transfers', transferMap);
+
+    return recordid;
   }
 
   Future<void> deleteTransfer(int transferId) async {
-    dummyTransfers.removeWhere((transfer) => transfer.id == transferId);
+    var db = await DBHelper.opendb();
 
-    await Future.delayed(const Duration(seconds: 3));
+    await db.delete('transfers', where: 'id = ?', whereArgs: [transferId]);
   }
 
   Future<void> updateTransfer(int transferId, Transfer newTransfer) async {
-    dummyTransfers.removeWhere((transfer) => transfer.id == transferId);
-    dummyTransfers.add(Transfer(
-      id: transferId,
-      src: newTransfer.src,
-      dst: newTransfer.dst,
-      amount: newTransfer.amount,
-      date: newTransfer.date,
-      remark: newTransfer.remark,
-    ));
+    var db = await DBHelper.opendb();
 
-    await Future.delayed(const Duration(seconds: 3));
+    var transferMap = newTransfer.toMap();
+    transferMap.remove('id');
+    transferMap['date'] =
+        (transferMap['date'] as DateTime).millisecondsSinceEpoch;
+
+    await db.update('transfers', transferMap,
+        where: 'id = ?', whereArgs: [transferId]);
   }
 }
