@@ -9,9 +9,9 @@ class IconColor {
 
 class IconColors {
   static const IconColor myRed =
-      IconColor(color: Color(0xffE47A59), name: '紅色');
+      IconColor(color: Color(0xfff84747), name: '紅色');
   static const IconColor myOrange =
-      IconColor(color: Color(0xffE4A459), name: '橘色');
+      IconColor(color: Color(0xffE47A59), name: '橘色');
   static const IconColor myYellow =
       IconColor(color: Color(0xffE4D659), name: '黃色');
   static const IconColor myGreen =
