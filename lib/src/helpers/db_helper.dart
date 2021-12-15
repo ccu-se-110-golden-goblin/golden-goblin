@@ -23,7 +23,7 @@ class DBHelper {
 Future<void> _onCreate(Database db, int version) async {
   try {
     await db.execute("CREATE TABLE accounts ("
-        "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, name TEXT NOT NULL, icon INTERGER NOT NULL, iconcolor INTEGER NOT NULL)");
+        "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, name TEXT NOT NULL, icon INTERGER NOT NULL, iconColor INTEGER NOT NULL)");
     await db.execute("CREATE TABLE categories ("
         "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, name TEXT NOT NULL, type INTERGER NOT NULL)");
     await db.execute("CREATE TABLE transactions ("
