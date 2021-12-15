@@ -1,49 +1,10 @@
+import 'package:flutter/foundation.dart';
+
 import 'transaction.dart';
+import '../helpers/db_helper.dart';
 
 class TransactionProvider {
-  List<Transaction> dummyTransactions = [
-    Transaction(
-      id: 0,
-      amount: 100,
-      account: 0,
-      category: 0,
-      date: DateTime(2021, 9, 22),
-      remark: "我是備註",
-    ),
-    Transaction(
-      id: 1,
-      amount: 1200,
-      account: 0,
-      category: 0,
-      date: DateTime(2021, 11, 3),
-      invoice: "AA123456789",
-    ),
-    Transaction(
-      id: 2,
-      amount: 567,
-      account: 1,
-      category: 3,
-      date: DateTime(2021, 11, 1),
-    ),
-    Transaction(
-      id: 3,
-      amount: 888,
-      account: 0,
-      category: 3,
-      date: DateTime(2021, 12, 12),
-      remark: "我也是備註的啦",
-      invoice: "BB987654321",
-    ),
-    Transaction(
-      id: 4,
-      amount: 100,
-      account: 0,
-      category: 0,
-      date: DateTime(2021, 9, 22),
-    ),
-  ];
-
-  Future<List<Transaction>> getTransactions({
+  static Future<List<Transaction>> getTransactions({
     List<int>? accounts,
     List<int>? categories,
     DateTime? startDate,
@@ -54,71 +15,123 @@ class TransactionProvider {
     assert(offset == null || offset >= 0, "offset should be null or >= 0");
     assert(limit == null || limit >= 0, "limit should be null or >= 0");
 
-    List<Transaction> transactions = dummyTransactions;
+    bool hasAddWhere = false;
+    String queryString = "SELECT * FROM transactions";
+
+    var db = await DBHelper.opendb();
 
     if (accounts != null) {
-      transactions
-          .retainWhere((transaction) => accounts.contains(transaction.account));
+      if (!hasAddWhere) {
+        queryString += " WHERE";
+        hasAddWhere = true;
+      } else {
+        queryString += " AND";
+      }
+
+      queryString += " account IN(";
+      queryString += accounts.join(',');
+      queryString += ")";
     }
 
     if (categories != null) {
-      transactions.retainWhere(
-          (transaction) => categories.contains(transaction.category));
+      if (!hasAddWhere) {
+        queryString += " WHERE";
+        hasAddWhere = true;
+      } else {
+        queryString += " AND";
+      }
+
+      queryString += " category IN(";
+      queryString += categories.join(',');
+      queryString += ")";
     }
 
     if (startDate != null) {
-      transactions
-          .retainWhere((transaction) => !transaction.date.isBefore(startDate));
+      if (!hasAddWhere) {
+        queryString += " WHERE";
+        hasAddWhere = true;
+      } else {
+        queryString += " AND";
+      }
+
+      queryString += " date >= ${startDate.millisecondsSinceEpoch}";
     }
 
     if (endDate != null) {
-      transactions
-          .retainWhere((transaction) => !transaction.date.isAfter(endDate));
+      if (!hasAddWhere) {
+        queryString += " WHERE";
+        hasAddWhere = true;
+      } else {
+        queryString += " AND";
+      }
+
+      queryString += " date <= ${endDate.millisecondsSinceEpoch}";
     }
 
-    transactions.sort((t1, t2) => t1.date.isAfter(t2.date) ? -1 : 1);
-
-    if (offset != null) {
-      transactions = transactions.skip(offset).toList();
-    }
+    queryString += " ORDER BY date DESC";
 
     if (limit != null) {
-      transactions = transactions.take(limit).toList();
+      queryString += " LIMIT $limit";
+    } else {
+      //without limit, offset is unusable
+      queryString += " LIMIT -1";
     }
 
-    await Future.delayed(const Duration(seconds: 3));
+    if (offset != null) {
+      queryString += " OFFSET $offset";
+    }
+
+    if (!kReleaseMode) {
+      print("queryString = $queryString");
+    }
+    List<Map> rawTransactions = await db.rawQuery(queryString);
+
+    List<Transaction> transactions = rawTransactions
+        .map((mapobj) => Transaction(
+              id: mapobj['id'],
+              amount: mapobj['amount'],
+              account: mapobj['account'],
+              category: mapobj['category'],
+              date: DateTime.fromMillisecondsSinceEpoch(mapobj['date'] as int),
+              remark: mapobj['remark'],
+              invoice: mapobj['invoice'],
+            ))
+        .toList();
 
     return transactions;
   }
 
   // When insert into database, id will be ignore and replaced, use getAccounts to get new list with new id
-  Future<void> addTransaction(Transaction transaction) async {
-    dummyTransactions.add(transaction);
+  static Future<int> addTransaction(Transaction transaction) async {
+    var db = await DBHelper.opendb();
 
-    await Future.delayed(const Duration(seconds: 3));
+    var transactionMap = transaction.toMap();
+    transactionMap.remove('id');
+    transactionMap['date'] =
+        (transactionMap['date'] as DateTime).millisecondsSinceEpoch;
+
+    var recordid = await db.insert('transactions', transactionMap);
+
+    return recordid;
   }
 
-  Future<void> deleteTransaction(int transactionId) async {
-    dummyTransactions
-        .removeWhere((transaction) => transaction.id == transactionId);
+  static Future<void> deleteTransaction(int transactionId) async {
+    var db = await DBHelper.opendb();
 
-    await Future.delayed(const Duration(seconds: 3));
+    await db
+        .delete('transactions', where: 'id = ?', whereArgs: [transactionId]);
   }
 
-  Future<void> updateTransaction(
+  static Future<void> updateTransaction(
       int transactionId, Transaction newTransaction) async {
-    dummyTransactions
-        .removeWhere((transaction) => transaction.id == transactionId);
-    dummyTransactions.add(Transaction(
-      id: transactionId,
-      amount: newTransaction.amount,
-      account: newTransaction.account,
-      category: newTransaction.category,
-      date: newTransaction.date,
-      remark: newTransaction.remark,
-      invoice: newTransaction.invoice,
-    ));
+    var db = await DBHelper.opendb();
 
-    await Future.delayed(const Duration(seconds: 3));
+    var transactionMap = newTransaction.toMap();
+    transactionMap.remove('id');
+    transactionMap['date'] =
+        (transactionMap['date'] as DateTime).millisecondsSinceEpoch;
+
+    await db.update('transactions', transactionMap,
+        where: 'id = ?', whereArgs: [transactionId]);
   }
 }
