@@ -29,7 +29,7 @@ Future<void> _onCreate(Database db, int version) async {
     await db.execute("CREATE TABLE transactions ("
         "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, amount INTEGER NOT NULL, account INTEGER NOT NULL, category INTEGER NOT NULL, date INTEGER NOT NULL, remark TEXT, invoice TEXT)");
     await db.execute("CREATE TABLE transfers ("
-        "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, amount INTEGER NOT NULL, src INTEGER NOT NULL, dst INTEGER NOT NULL, amount INTEGER NOT NULL, remark TEXT)");
+        "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, amount INTEGER NOT NULL, src INTEGER NOT NULL, dst INTEGER NOT NULL, date INTEGER NOT NULL, remark TEXT)");
   } catch (err) {
     if (!kReleaseMode) {
       print("create database error: $err");
