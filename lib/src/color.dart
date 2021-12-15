@@ -26,4 +26,16 @@ class IconColors {
       IconColor(color: Color(0xffA1A1A1), name: '灰色');
   static const IconColor myBlack =
       IconColor(color: Color(0xff000000), name: '黑色');
+
+  static const List<IconColor> allColors = [
+    myRed,
+    myOrange,
+    myYellow,
+    myGreen,
+    myBlack,
+    myPuerple,
+    myPink,
+    myGray,
+    myBlack
+  ];
 }
