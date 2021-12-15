@@ -11,6 +11,7 @@ import 'src/models/transaction_provider.dart';
 import 'src/models/transfer_provider.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   // Set up the SettingsController, which will glue user settings to multiple
   // Flutter Widgets.
   final settingsController = SettingsController(SettingsService());
