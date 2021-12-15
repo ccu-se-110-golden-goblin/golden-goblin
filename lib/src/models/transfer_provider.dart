@@ -4,7 +4,7 @@ import 'transfer.dart';
 import '../helpers/db_helper.dart';
 
 class TransferProvider {
-  Future<List<Transfer>> getTransfers({
+  static Future<List<Transfer>> getTransfers({
     List<int>? srcAccounts,
     List<int>? dstAccounts,
     DateTime? startDate,
@@ -101,7 +101,7 @@ class TransferProvider {
   }
 
   // When insert into database, id will be ignore and replaced, use getAccounts to get new list with new id
-  Future<int> addTransfer(Transfer transfer) async {
+  static Future<int> addTransfer(Transfer transfer) async {
     var db = await DBHelper.opendb();
 
     var transferMap = transfer.toMap();
@@ -114,13 +114,14 @@ class TransferProvider {
     return recordid;
   }
 
-  Future<void> deleteTransfer(int transferId) async {
+  static Future<void> deleteTransfer(int transferId) async {
     var db = await DBHelper.opendb();
 
     await db.delete('transfers', where: 'id = ?', whereArgs: [transferId]);
   }
 
-  Future<void> updateTransfer(int transferId, Transfer newTransfer) async {
+  static Future<void> updateTransfer(
+      int transferId, Transfer newTransfer) async {
     var db = await DBHelper.opendb();
 
     var transferMap = newTransfer.toMap();
