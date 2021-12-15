@@ -18,7 +18,7 @@ class IconColors {
       IconColor(color: Color(0xff6CE459), name: '綠色');
   static const IconColor myBlue =
       IconColor(color: Color(0xff5988E4), name: '藍色');
-  static const IconColor myPuerple =
+  static const IconColor myPurple =
       IconColor(color: Color(0xff7D59E4), name: '紫色');
   static const IconColor myPink =
       IconColor(color: Color(0xffE459AC), name: '粉色');
@@ -33,7 +33,7 @@ class IconColors {
     myYellow,
     myGreen,
     myBlack,
-    myPuerple,
+    myPurple,
     myPink,
     myGray,
     myBlack
