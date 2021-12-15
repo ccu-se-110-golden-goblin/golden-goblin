@@ -1,12 +1,99 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:golden_goblin/src/models/category.dart';
+import 'package:golden_goblin/src/models/category_provider.dart';
 import 'package:golden_goblin/src/themes.dart';
 import 'package:golden_goblin/src/views/category_view/category_view.dart';
 
-class CategoryEditView extends StatelessWidget {
-  const CategoryEditView({Key? key}) : super(key: key);
+class CategoryEditArguments {
+  CategoryEditArguments({
+    this.category,
+    required this.type,
+  });
+
+  final Category? category;
+  final Type type;
+}
+
+class CategoryEditView extends StatefulWidget {
+  const CategoryEditView({Key? key, required this.args}) : super(key: key);
+
+  final CategoryEditArguments args;
 
   static const routeName = "/category_edit";
+
+  @override
+  State<StatefulWidget> createState() => _CategoryEditState(args: args);
+}
+
+class _CategoryEditState extends State<CategoryEditView> {
+  _CategoryEditState({required this.args});
+
+  final CategoryEditArguments args;
+
+  static const List<IconData> iconOptions = [Icons.commute, Icons.restaurant];
+  static const List<Color> colorOptions = [
+    Colors.cyan,
+    Colors.deepOrange,
+    Color(0xFF99D6EA)
+  ];
+
+  static String getIconName(IconData icon) {
+    if (icon == Icons.commute) return "交通";
+    if (icon == Icons.restaurant) return "飲食";
+    return "unknown";
+  }
+
+  static String getColorName(Color color) {
+    if (color == Colors.cyan) return "青色";
+    if (color == Colors.deepOrange) return "橘色";
+    return "unknown";
+  }
+
+  String name = "";
+  IconData icon = iconOptions[0];
+  Color color = colorOptions[0];
+
+  @override
+  void initState() {
+    super.initState();
+    var category = args.category;
+    if (category != null) {
+      setState(() {
+        name = category.name;
+        icon = category.iconData;
+        color = category.iconColor;
+      });
+    }
+  }
+
+  void handleSave() {
+    var category = args.category;
+    if (category != null) {
+      CategoryProvider()
+          .updateCategory(
+              category.id,
+              Category(
+                id: category.id,
+                type: category.type,
+                name: name,
+              ))
+          .then((value) => Navigator.pop(context));
+    } else {
+      CategoryProvider()
+          .addCategory(Category(id: 0, type: args.type, name: name))
+          .then((value) => Navigator.pop(context));
+    }
+  }
+
+  void handleDelete() {
+    var category = args.category;
+    if (category != null) {
+      CategoryProvider()
+          .deleteCategory(category.id)
+          .then((value) => Navigator.pop(context));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,56 +116,69 @@ class CategoryEditView extends StatelessWidget {
             child: Column(
               children: [
                 TextFormField(
-                  initialValue: "飲食",
+                  initialValue: name,
                   decoration: InputDecoration(
                     icon: CategoryIcon(
-                      iconData: Icons.restaurant,
-                      color: const Color(0xFF99D6EA),
+                      iconData: icon,
+                      color: color,
                     ),
                     labelText: "類別名稱",
                   ),
+                  onChanged: (v) {
+                    setState(() {
+                      name = v;
+                    });
+                  },
                 ),
                 DropdownButtonFormField(
-                  value: 2,
+                  value: icon,
                   decoration: const InputDecoration(
                     labelText: "類別圖示",
                     border: OutlineInputBorder(),
                   ),
-                  onChanged: (v) {},
-                  items: const [
-                    DropdownMenuItem(
-                      child: Text("刀叉"),
-                      value: 1,
-                    ),
-                    DropdownMenuItem(
-                      child: Text("交通"),
-                      value: 2,
-                    ),
-                  ],
+                  items: iconOptions
+                      .map(
+                        (e) => DropdownMenuItem(
+                          child: Text(getIconName(e)),
+                          value: e,
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (IconData? v) {
+                    if (v != null) {
+                      setState(() {
+                        icon = v;
+                      });
+                    }
+                  },
                 ),
                 DropdownButtonFormField(
-                  value: 1,
+                  value: color,
                   decoration: const InputDecoration(
                     labelText: "圖示顏色",
                     border: OutlineInputBorder(),
                   ),
-                  onChanged: (v) {},
-                  items: const [
-                    DropdownMenuItem(
-                      child: Text("藍色"),
-                      value: 1,
-                    ),
-                    DropdownMenuItem(
-                      child: Text("黃色"),
-                      value: 2,
-                    ),
-                  ],
+                  items: colorOptions
+                      .map(
+                        (e) => DropdownMenuItem(
+                          child: Text(getColorName(e)),
+                          value: e,
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (Color? v) {
+                    if (v != null) {
+                      setState(() {
+                        color = v;
+                      });
+                    }
+                  },
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     TextButton(
-                      onPressed: () {},
+                      onPressed: handleDelete,
                       child: const Text("刪除",
                           style: TextStyle(color: Color(0xFFFF0000))),
                       style: ButtonStyle(
@@ -89,7 +189,7 @@ class CategoryEditView extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(left: 10),
                       child: TextButton(
-                        onPressed: () {},
+                        onPressed: handleSave,
                         child: const Text("完成",
                             style: TextStyle(color: Color(0xFFFFFFFF))),
                         style: ButtonStyle(

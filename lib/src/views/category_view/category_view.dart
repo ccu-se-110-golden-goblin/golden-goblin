@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:golden_goblin/src/models/category.dart';
+import 'package:golden_goblin/src/models/category_provider.dart';
 import 'package:golden_goblin/src/themes.dart';
+import 'package:golden_goblin/src/views/category_view/category_edit_view.dart';
 import 'package:golden_goblin/src/views/common/sidebar.dart';
 
 class CategoryIcon extends StatelessWidget {
@@ -29,11 +31,18 @@ class CategoryIcon extends StatelessWidget {
 }
 
 class CategoryItem extends StatelessWidget {
-  const CategoryItem({Key? key, required this.iconData, required this.name})
+  const CategoryItem(
+      {Key? key,
+      required this.iconData,
+      required this.name,
+      required this.iconColor,
+      this.onTap})
       : super(key: key);
 
   final IconData iconData;
+  final Color iconColor;
   final String name;
+  final GestureTapCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -45,91 +54,142 @@ class CategoryItem extends StatelessWidget {
           children: [
             CategoryIcon(
               iconData: iconData,
-              color: const Color(0xFF99D6EA),
+              color: iconColor,
             ),
             Text(name),
           ],
         ),
       ),
-      onTap: () {},
+      onTap: onTap ?? () {},
     );
   }
 }
 
-class CategoryView extends StatelessWidget {
+class CategoryView extends StatefulWidget {
   const CategoryView({Key? key}) : super(key: key);
 
+  static const routeName = _CategoryViewState.routeName;
+
+  @override
+  State<StatefulWidget> createState() => _CategoryViewState();
+}
+
+class _CategoryViewState extends State<CategoryView>
+    with SingleTickerProviderStateMixin {
   static const routeName = "/category";
 
-  final Map<Type, List<CategoryItem>> categories = const {
-    Type.expenses: [
-      CategoryItem(iconData: Icons.restaurant, name: "飲食"),
-      CategoryItem(iconData: Icons.commute, name: "交通"),
-      CategoryItem(iconData: Icons.local_grocery_store, name: "日常用品"),
-      CategoryItem(iconData: Icons.checkroom, name: "穿著"),
-      CategoryItem(iconData: Icons.card_giftcard, name: "禮物"),
-    ],
-    Type.income: [
-      CategoryItem(iconData: Icons.money, name: "薪水"),
-      CategoryItem(iconData: Icons.attach_money, name: "投資"),
-    ],
-  };
+  List<Category> categories = [];
+
+  late TabController _tabController;
+
+  void handleLoadData() {
+    CategoryProvider().loadCategories().then((value) {
+      setState(() {
+        categories = CategoryProvider().getCategories;
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    handleLoadData();
+
+    _tabController = TabController(length: Type.values.length, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text("類別"),
-          leading: Builder(builder: (BuildContext context) {
-            return IconButton(
-              icon: const Icon(Icons.menu),
-              onPressed: () {
-                Scaffold.of(context).openDrawer();
-              },
-            );
-          }),
-        ),
-        drawer: const Sidebar(currentRouteName: routeName),
-        floatingActionButton: FloatingActionButton(
-          foregroundColor: const Color(0xFFFFD344),
-          backgroundColor: const Color(0xFF000000),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          child: const Icon(Icons.add),
-          onPressed: () {
-            Navigator.pushNamed(context, "/category_edit");
-          },
-        ),
-        body: Column(
-          children: [
-            TabBar(
-              indicatorColor: GoldenGoblinThemes.light.primaryColor,
-              labelColor: GoldenGoblinThemes.light.primaryColor,
-              unselectedLabelColor: const Color(0x99000000),
-              tabs: const [
-                Tab(text: '支出'),
-                Tab(text: '收入'),
-              ],
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("類別"),
+        leading: Builder(builder: (BuildContext context) {
+          return IconButton(
+            icon: const Icon(Icons.menu),
+            onPressed: () {
+              Scaffold.of(context).openDrawer();
+            },
+          );
+        }),
+      ),
+      drawer: const Sidebar(currentRouteName: routeName),
+      floatingActionButton: FloatingActionButton(
+        foregroundColor: const Color(0xFFFFD344),
+        backgroundColor: const Color(0xFF000000),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        child: const Icon(Icons.add),
+        onPressed: () {
+          Navigator.pushNamed(
+            context,
+            "/category_edit",
+            arguments: CategoryEditArguments(
+              type: Type.values[_tabController.index],
             ),
-            Expanded(
-              child: TabBarView(
-                children: [Type.expenses, Type.income]
-                    .map((e) => GridView(
-                          padding: const EdgeInsets.only(
-                              top: 10, left: 10, right: 10),
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 5,
-                            childAspectRatio: 0.7,
-                          ),
-                          children: categories[e] ?? [],
-                        ))
-                    .toList(),
-              ),
-            )
-          ],
-        ),
+          ).then((value) {
+            handleLoadData();
+          });
+        },
+      ),
+      body: Column(
+        children: [
+          TabBar(
+            controller: _tabController,
+            indicatorColor: GoldenGoblinThemes.light.primaryColor,
+            labelColor: GoldenGoblinThemes.light.primaryColor,
+            unselectedLabelColor: const Color(0x99000000),
+            tabs: Type.values.map((e) {
+              if (e == Type.income) {
+                return const Tab(text: '收入');
+              }
+              return const Tab(text: '支出');
+            }).toList(),
+          ),
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: Type.values
+                  .map((type) => GridView(
+                        padding:
+                            const EdgeInsets.only(top: 10, left: 10, right: 10),
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 5,
+                          childAspectRatio: 0.7,
+                        ),
+                        children: categories
+                            .where((value) => value.type == type)
+                            .map(
+                              (category) => CategoryItem(
+                                name: category.name,
+                                iconData: category.iconData,
+                                iconColor: category.iconColor,
+                                onTap: () {
+                                  Navigator.pushNamed(
+                                    context,
+                                    "/category_edit",
+                                    arguments: CategoryEditArguments(
+                                      category: category,
+                                      type: category.type,
+                                    ),
+                                  ).then((value) {
+                                    handleLoadData();
+                                  });
+                                },
+                              ),
+                            )
+                            .toList(),
+                      ))
+                  .toList(),
+            ),
+          )
+        ],
       ),
     );
   }
