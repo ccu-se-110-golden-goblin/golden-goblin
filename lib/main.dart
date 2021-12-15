@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -19,11 +20,13 @@ void main() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-    await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
 
-    if (kReleaseMode) {
-      FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
-    }
+    await FirebaseCrashlytics.instance
+        .setCrashlyticsCollectionEnabled(kReleaseMode);
+    await FirebasePerformance.instance
+        .setPerformanceCollectionEnabled(kReleaseMode);
+
+    FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
 
     final settingsController = SettingsController(SettingsService());
 
@@ -36,9 +39,5 @@ void main() async {
     // SettingsController for changes, then passes it further down to the
     // SettingsView.
     runApp(MyApp(settingsController: settingsController));
-  },
-      (error, stack) => {
-            if (kReleaseMode)
-              FirebaseCrashlytics.instance.recordError(error, stack)
-          });
+  }, (error, stack) => FirebaseCrashlytics.instance.recordError(error, stack));
 }

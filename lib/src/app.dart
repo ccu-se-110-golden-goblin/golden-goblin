@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:golden_goblin/src/views/account_view/account_edit_view.dart';
@@ -68,6 +69,10 @@ class MyApp extends StatelessWidget {
           // Define a function to handle named routes in order to support
           // Flutter web url navigation and deep linking.
           onGenerateRoute: (RouteSettings routeSettings) {
+            FirebaseAnalytics.instance.logScreenView(
+              screenName: routeSettings.name,
+            );
+
             return MaterialPageRoute<void>(
               settings: routeSettings,
               builder: (BuildContext context) {
