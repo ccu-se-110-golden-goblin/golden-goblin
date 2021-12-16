@@ -32,7 +32,7 @@ class IconColors {
     myOrange,
     myYellow,
     myGreen,
-    myBlack,
+    myBlue,
     myPurple,
     myPink,
     myGray,
