@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:golden_goblin/src/color.dart';
+import 'package:golden_goblin/src/icon_set.dart';
 import 'package:golden_goblin/src/models/category.dart';
 import 'package:golden_goblin/src/models/category_provider.dart';
 import 'package:golden_goblin/src/themes.dart';
@@ -31,28 +33,9 @@ class _CategoryEditState extends State<CategoryEditView> {
 
   final CategoryEditArguments args;
 
-  static const List<IconData> iconOptions = [Icons.commute, Icons.restaurant];
-  static const List<Color> colorOptions = [
-    Colors.cyan,
-    Colors.deepOrange,
-    Color(0xFF99D6EA)
-  ];
-
-  static String getIconName(IconData icon) {
-    if (icon == Icons.commute) return "交通";
-    if (icon == Icons.restaurant) return "飲食";
-    return "unknown";
-  }
-
-  static String getColorName(Color color) {
-    if (color == Colors.cyan) return "青色";
-    if (color == Colors.deepOrange) return "橘色";
-    return "unknown";
-  }
-
   String name = "";
-  IconData icon = iconOptions[0];
-  Color color = colorOptions[0];
+  IconData icon = MyIcons.icons[0].icon;
+  Color color = IconColors.allColors[0].color;
 
   @override
   void initState() {
@@ -101,6 +84,19 @@ class _CategoryEditState extends State<CategoryEditView> {
         ? "新增${args.type == Type.income ? "收入" : "支出"}類別"
         : "編輯類別";
 
+    var icons = MyIcons.icons;
+    var colors = IconColors.allColors;
+
+    if (icons.where((element) => element.icon == icon).isEmpty) {
+      icons = List.from(icons);
+      icons.add(MyIcon(icon: icon, name: "unknown"));
+    }
+
+    if (colors.where((element) => element.color == color).isEmpty) {
+      colors = List.from(colors);
+      colors.add(IconColor(color: color, name: "unknown"));
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
@@ -141,11 +137,11 @@ class _CategoryEditState extends State<CategoryEditView> {
                       labelText: "類別圖示",
                       border: OutlineInputBorder(),
                     ),
-                    items: iconOptions
+                    items: icons
                         .map(
                           (e) => DropdownMenuItem(
-                            child: Text(getIconName(e)),
-                            value: e,
+                            child: Text(e.name),
+                            value: e.icon,
                           ),
                         )
                         .toList(),
@@ -163,11 +159,11 @@ class _CategoryEditState extends State<CategoryEditView> {
                       labelText: "圖示顏色",
                       border: OutlineInputBorder(),
                     ),
-                    items: colorOptions
+                    items: colors
                         .map(
                           (e) => DropdownMenuItem(
-                            child: Text(getColorName(e)),
-                            value: e,
+                            child: Text(e.name),
+                            value: e.color,
                           ),
                         )
                         .toList(),
