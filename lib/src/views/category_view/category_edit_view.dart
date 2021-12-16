@@ -97,9 +97,13 @@ class _CategoryEditState extends State<CategoryEditView> {
 
   @override
   Widget build(BuildContext context) {
+    var title = (args.category == null)
+        ? "新增${args.type == Type.income ? "收入" : "支出"}類別"
+        : "編輯類別";
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text("編輯類別"),
+        title: Text(title),
         leading: Builder(builder: (BuildContext context) {
           return IconButton(
             icon: const Icon(Icons.arrow_back),
@@ -109,109 +113,116 @@ class _CategoryEditState extends State<CategoryEditView> {
           );
         }),
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 10, left: 40, right: 40),
-            child: Column(
-              children: [
-                TextFormField(
-                  initialValue: name,
-                  decoration: InputDecoration(
-                    icon: CategoryIcon(
-                      iconData: icon,
-                      color: color,
-                    ),
-                    labelText: "類別名稱",
-                  ),
-                  onChanged: (v) {
-                    setState(() {
-                      name = v;
-                    });
-                  },
-                ),
-                DropdownButtonFormField(
-                  value: icon,
-                  decoration: const InputDecoration(
-                    labelText: "類別圖示",
-                    border: OutlineInputBorder(),
-                  ),
-                  items: iconOptions
-                      .map(
-                        (e) => DropdownMenuItem(
-                          child: Text(getIconName(e)),
-                          value: e,
-                        ),
-                      )
-                      .toList(),
-                  onChanged: (IconData? v) {
-                    if (v != null) {
-                      setState(() {
-                        icon = v;
-                      });
-                    }
-                  },
-                ),
-                DropdownButtonFormField(
-                  value: color,
-                  decoration: const InputDecoration(
-                    labelText: "圖示顏色",
-                    border: OutlineInputBorder(),
-                  ),
-                  items: colorOptions
-                      .map(
-                        (e) => DropdownMenuItem(
-                          child: Text(getColorName(e)),
-                          value: e,
-                        ),
-                      )
-                      .toList(),
-                  onChanged: (Color? v) {
-                    if (v != null) {
-                      setState(() {
-                        color = v;
-                      });
-                    }
-                  },
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    TextButton(
-                      onPressed: handleDelete,
-                      child: const Text("刪除",
-                          style: TextStyle(color: Color(0xFFFF0000))),
-                      style: ButtonStyle(
-                        shape: MaterialStateProperty.resolveWith(
-                            (states) => const StadiumBorder()),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 10, left: 40, right: 40),
+              child: Column(
+                children: [
+                  TextFormField(
+                    initialValue: name,
+                    decoration: InputDecoration(
+                      icon: CategoryIcon(
+                        iconData: icon,
+                        color: color,
                       ),
+                      labelText: "類別名稱",
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 10),
-                      child: TextButton(
-                        onPressed: handleSave,
-                        child: const Text("完成",
-                            style: TextStyle(color: Color(0xFFFFFFFF))),
+                    onChanged: (v) {
+                      setState(() {
+                        name = v;
+                      });
+                    },
+                  ),
+                  DropdownButtonFormField(
+                    value: icon,
+                    decoration: const InputDecoration(
+                      labelText: "類別圖示",
+                      border: OutlineInputBorder(),
+                    ),
+                    items: iconOptions
+                        .map(
+                          (e) => DropdownMenuItem(
+                            child: Text(getIconName(e)),
+                            value: e,
+                          ),
+                        )
+                        .toList(),
+                    onChanged: (IconData? v) {
+                      if (v != null) {
+                        setState(() {
+                          icon = v;
+                        });
+                      }
+                    },
+                  ),
+                  DropdownButtonFormField(
+                    value: color,
+                    decoration: const InputDecoration(
+                      labelText: "圖示顏色",
+                      border: OutlineInputBorder(),
+                    ),
+                    items: colorOptions
+                        .map(
+                          (e) => DropdownMenuItem(
+                            child: Text(getColorName(e)),
+                            value: e,
+                          ),
+                        )
+                        .toList(),
+                    onChanged: (Color? v) {
+                      if (v != null) {
+                        setState(() {
+                          color = v;
+                        });
+                      }
+                    },
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        onPressed:
+                            (args.category != null) ? handleDelete : null,
+                        child: Text("刪除",
+                            style: TextStyle(
+                              color: args.category != null
+                                  ? const Color(0xFFFF0000)
+                                  : const Color(0x55000000),
+                            )),
                         style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.resolveWith(
-                              (states) =>
-                                  GoldenGoblinThemes.light.primaryColor),
                           shape: MaterialStateProperty.resolveWith(
                               (states) => const StadiumBorder()),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ]
-                  .map((e) => Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 15),
-                        child: e,
-                      ))
-                  .toList(),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10),
+                        child: TextButton(
+                          onPressed: handleSave,
+                          child: const Text("完成",
+                              style: TextStyle(color: Color(0xFFFFFFFF))),
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.resolveWith(
+                                (states) =>
+                                    GoldenGoblinThemes.light.primaryColor),
+                            shape: MaterialStateProperty.resolveWith(
+                                (states) => const StadiumBorder()),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ]
+                    .map((e) => Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          child: e,
+                        ))
+                    .toList(),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

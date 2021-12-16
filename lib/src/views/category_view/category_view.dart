@@ -137,59 +137,61 @@ class _CategoryViewState extends State<CategoryView>
           });
         },
       ),
-      body: Column(
-        children: [
-          TabBar(
-            controller: _tabController,
-            indicatorColor: GoldenGoblinThemes.light.primaryColor,
-            labelColor: GoldenGoblinThemes.light.primaryColor,
-            unselectedLabelColor: const Color(0x99000000),
-            tabs: Type.values.map((e) {
-              if (e == Type.income) {
-                return const Tab(text: '收入');
-              }
-              return const Tab(text: '支出');
-            }).toList(),
-          ),
-          Expanded(
-            child: TabBarView(
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            TabBar(
               controller: _tabController,
-              children: Type.values
-                  .map((type) => GridView(
-                        padding:
-                            const EdgeInsets.only(top: 10, left: 10, right: 10),
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 5,
-                          childAspectRatio: 0.7,
-                        ),
-                        children: categories
-                            .where((value) => value.type == type)
-                            .map(
-                              (category) => CategoryItem(
-                                name: category.name,
-                                iconData: category.iconData,
-                                iconColor: category.iconColor,
-                                onTap: () {
-                                  Navigator.pushNamed(
-                                    context,
-                                    "/category_edit",
-                                    arguments: CategoryEditArguments(
-                                      category: category,
-                                      type: category.type,
-                                    ),
-                                  ).then((value) {
-                                    handleLoadData();
-                                  });
-                                },
-                              ),
-                            )
-                            .toList(),
-                      ))
-                  .toList(),
+              indicatorColor: GoldenGoblinThemes.light.primaryColor,
+              labelColor: GoldenGoblinThemes.light.primaryColor,
+              unselectedLabelColor: const Color(0x99000000),
+              tabs: Type.values.map((e) {
+                if (e == Type.income) {
+                  return const Tab(text: '收入');
+                }
+                return const Tab(text: '支出');
+              }).toList(),
             ),
-          )
-        ],
+            Expanded(
+              child: TabBarView(
+                controller: _tabController,
+                children: Type.values
+                    .map((type) => GridView(
+                          padding: const EdgeInsets.only(
+                              top: 10, left: 10, right: 10),
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 5,
+                            childAspectRatio: 0.7,
+                          ),
+                          children: categories
+                              .where((value) => value.type == type)
+                              .map(
+                                (category) => CategoryItem(
+                                  name: category.name,
+                                  iconData: category.iconData,
+                                  iconColor: category.iconColor,
+                                  onTap: () {
+                                    Navigator.pushNamed(
+                                      context,
+                                      "/category_edit",
+                                      arguments: CategoryEditArguments(
+                                        category: category,
+                                        type: category.type,
+                                      ),
+                                    ).then((value) {
+                                      handleLoadData();
+                                    });
+                                  },
+                                ),
+                              )
+                              .toList(),
+                        ))
+                    .toList(),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
