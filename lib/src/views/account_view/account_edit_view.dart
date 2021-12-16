@@ -1,24 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:golden_goblin/src/color.dart';
 
+import '../../icon_set.dart';
 import '../../themes.dart';
 class AccountEditView extends StatefulWidget {
   const AccountEditView({Key? key}) : super(key: key);
 
   static const routeName = '/account_edit_view';
-  static List<IconData> icons = [
-    Icons.equalizer_rounded,
-    Icons.wifi_lock,
-    Icons.mail,
-  ];
-  static List<Color> colors = [
-    Colors.amberAccent,
-    Colors.blueAccent,
-    Colors.teal,
-  ];
-  static List<String> colorString = [
-    "黃色","藍色","綠色"
-  ];
-  static List<String> accounts = ["錢包", "悠遊卡", "銀行"];
+  static List<MyIcon> icons = MyIcons.icons;
+  static List<IconColor> colors = IconColors.allColors;
+
   static IconData icon = Icons.account_balance_wallet;
   static Color color = Colors.grey;
   static var accountName = "";
@@ -69,7 +60,7 @@ class _AccountEditViewState extends State<AccountEditView> {
                       ),
                         onChanged: (int? v) {
                           setState((){
-                            AccountEditView.icon =  AccountEditView.icons[v!];
+                            AccountEditView.icon =  AccountEditView.icons[v!].icon;
                           });
 
                         },
@@ -78,9 +69,9 @@ class _AccountEditViewState extends State<AccountEditView> {
                             value: val,
                             child: Row(
                               children: [
-                                Icon(AccountEditView.icons[val]),
+                                Icon(AccountEditView.icons[val].icon),
                                 const SizedBox(width: 30),
-                                Text(AccountEditView.accounts[val]),
+                                Text(AccountEditView.icons[val].name),
                               ],
                             ),
                           );
@@ -94,14 +85,14 @@ class _AccountEditViewState extends State<AccountEditView> {
                       ),
                       onChanged: (int? v) {
                         setState((){
-                          AccountEditView.color =  AccountEditView.colors[v!];
+                          AccountEditView.color =  AccountEditView.colors[v!].color;
                         });
 
                       },
-                      items: [for (var i = 0; i < AccountEditView.colorString.length; i++) i].map((int val) {
+                      items: [for (var i = 0; i < AccountEditView.colors.length; i++) i].map((int val) {
                         return DropdownMenuItem<int>(
                           value: val,
-                          child: Text(AccountEditView.colorString[val]),
+                          child: Text(AccountEditView.colors[val].name),
                         );
                       }).toList(),
 
