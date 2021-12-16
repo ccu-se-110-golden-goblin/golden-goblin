@@ -1,20 +1,49 @@
 import 'package:flutter/material.dart';
 
 class GoldenGoblinThemes {
+  static ThemeData get _baseBrightThemeData => ThemeData(
+        primarySwatch: _goldengoblin,
+      );
+
+  static ThemeData get _baseDarkhemeData => ThemeData(
+        brightness: Brightness.dark,
+        primarySwatch: _goldengoblin,
+        // ;;Note by Firecodev
+        // Belows are required since set "brightness" to dark will make many colors ignored from primarySwatch.
+        // See source code to get more info.
+        // Is this a bug or a feature? I don't know, this issue is still opened https://github.com/flutter/flutter/issues/19089
+        primaryColor: const Color(_goldengoblinPrimaryValue),
+        // I know it's deprecated, but just ignore the warning to make your life easier :)
+        accentColor: _goldengoblin[200],
+        toggleableActiveColor: _goldengoblin[200],
+      );
+
   static AppBarTheme get _customAppBarTheme => ThemeData().appBarTheme.copyWith(
-        foregroundColor: Colors.black,
-        backgroundColor: const Color(0xFFFFD344),
         elevation: 0.0,
       );
 
-  static ThemeData get light => ThemeData.light().copyWith(
+  static ThemeData get light => _baseBrightThemeData.copyWith(
         scaffoldBackgroundColor: const Color(0xFFF4F4F4),
         appBarTheme: _customAppBarTheme,
-        primaryColor: const Color(0xFFFFD344),
       );
 
-  static ThemeData get dark => ThemeData.dark().copyWith(
+  static ThemeData get dark => _baseDarkhemeData.copyWith(
         appBarTheme: _customAppBarTheme,
-        primaryColor: const Color(0xFFFFD344),
       );
+
+  // Generate from http://mcg.mbitson.com
+  static const MaterialColor _goldengoblin =
+      MaterialColor(_goldengoblinPrimaryValue, <int, Color>{
+    50: Color(0xFFFFFAE9),
+    100: Color(0xFFFFF2C7),
+    200: Color(0xFFFFE9A2),
+    300: Color(0xFFFFE07C),
+    400: Color(0xFFFFDA60),
+    500: Color(_goldengoblinPrimaryValue),
+    600: Color(0xFFFFCE3E),
+    700: Color(0xFFFFC835),
+    800: Color(0xFFFFC22D),
+    900: Color(0xFFFFB71F),
+  });
+  static const int _goldengoblinPrimaryValue = 0xFFFFD344;
 }
