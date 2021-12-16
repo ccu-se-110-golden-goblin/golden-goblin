@@ -6,6 +6,7 @@ import 'package:golden_goblin/src/models/category.dart';
 import 'package:golden_goblin/src/models/category_provider.dart';
 import 'package:golden_goblin/src/themes.dart';
 import 'package:golden_goblin/src/views/category_view/category_view.dart';
+import 'package:provider/provider.dart';
 
 class CategoryEditArguments {
   CategoryEditArguments({
@@ -50,10 +51,10 @@ class _CategoryEditState extends State<CategoryEditView> {
     }
   }
 
-  void handleSave() {
+  void handleSave(CategoryProvider categoryProvider) {
     var category = args.category;
     if (category != null) {
-      CategoryProvider()
+      categoryProvider
           .updateCategory(
               category.id,
               Category(
@@ -65,7 +66,7 @@ class _CategoryEditState extends State<CategoryEditView> {
               ))
           .then((value) => Navigator.pop(context));
     } else {
-      CategoryProvider()
+      categoryProvider
           .addCategory(Category(
               id: 0,
               type: args.type,
@@ -76,10 +77,10 @@ class _CategoryEditState extends State<CategoryEditView> {
     }
   }
 
-  void handleDelete() {
+  void handleDelete(CategoryProvider categoryProvider) {
     var category = args.category;
     if (category != null) {
-      CategoryProvider()
+      categoryProvider
           .deleteCategory(category.id)
           .then((value) => Navigator.pop(context));
     }
@@ -87,6 +88,8 @@ class _CategoryEditState extends State<CategoryEditView> {
 
   @override
   Widget build(BuildContext context) {
+    CategoryProvider categoryProvider = Provider.of<CategoryProvider>(context);
+
     var title = (args.category == null)
         ? "新增${args.type == Type.income ? "收入" : "支出"}類別"
         : "編輯類別";
@@ -186,15 +189,16 @@ class _CategoryEditState extends State<CategoryEditView> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       TextButton(
-                        onPressed:
-                            (args.category != null) ? handleDelete : null,
+                        onPressed: (args.category != null)
+                            ? () => handleDelete(categoryProvider)
+                            : null,
                         child: const Text("刪除"),
                         style: GoldenGoblinThemes.dangerButtonLightStyle,
                       ),
                       Padding(
                         padding: const EdgeInsets.only(left: 10),
                         child: TextButton(
-                          onPressed: handleSave,
+                          onPressed: () => handleSave(categoryProvider),
                           child: const Text("完成"),
                         ),
                       ),

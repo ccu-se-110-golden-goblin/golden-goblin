@@ -27,7 +27,7 @@ void main() async {
 
   await accountProvider.loadAccounts();
 
-  final categoryProvider = CategoryProvider();
+  final categoryProvider = DBCategoryProvider();
 
   await categoryProvider.loadCategories();
 
@@ -37,7 +37,7 @@ void main() async {
   runApp(MultiProvider(
     providers: [
       Provider.value(value: accountProvider),
-      Provider.value(value: categoryProvider),
+      Provider<CategoryProvider>.value(value: categoryProvider),
       Provider<TransactionProvider>(
         create: (_) => TransactionProvider(),
         lazy: false,

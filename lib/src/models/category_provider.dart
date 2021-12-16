@@ -4,9 +4,24 @@ import 'category.dart';
 
 import '../helpers/db_helper.dart';
 
-class CategoryProvider {
-  static List<Category> _categories = [];
+abstract class CategoryProvider {
+  Future<void> loadCategories();
 
+  List<Category> get getCategories;
+
+  Category getCategory(int categoryId);
+
+  Future<int> addCategory(Category category);
+
+  Future<void> deleteCategory(int categoryId);
+
+  Future<void> updateCategory(int categoryId, Category newCategory);
+}
+
+class DBCategoryProvider implements CategoryProvider {
+  List<Category> _categories = [];
+
+  @override
   Future<void> loadCategories() async {
     var db = await DBHelper.opendb();
 
@@ -24,8 +39,10 @@ class CategoryProvider {
         .toList();
   }
 
+  @override
   List<Category> get getCategories => _categories;
 
+  @override
   Category getCategory(int categoryId) {
     assert(categoryId >= 0, "categoryId must >= 0");
 
@@ -33,6 +50,7 @@ class CategoryProvider {
   }
 
   // When insert into database, id will be ignore and replaced, use getAccounts to get new list with new id
+  @override
   Future<int> addCategory(Category category) async {
     var db = await DBHelper.opendb();
 
@@ -50,6 +68,7 @@ class CategoryProvider {
     return recordid;
   }
 
+  @override
   Future<void> deleteCategory(int categoryId) async {
     var db = await DBHelper.opendb();
 
@@ -58,6 +77,7 @@ class CategoryProvider {
     await loadCategories();
   }
 
+  @override
   Future<void> updateCategory(int categoryId, Category newCategory) async {
     var db = await DBHelper.opendb();
 
