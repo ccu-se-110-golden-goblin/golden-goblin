@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
 class GoldenGoblinThemes {
@@ -28,6 +30,11 @@ class GoldenGoblinThemes {
         floatingActionButtonTheme: FloatingActionButtonThemeData(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            onPrimary: const Color(0xFFFFFFFF),
+          ),
+        ),
       );
 
   static ThemeData get dark => _baseDarkThemeData.copyWith(
@@ -36,8 +43,13 @@ class GoldenGoblinThemes {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
         tabBarTheme: ThemeData.dark().tabBarTheme.copyWith(
-          labelColor: _goldengoblin.shade200,
-          unselectedLabelColor: const Color(0xFFFFFFFF),
+              labelColor: _goldengoblin.shade200,
+              unselectedLabelColor: const Color(0xFFFFFFFF),
+            ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            onPrimary: const Color(0xFFFFFFFF),
+          ),
         ),
       );
 
