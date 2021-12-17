@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:golden_goblin/src/color.dart';
-import 'package:golden_goblin/src/icon_set.dart';
+import 'package:golden_goblin/src/models/transaction.dart';
+import 'package:golden_goblin/src/models/transaction_provider.dart';
 import 'package:golden_goblin/src/views/account_view/account_edit_view.dart';
 import 'package:golden_goblin/src/views/common/sidebar.dart';
 import 'package:golden_goblin/src/models/account.dart';
@@ -12,6 +12,7 @@ class AccountItem extends StatelessWidget {
       required this.iconData,
       required this.name,
       required this.iconColor,
+      this.accountAsset,
       this.onTap})
       : super(key: key);
 
@@ -19,6 +20,7 @@ class AccountItem extends StatelessWidget {
   final Color iconColor;
   final String name;
   final GestureTapCallback? onTap;
+  final int? accountAsset;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +31,7 @@ class AccountItem extends StatelessWidget {
           title: Row(
             children: [
               Expanded(child: Text(name)),
-              SizedBox(width: 100, child: Text("\$NTD " + 8787.toString()))
+              SizedBox(width: 100, child: Text("\$NTD ${accountAsset ?? 0}"))
             ],
           ),
           leading: Icon(
@@ -52,18 +54,28 @@ class AccountView extends StatefulWidget {
   State<StatefulWidget> createState() => _AccountViewState();
 }
 
+class _TransactionCalcResult {
+  var totalAsset = 0;
+  Map<int, int> accountCount = {};
+}
+
 class _AccountViewState extends State<AccountView> {
   static const routeName = '/account';
-  // TODO : get total asset by transection
-  final total_asset = 15550;
+  var calcResult = _TransactionCalcResult();
 
-  List<Account> accounts = [
-    Account(
-        id: 0,
-        name: '飲料',
-        icon: MyIcons.drink.icon,
-        iconColor: IconColors.myBlue.color)
-  ];
+  List<Account> accounts = [];
+
+  void handleTransactionData(List<Transaction> transactions) {
+    setState(() {
+      calcResult = transactions.fold(_TransactionCalcResult(),
+          (_TransactionCalcResult previousValue, element) {
+        previousValue.totalAsset += element.amount;
+        previousValue.accountCount[element.account] =
+            (previousValue.accountCount[element.account] ?? 0) + element.amount;
+        return previousValue;
+      });
+    });
+  }
 
   void handleLoadData() {
     AccountProvider().loadAccounts().then((value) {
@@ -71,6 +83,9 @@ class _AccountViewState extends State<AccountView> {
         accounts = AccountProvider().getAccounts;
       });
     });
+
+    TransactionProvider.getTransactions()
+        .then((transactions) => handleTransactionData(transactions));
   }
 
   @override
@@ -121,7 +136,7 @@ class _AccountViewState extends State<AccountView> {
                     Container(
                         padding: const EdgeInsets.symmetric(
                             vertical: 10, horizontal: 20),
-                        child: Text("\$NTD $total_asset",
+                        child: Text("\$NTD ${calcResult.totalAsset}",
                             style: const TextStyle(fontSize: 30))),
                     const Divider(thickness: 0.5, height: 0),
                   ],
@@ -135,6 +150,7 @@ class _AccountViewState extends State<AccountView> {
                   iconData: account.icon,
                   name: account.name,
                   iconColor: account.iconColor,
+                  accountAsset: calcResult.accountCount[account.id],
                   onTap: () {
                     Navigator.pushNamed(
                       context,
