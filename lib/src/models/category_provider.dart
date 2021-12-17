@@ -3,7 +3,7 @@ import 'category.dart';
 import '../helpers/db_helper.dart';
 
 class CategoryProvider {
-  List<Category> _categories = [];
+  static List<Category> _categories = [];
 
   Future<void> loadCategories() async {
     var db = await DBHelper.opendb();
