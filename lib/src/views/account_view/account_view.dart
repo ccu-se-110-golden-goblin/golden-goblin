@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:golden_goblin/src/color.dart';
+import 'package:golden_goblin/src/icon_set.dart';
 import 'package:golden_goblin/src/views/account_view/account_edit_view.dart';
 import 'package:golden_goblin/src/views/common/sidebar.dart';
 import 'package:golden_goblin/src/models/account.dart';
@@ -55,7 +57,13 @@ class _AccountViewState extends State<AccountView> {
   // TODO : get total asset by transection
   final total_asset = 15550;
 
-  List<Account> accounts = [];
+  List<Account> accounts = [
+    Account(
+        id: 0,
+        name: '飲料',
+        icon: MyIcons.drink.icon,
+        iconColor: IconColors.myBlue.color)
+  ];
 
   void handleLoadData() {
     AccountProvider().loadAccounts().then((value) {

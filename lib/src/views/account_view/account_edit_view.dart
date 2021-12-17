@@ -30,12 +30,9 @@ class _AccountEditState extends State<AccountEditView> {
 
   final AccountEditArguments args;
 
-  static const List<MyIcon> iconOptions = MyIcons.icons;
-  static const List<IconColor> colorOptions = IconColors.allColors;
-
   String name = "";
-  IconData icon = MyIcons.paid.icon;
-  Color color = IconColors.myBlack.color;
+  IconData icon = MyIcons.icons[0].icon;
+  Color color = IconColors.allColors[0].color;
 
   @override
   void initState() {
@@ -43,12 +40,9 @@ class _AccountEditState extends State<AccountEditView> {
     var account = args.account;
     if (account != null) {
       setState(() {
-        name:
-        account.name;
-        icon:
-        account.icon;
-        color:
-        account.iconColor;
+        name = account.name;
+        icon = account.icon;
+        color = account.iconColor;
       });
     }
   }
@@ -65,19 +59,18 @@ class _AccountEditState extends State<AccountEditView> {
   void handleSave() {
     var account = args.account;
     if (account != null) {
-      AccountProvider().updateAccount(
-          account.id,
-          Account(
-              id: account.id,
-              name: account.name,
-              icon: account.icon,
-              iconColor: account.iconColor));
+      AccountProvider()
+          .updateAccount(account.id,
+              Account(id: account.id, name: name, icon: icon, iconColor: color))
+          .then((value) => Navigator.pop(context));
     } else {
       AccountProvider()
-          .addAccount(Account(id: 0, name: name, icon: icon, iconColor: color));
+          .addAccount(Account(id: 0, name: name, icon: icon, iconColor: color))
+          .then((value) => Navigator.pop(context));
     }
   }
 
+  @override
   Widget build(BuildContext context) {
     var icons = MyIcons.icons;
     var colors = IconColors.allColors;
@@ -137,7 +130,7 @@ class _AccountEditState extends State<AccountEditView> {
                           });
                         }
                       },
-                      items: iconOptions
+                      items: icons
                           .map((e) => DropdownMenuItem(
                                 value: e.icon,
                                 child: Row(
@@ -163,7 +156,7 @@ class _AccountEditState extends State<AccountEditView> {
                           });
                         }
                       },
-                      items: colorOptions
+                      items: colors
                           .map(
                             (e) => DropdownMenuItem(
                               value: e.color,
