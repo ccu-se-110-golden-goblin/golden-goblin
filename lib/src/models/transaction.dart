@@ -2,7 +2,7 @@ class Transaction {
   // basic props
   final int id;
   final int amount;
-  final int book;
+  final int account;
   final int category;
   final DateTime date;
 
@@ -14,7 +14,7 @@ class Transaction {
   Transaction({
     required this.id,
     required this.amount,
-    required this.book,
+    required this.account,
     required this.category,
     required this.date,
     this.remark,
@@ -26,7 +26,7 @@ class Transaction {
     return {
       'id': id,
       'amount': amount,
-      'book': book,
+      'account': account,
       'category': category,
       'date': date,
       'remark': remark,
@@ -37,6 +37,6 @@ class Transaction {
   // Implement toString to make Transaction easier to use the print statement.
   @override
   String toString() {
-    return 'Transaction{id: $id, amount: $amount, book: $book, category: $category, date: $date, remark: $remark, invoice: $invoice}';
+    return 'Transaction{id: $id, amount: $amount, book: $account, category: $category, date: $date, remark: $remark, invoice: $invoice}';
   }
 }

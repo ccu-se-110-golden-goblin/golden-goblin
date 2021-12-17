@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:golden_goblin/src/views/account_view/account_edit_view.dart';
+import 'package:golden_goblin/src/views/account_view/account_view.dart';
+import 'package:golden_goblin/src/views/category_view/category_edit_view.dart';
+import 'package:golden_goblin/src/views/category_view/category_view.dart';
 import 'package:golden_goblin/src/views/ledger_view/ledger_edit_view.dart';
 import 'package:golden_goblin/src/views/ledger_view/ledger_transfer.dart';
 
@@ -22,8 +26,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     // Glue the SettingsController to the MaterialApp.
     //
-    // The AnimatedBuilder Widget listens to the SettingsController for changes.
-    // Whenever the user updates their settings, the MaterialApp is rebuilt.
     return AnimatedBuilder(
       animation: settingsController,
       builder: (BuildContext context, Widget? child) {
@@ -77,6 +79,19 @@ class MyApp extends StatelessWidget {
                     return LedgerEditView();
                   case LedgerTransferView.routeName:
                     return LedgerTransferView();
+                  case AccountView.routeName:
+                    return const AccountView();
+                  case AccountEditView.routeName:
+                    return AccountEditView(
+                      args: (routeSettings.arguments! as AccountEditArguments),
+                    );
+                  case CategoryView.routeName:
+                    return const CategoryView();
+                  case CategoryEditView.routeName:
+                    return CategoryEditView(
+                      args: (routeSettings.arguments! as CategoryEditArguments),
+                    );
+
                   default:
                     return const LedgerView();
                 }

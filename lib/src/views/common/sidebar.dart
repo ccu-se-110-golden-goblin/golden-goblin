@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:golden_goblin/src/views/account_view/account_view.dart';
+import 'package:golden_goblin/src/views/category_view/category_view.dart';
 
 import '../../widgets/sidebar_tile.dart';
 
@@ -71,7 +73,7 @@ class Sidebar extends StatelessWidget {
                         onTap: () {
                           print("一般 tapped");
                           Navigator.pop(context);
-                          Navigator.restorablePushNamed(
+                          Navigator.restorablePushReplacementNamed(
                               context, SettingsView.routeName);
                         },
                       ),
@@ -83,6 +85,8 @@ class Sidebar extends StatelessWidget {
                         onTap: () {
                           print("帳本管理 tapped");
                           Navigator.pop(context);
+                          Navigator.restorablePushNamed(
+                            context, AccountView.routeName);
                         },
                       ),
                       SidebarTile(
@@ -92,7 +96,8 @@ class Sidebar extends StatelessWidget {
                             vertical: 12.0, horizontal: 30.0),
                         onTap: () {
                           print("類別管理 tapped");
-                          Navigator.pop(context);
+                          Navigator.pushReplacementNamed(
+                              context, CategoryView.routeName);
                         },
                       ),
                       SidebarTile(
