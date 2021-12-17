@@ -1,30 +1,69 @@
 import 'package:flutter/material.dart';
+import 'package:golden_goblin/src/models/account.dart';
+import 'package:golden_goblin/src/models/account_provider.dart';
+import 'package:golden_goblin/src/models/transaction.dart';
+import 'package:golden_goblin/src/models/transaction_provider.dart';
 import 'package:golden_goblin/src/views/ledger_view/ledger_transfer.dart';
 import 'package:golden_goblin/src/views/ledger_view/ledger_view.dart';
 import 'package:intl/intl.dart';
 
+import '../../themes.dart';
+
 class LedgerEditView extends StatefulWidget {
-  const LedgerEditView({Key? key}) : super(key: key);
+  LedgerEditView({Key? key, required this.argsId}) : super(key: key);
 
   static const routeName = '/ledger_edit';
-  static DateTime date = DateTime.now();
-  static List<String> accounts = ["錢包", "悠遊卡", "銀行"];
-  static List<IconData> icons = [
-    Icons.equalizer_rounded,
-    Icons.wifi_lock,
-    Icons.mail,
-  ];
-  static var account;
-  static var icon;
+  final argsId;
 
   @override
-  State<LedgerEditView> createState() => _LedgerEditViewState();
+  State<LedgerEditView> createState() => _LedgerEditViewState(args: argsId);
 }
 
 class _LedgerEditViewState extends State<LedgerEditView> {
-  var dollar = "";
+  _LedgerEditViewState({required this.args});
 
-  var comment = "";
+  final args;
+  final _formKey = GlobalKey<FormState>();
+  var dollarController = TextEditingController();
+  final commentController = TextEditingController();
+
+  var category = 0;
+  static DateTime date = DateTime.now();
+  static var account = 0;
+
+  void handleSave() {
+    if (args == -1) {
+      TransactionProvider.addTransaction(Transaction(id: 0,
+          amount: int.parse(dollarController.text),  account: account, category: category, date: date, remark: commentController.text))
+          .then((value) => Navigator.pop(context));
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('已新增交易', style: TextStyle(color:Colors.black),),
+          backgroundColor: Color(0xFFFFD344),),
+      );
+    } else {
+      TransactionProvider.updateTransaction(args, Transaction(id: args,
+          amount: int.parse(dollarController.text),  account: account, category: category, date: date, remark: commentController.text))
+          .then((value) => Navigator.pop(context));
+    }
+  }
+
+  void handleDelete(){
+    TransactionProvider.deleteTransaction(args)
+        .then((value) => Navigator.pop(context));
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('已刪除交易', style: TextStyle(color:Colors.black),),
+        backgroundColor: Color(0xFFFFD344),),
+    );
+  }
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    commentController.dispose();
+    super.dispose();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +80,7 @@ class _LedgerEditViewState extends State<LedgerEditView> {
           );
 
         }),
-        actions: <Widget>[
+        actions:  (args == -1) ? <Widget>[
           Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
@@ -55,102 +94,130 @@ class _LedgerEditViewState extends State<LedgerEditView> {
                     }),
                 const Text("轉帳" ,style: TextStyle(fontSize: 8)),
               ]),
-        ],
+        ] : null,
       ),
 
       body: Container(
         padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 30.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              //dollar
+              Container(
+                 padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 20.0),
+                 child: Row(
+                  children: [
+                    Flexible(
+                      child: TextFormField(
+                        keyboardType: TextInputType.number,
+                        controller: dollarController,
+                        decoration: const InputDecoration(
+                          border: UnderlineInputBorder(),
+                            hintText: "金額",
+                            icon: Icon(Icons.attach_money, color:Colors.black),),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return '請輸入金額';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    const Text("NTD"),
+                  ],
 
-            Container(
-               padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 20.0),
-               child: Row(
+                ),
+              ),
+              //date
+              Container(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: const [
+                      Text("日期:", style: TextStyle(fontSize: 15)),
+                      DatePicker()
+                    ],
+                  )
+              ),
+              //account
+              Container(
+                  padding: const EdgeInsets.symmetric(vertical: 12.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: const [
+                      Text("帳戶:", style: TextStyle(fontSize: 15)),
+                      AccountPicker()
+                    ],
+                  )
+              ),
+              //category
+              Container(
+                  padding: const EdgeInsets.symmetric(vertical: 12.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: const [
+                        Text("類別:", style: TextStyle(fontSize: 15)),
+                    ],
+                  )
+              ),
+
+              Container(
+                  padding: const EdgeInsets.symmetric(vertical: 12.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text("註解:", style: TextStyle(fontSize: 15)),
+
+                      TextFormField(
+                        controller: commentController,
+                        decoration: const InputDecoration(
+                          border: UnderlineInputBorder(),
+                          hintText: "無",
+
+                        ),
+                      ),
+
+                    ],
+                  )
+              ),
+
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Flexible(
-                    child: TextFormField(
-                      keyboardType: TextInputType.number,
-
-                      decoration: const InputDecoration(
-                        border: UnderlineInputBorder(),
-                          hintText: "0",
-                          icon: Icon(Icons.attach_money, color:Colors.black),
+                  if (args != -1) TextButton(
+                    onPressed: handleDelete,
+                    child: const Text("刪除",
+                        style: TextStyle(color: Color(0xFFFF0000))),
+                    style: ButtonStyle(
+                      shape: MaterialStateProperty.resolveWith(
+                              (states) => const StadiumBorder()),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: ElevatedButton(
+                      onPressed: (){
+                        if (_formKey.currentState!.validate()){
+                          handleSave();
+                        }
+                      },
+                      child: const Text("完成",
+                          style: TextStyle(color: Color(0xFFFFFFFF))),
+                      style: ButtonStyle(
+                        backgroundColor:
+                        MaterialStateProperty.resolveWith((states) =>
+                        GoldenGoblinThemes.light.primaryColor),
+                        shape: MaterialStateProperty.resolveWith(
+                                (states) => const StadiumBorder()),
                       ),
                     ),
                   ),
-                  const Text("NTD"),
                 ],
-
               ),
-            ),
-
-            Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                    Text("日期:", style: TextStyle(fontSize: 15)),
-                    DatePicker()
-                  ],
-                )
-            ),
-
-
-            Container(
-                padding: const EdgeInsets.symmetric(vertical: 12.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                    Text("帳戶:", style: TextStyle(fontSize: 15)),
-                    AccountPicker()
-                  ],
-                )
-            ),
-
-            Container(
-                padding: const EdgeInsets.symmetric(vertical: 12.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                      Text("類別:", style: TextStyle(fontSize: 15)),
-                  ],
-                )
-            ),
-
-            Container(
-                padding: const EdgeInsets.symmetric(vertical: 12.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text("註解:", style: TextStyle(fontSize: 15)),
-
-                    TextFormField(
-                      decoration: const InputDecoration(
-                        border: UnderlineInputBorder(),
-                        hintText: "無",
-
-                      ),
-                    ),
-
-                  ],
-                )
-            ),
-
-            ElevatedButton(
-              onPressed: (){
-                Navigator.pop(context);
-              },
-              child: const Text("完成"),
-              style: ButtonStyle(
-                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                        side: BorderSide(color: Color(0x00ffd344))
-                    )
-                )
-              )
-            )
-          ],
+            ],
+          ),
         ),
       )
 
@@ -174,14 +241,14 @@ class _DatePickerState extends State<DatePicker> {
         onTap: () async{
           final newDate = await showDatePicker(
             context: context,
-            initialDate: LedgerEditView.date,
+            initialDate: _LedgerEditViewState.date,
             firstDate: DateTime(DateTime.now().year - 5),
             lastDate: DateTime(DateTime.now().year + 1),
           );
 
           if (newDate == null) return;
 
-          setState(() => LedgerEditView.date = newDate);
+          setState(() => _LedgerEditViewState.date = newDate);
         },
         child: Container(
           width: 260,
@@ -191,7 +258,7 @@ class _DatePickerState extends State<DatePicker> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               const Icon(Icons.event),
-              Text( DateFormat('MM / dd / yyyy').format(LedgerEditView.date).toString(), style: const TextStyle(fontSize: 20)),
+              Text( DateFormat('MM / dd / yyyy').format(_LedgerEditViewState.date).toString(), style: const TextStyle(fontSize: 20)),
               const Icon(Icons.expand_more),
             ],
           ),
@@ -208,9 +275,27 @@ class AccountPicker extends StatefulWidget {
 }
 
 class _AccountPickerState extends State<AccountPicker> {
-  _AccountPickerState(){
-    LedgerEditView.account = LedgerEditView.accounts[0];
-    LedgerEditView.icon = LedgerEditView.icons[0];
+  List<Account> accounts = [];
+  var account;
+  var icon;
+  var iconColor;
+  void handleLoadData() {
+    AccountProvider().loadAccounts().then((value) {
+      setState(() {
+        accounts = AccountProvider().getAccounts;
+        account = accounts[0].name;
+        icon = accounts[0].icon;
+        iconColor = accounts[0].iconColor;
+        print(accounts);
+      });
+
+    });
+  }
+
+  @override
+  void initState() {
+    handleLoadData();
+    super.initState();
   }
   @override
   Widget build(BuildContext context) {
@@ -226,18 +311,20 @@ class _AccountPickerState extends State<AccountPicker> {
                     width: double.minPositive,
                     child: ListView.builder(
                       shrinkWrap: true,
-                      itemCount: LedgerEditView.accounts.length,
+                      itemCount: accounts.length,
                       itemBuilder: (BuildContext context, int index) {
                         return ListTile(
-                          title: Text(LedgerEditView.accounts[index]),
-                          leading: Icon(LedgerEditView.icons[index]),
+                          title: Text(accounts[index].name),
+                          leading: Icon(accounts[index].icon, color: accounts[index].iconColor,),
                           onTap: () {
                             setState(() {
-                              LedgerEditView.account = LedgerEditView.accounts[index];
-                              LedgerEditView.icon = LedgerEditView.icons[index];
+                              account = accounts[index].name;
+                              icon = accounts[index].icon;
+                              iconColor = accounts[index].iconColor;
+                              _LedgerEditViewState.account = index;
                             });
 
-                            Navigator.pop(context, LedgerEditView.accounts[index]);
+                            Navigator.pop(context, accounts[index]);
 
                           },
                         );
@@ -254,8 +341,8 @@ class _AccountPickerState extends State<AccountPicker> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children:<Widget>[
-              Icon(LedgerEditView.icon),
-              Text(LedgerEditView.account),
+              Icon(icon, color: iconColor,),
+              Text(account),
               Icon(Icons.expand_more),
             ],
           ),
