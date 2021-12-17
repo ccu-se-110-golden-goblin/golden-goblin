@@ -93,9 +93,6 @@ class CategoryView extends StatelessWidget {
         ),
         drawer: const Sidebar(currentRouteName: routeName),
         floatingActionButton: FloatingActionButton(
-          foregroundColor: const Color(0xFFFFD344),
-          backgroundColor: const Color(0xFF000000),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           child: const Icon(Icons.add),
           onPressed: () {
             Navigator.pushNamed(context, "/category_edit");
@@ -103,11 +100,8 @@ class CategoryView extends StatelessWidget {
         ),
         body: Column(
           children: [
-            TabBar(
-              indicatorColor: GoldenGoblinThemes.light.primaryColor,
-              labelColor: GoldenGoblinThemes.light.primaryColor,
-              unselectedLabelColor: const Color(0x99000000),
-              tabs: const [
+            const TabBar(
+              tabs: [
                 Tab(text: '支出'),
                 Tab(text: '收入'),
               ],

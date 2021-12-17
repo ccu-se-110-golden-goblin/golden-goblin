@@ -5,7 +5,7 @@ class GoldenGoblinThemes {
         primarySwatch: _goldengoblin,
       );
 
-  static ThemeData get _baseDarkhemeData => ThemeData(
+  static ThemeData get _baseDarkThemeData => ThemeData(
         brightness: Brightness.dark,
         primarySwatch: _goldengoblin,
         // ;;Note by Firecodev
@@ -25,10 +25,20 @@ class GoldenGoblinThemes {
   static ThemeData get light => _baseBrightThemeData.copyWith(
         scaffoldBackgroundColor: const Color(0xFFF4F4F4),
         appBarTheme: _customAppBarTheme,
+        floatingActionButtonTheme: FloatingActionButtonThemeData(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        ),
       );
 
-  static ThemeData get dark => _baseDarkhemeData.copyWith(
+  static ThemeData get dark => _baseDarkThemeData.copyWith(
         appBarTheme: _customAppBarTheme,
+        floatingActionButtonTheme: FloatingActionButtonThemeData(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        ),
+        tabBarTheme: ThemeData.dark().tabBarTheme.copyWith(
+          labelColor: _goldengoblin.shade200,
+          unselectedLabelColor: const Color(0xFFFFFFFF),
+        ),
       );
 
   // Generate from http://mcg.mbitson.com
