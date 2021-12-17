@@ -5,6 +5,8 @@ import 'package:golden_goblin/src/models/category_provider.dart';
 import 'package:golden_goblin/src/views/category_view/category_view.dart';
 import 'package:provider/provider.dart';
 
+import 'util.dart';
+
 class MockCategoryProvider implements CategoryProvider {
   MockCategoryProvider({List<Category>? list}) {
     if (list != null) _list.addAll(list);
@@ -50,11 +52,6 @@ class MockCategoryProvider implements CategoryProvider {
   }
 }
 
-Widget buildTestableWidget(Widget widget) {
-  return MediaQuery(
-      data: const MediaQueryData(), child: MaterialApp(home: widget));
-}
-
 void main() {
   late MockCategoryProvider mockCategoryProvider;
 
@@ -88,6 +85,26 @@ void main() {
 
       expect(find.text(categoryList[1].name), findsOneWidget);
       expect(find.text(categoryList[0].name), findsNothing);
+    });
+
+    testWidgets('floating action button should navigate to category edit view',
+        (WidgetTester tester) async {
+      final mockObserver = MockNavigatorObserver();
+
+      var categoryViewWidget = MultiProvider(
+        providers: [
+          Provider<CategoryProvider>.value(value: mockCategoryProvider),
+        ],
+        child: const CategoryView(),
+      );
+
+      await tester.pumpWidget(
+          buildTestableWidget(categoryViewWidget, navObserver: mockObserver));
+
+      await tester.tap(find.byType(FloatingActionButton));
+      await tester.pumpAndSettle();
+
+      // TODO: test navigator and arguments
     });
   });
 }
