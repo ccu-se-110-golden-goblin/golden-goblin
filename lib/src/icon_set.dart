@@ -8,6 +8,8 @@ class MyIcon {
 }
 
 class MyIcons {
+  static const MyIcon wallet =
+      MyIcon(icon: Icons.account_balance_wallet, name: '錢包');
   static const MyIcon dining = MyIcon(icon: Icons.restaurant_menu, name: '飲食');
   static const MyIcon drink = MyIcon(icon: Icons.coffee, name: '飲料');
   static const MyIcon liquor = MyIcon(icon: Icons.liquor, name: '酒');
@@ -28,7 +30,10 @@ class MyIcons {
   static const MyIcon phone = MyIcon(icon: Icons.phone, name: '電話');
   static const MyIcon book = MyIcon(icon: Icons.menu_book, name: '書籍');
   static const MyIcon gift = MyIcon(icon: Icons.redeem, name: '禮物');
-  static const MyIcon health = MyIcon(icon: Icons.local_hospital, name: '健康');
+  static const MyIcon health =
+      MyIcon(icon: Icons.health_and_safety, name: '健康');
+  static const MyIcon medical =
+      MyIcon(icon: Icons.medical_services, name: '醫療');
   static const MyIcon savings = MyIcon(icon: Icons.savings, name: '儲蓄');
   static const MyIcon bank = MyIcon(icon: Icons.account_balance, name: '銀行');
   static const MyIcon pets = MyIcon(icon: Icons.pets, name: '寵物');
@@ -49,6 +54,10 @@ class MyIcons {
   static const MyIcon fix = MyIcon(icon: Icons.hardware, name: '維修');
   static const MyIcon computer = MyIcon(icon: Icons.computer, name: '電腦');
   static const MyIcon child = MyIcon(icon: Icons.child_care, name: '育兒');
+  static const MyIcon invest = MyIcon(icon: Icons.timeline, name: '投資');
+  static const MyIcon game = MyIcon(icon: Icons.sports_esports, name: '遊戲');
+  static const MyIcon cash = MyIcon(icon: Icons.local_atm, name: '鈔票');
+  static const MyIcon wifi = MyIcon(icon: Icons.wifi, name: '網路');
 
   static const List<MyIcon> icons = [
     dining,
