@@ -1,3 +1,6 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+
 enum Type { income, expenses }
 
 class Category {
@@ -5,6 +8,8 @@ class Category {
   final int id;
   final String name;
   final Type type;
+  final IconData iconData = Icons.restaurant;
+  final Color iconColor = const Color(0xFF99D6EA);
 
   // construct
   Category({

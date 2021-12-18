@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:golden_goblin/src/views/ledger_view/ledger_transfer.dart';
 import 'package:golden_goblin/src/views/ledger_view/ledger_view.dart';
 import 'package:intl/intl.dart';
 
-class LedgerEditView extends StatelessWidget {
-  LedgerEditView({Key? key}) : super(key: key);
+class LedgerEditView extends StatefulWidget {
+  const LedgerEditView({Key? key}) : super(key: key);
 
   static const routeName = '/ledger_edit';
-  var dollar = "";
   static DateTime date = DateTime.now();
-  var comment = "";
-
   static List<String> accounts = ["錢包", "悠遊卡", "銀行"];
   static List<IconData> icons = [
     Icons.equalizer_rounded,
@@ -20,11 +18,20 @@ class LedgerEditView extends StatelessWidget {
   static var icon;
 
   @override
+  State<LedgerEditView> createState() => _LedgerEditViewState();
+}
+
+class _LedgerEditViewState extends State<LedgerEditView> {
+  var dollar = "";
+
+  var comment = "";
+
+  @override
   Widget build(BuildContext context) {
     print(ModalRoute.of(context)?.settings.name);
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Ledger Edit"),
+        title: const Text("新增交易"),
         leading: Builder(builder: (BuildContext context) {
           return IconButton(
             icon: const Icon(Icons.arrow_back),
@@ -36,11 +43,18 @@ class LedgerEditView extends StatelessWidget {
         }),
         actions: <Widget>[
           Column(
-              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                IconButton(icon: const Icon(Icons.transform), onPressed: () {}),
-                // Text("轉帳" ,style: TextStyle(fontSize: 8)),
-          ]),
+                IconButton(
+                    icon: const Icon(Icons.transform),
+                    padding: const EdgeInsets.only(top: 10, bottom: 0,left: 10, right: 10),
+                    constraints: const BoxConstraints(),
+                    onPressed: () {
+                      Navigator.pop(context);
+                      Navigator.pushNamed(context, LedgerTransferView.routeName);
+                    }),
+                const Text("轉帳" ,style: TextStyle(fontSize: 8)),
+              ]),
         ],
       ),
 
@@ -108,10 +122,9 @@ class LedgerEditView extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("註解:", style: TextStyle(fontSize: 15)),
+                    const Text("註解:", style: TextStyle(fontSize: 15)),
 
                     TextFormField(
-                      keyboardType: TextInputType.number,
                       decoration: const InputDecoration(
                         border: UnderlineInputBorder(),
                         hintText: "無",
@@ -123,19 +136,20 @@ class LedgerEditView extends StatelessWidget {
                 )
             ),
 
-          ElevatedButton(
-              onPressed: (){},
+            ElevatedButton(
+              onPressed: (){
+                Navigator.pop(context);
+              },
               child: const Text("完成"),
               style: ButtonStyle(
-
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(18.0),
-                          side: BorderSide(color: Color(0xFFD344))
-                      )
-                  )
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                        side: BorderSide(color: Color(0x00ffd344))
+                    )
+                )
               )
-          )
+            )
           ],
         ),
       )
@@ -172,9 +186,7 @@ class _DatePickerState extends State<DatePicker> {
         child: Container(
           width: 260,
           padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
-          decoration: BoxDecoration(
-              border: Border.all(color: Colors.black12, width: 2)
-          ),
+          color: Color(0x1FF0D821),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
@@ -238,9 +250,7 @@ class _AccountPickerState extends State<AccountPicker> {
         child: Container(
           width: 260,
           padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
-          decoration: BoxDecoration(
-              border: Border.all(color: Colors.black12, width: 2)
-          ),
+          color: Color(0x1FF0D821),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children:<Widget>[

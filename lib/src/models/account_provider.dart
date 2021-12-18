@@ -4,7 +4,7 @@ import 'account.dart';
 import '../helpers/db_helper.dart';
 
 class AccountProvider {
-  List<Account> _accounts = [];
+  static List<Account> _accounts = [];
 
   //This is only for init AccountProvider
   Future<void> loadAccounts() async {
@@ -16,8 +16,8 @@ class AccountProvider {
         .map((mapobj) => Account(
               id: mapobj['id'],
               name: mapobj['name'],
-              icon: IconData(mapobj['icon']),
-              iconColor: Color(mapobj['iconcolor']),
+              icon: IconData(mapobj['icon'], fontFamily: 'MaterialIcons'),
+              iconColor: Color(mapobj['iconColor']),
             ))
         .toList();
   }
