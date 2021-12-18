@@ -38,9 +38,6 @@ class LedgerView extends StatelessWidget {
       ),
       drawer: const Sidebar(currentRouteName: routeName),
       floatingActionButton: FloatingActionButton(
-        foregroundColor: const Color(0xFFFFD344),
-        backgroundColor: const Color(0xFF000000),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         child: const Icon(Icons.add),
         onPressed: () {
           Navigator.pushNamed(context, LedgerEditView.routeName);

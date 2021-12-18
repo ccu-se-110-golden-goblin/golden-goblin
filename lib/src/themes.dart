@@ -24,6 +24,30 @@ class GoldenGoblinThemes {
         elevation: 0.0,
       );
 
+  static final ButtonStyle normalButtonLightStyle = ButtonStyle(
+    backgroundColor: MaterialStateProperty.resolveWith((states) =>
+        states.contains(MaterialState.disabled)
+            ? Colors.grey[300]
+            : _goldengoblin.shade500),
+    shape: MaterialStateProperty.all(const StadiumBorder()),
+    foregroundColor: MaterialStateProperty.resolveWith((states) =>
+        states.contains(MaterialState.disabled)
+            ? Colors.black54
+            : const Color(0xFFFFFFFF)),
+  );
+
+  static final ButtonStyle dangerButtonLightStyle = ButtonStyle(
+    backgroundColor: MaterialStateProperty.resolveWith((states) =>
+        states.contains(MaterialState.disabled)
+            ? Colors.grey[300]
+            : Colors.red[500]),
+    shape: MaterialStateProperty.all(const StadiumBorder()),
+    foregroundColor: MaterialStateProperty.resolveWith((states) =>
+        states.contains(MaterialState.disabled)
+            ? Colors.black54
+            : const Color(0xFFFFFFFF)),
+  );
+
   static ThemeData get light => _baseBrightThemeData.copyWith(
         scaffoldBackgroundColor: const Color(0xFFF4F4F4),
         appBarTheme: _customAppBarTheme,
@@ -34,6 +58,9 @@ class GoldenGoblinThemes {
           style: ElevatedButton.styleFrom(
             onPrimary: const Color(0xFFFFFFFF),
           ),
+        ),
+        textButtonTheme: TextButtonThemeData(
+          style: normalButtonLightStyle,
         ),
       );
 
