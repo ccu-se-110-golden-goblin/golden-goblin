@@ -73,7 +73,7 @@ class MyApp extends StatelessWidget {
                   case SettingsView.routeName:
                     return SettingsView(controller: settingsController);
                   case LedgerView.routeName:
-                    return const LedgerView();
+                    return LedgerView();
                   case LedgerEditView.routeName:
                     return LedgerEditView();
                   case AccountView.routeName:
@@ -85,7 +85,7 @@ class MyApp extends StatelessWidget {
                   case CategoryEditView.routeName:
                     return const CategoryEditView();
                   default:
-                    return const LedgerView();
+                    return LedgerView();
                 }
               },
             );

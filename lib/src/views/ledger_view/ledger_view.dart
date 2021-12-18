@@ -1,17 +1,55 @@
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
+import 'package:provider/provider.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
-import '../../models/transaction_provider.dart';
+import '../../view_models/ledger_view_model.dart';
 
 import '../common/sidebar.dart';
 import 'ledger_edit_view.dart';
 
-class LedgerView extends StatelessWidget {
+class LedgerView extends StatefulWidget {
   const LedgerView({Key? key}) : super(key: key);
 
   static const routeName = '/ledger';
 
-  // TODO: connect to viewModel to get data
+  @override
+  State<LedgerView> createState() => _LedgerViewState();
+}
+
+class _LedgerViewState extends State<LedgerView> {
+  LedgerViewModel viewModelProvider = LedgerViewModel(now: DateTime.now());
+  DateTime _month = DateTime.now();
+
+  @override
+  void initState() {
+    super.initState();
+    DateTime now = DateTime.now();
+    viewModelProvider.setDate(DateTime(now.year, now.month));
+  }
+
+  void setMonth(DateTime month) {
+    DateTime newMonth = DateTime(month.year, month.month);
+    viewModelProvider.setDate(newMonth);
+    setState(() {
+      _month = newMonth;
+    });
+  }
+
+  List<Widget> getDailyListWidgit(List<DailyListData> dailyLists) {
+    List<Widget> list = [];
+    for (var i = 0; i < dailyLists.length; i++) {
+      list.add(_DailyList(
+          date: dailyLists[i].date,
+          itemIitles: dailyLists[i].itemTilteList,
+          dailyIncoming: dailyLists[i].totalIcoming,
+          dailyExpense: dailyLists[i].totalExpense));
+    }
+    if (list.isEmpty == true) {
+      list.add(const Text("No Data Found!"));
+    }
+    return list;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,13 +68,13 @@ class LedgerView extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.filter_list),
             onPressed: () {
-              TransactionProvider.getTransactions()
-                  .then((result) => print(result));
+              viewModelProvider.addMock();
+              setMonth(DateTime.now());
             },
           )
         ],
       ),
-      drawer: const Sidebar(currentRouteName: routeName),
+      drawer: const Sidebar(currentRouteName: LedgerView.routeName),
       floatingActionButton: FloatingActionButton(
         foregroundColor: const Color(0xFFFFD344),
         backgroundColor: const Color(0xFF000000),
@@ -61,21 +99,33 @@ class LedgerView extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  _DailyList(
-                    date: DateTime(2021, 8, 7),
-                  ),
-                  _DailyList(
-                    date: DateTime(2021, 8, 22),
-                  ),
-                  _DailyList(
-                    date: DateTime(2021, 11, 1),
-                  ),
-                ],
-              ),
-            ),
+            child: FutureBuilder(
+                future: viewModelProvider.getDailyLists(),
+                builder: (BuildContext context,
+                    AsyncSnapshot<List<DailyListData>> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    if (snapshot.hasData && snapshot.data != null) {
+                      return ListView.builder(
+                          itemCount: snapshot.data!.length,
+                          itemBuilder: (context, index) {
+                            return _DailyList(
+                                date: snapshot.data![index].date,
+                                itemIitles: snapshot.data![index].itemTilteList,
+                                dailyExpense:
+                                    snapshot.data![index].totalExpense,
+                                dailyIncoming:
+                                    snapshot.data![index].totalIcoming);
+                          });
+                    } else {
+                      return const Text("No Date!");
+                    }
+                  }
+                  if (snapshot.connectionState == ConnectionState.waiting ||
+                      snapshot.connectionState == ConnectionState.active) {
+                    return const Text("Loading!");
+                  }
+                  return const Text("No Date!");
+                }),
           ),
         ],
       ),
@@ -178,12 +228,18 @@ class BudgetTile extends StatelessWidget {
 }
 
 class _DailyList extends StatelessWidget {
-  const _DailyList({
-    Key? key,
-    required this.date,
-  }) : super(key: key);
+  const _DailyList(
+      {Key? key,
+      required this.date,
+      required this.itemIitles,
+      required this.dailyIncoming,
+      required this.dailyExpense})
+      : super(key: key);
 
   final DateTime date;
+  final List<ItemTitleData> itemIitles;
+  final int dailyIncoming;
+  final int dailyExpense;
 
   static const List<String> _weekdayText = [
     "I should not be showed!!!",
@@ -196,10 +252,27 @@ class _DailyList extends StatelessWidget {
     "SUN",
   ];
 
-  // TODO: connect to viewModel to get daily data
+  // TODO: connect to viewModel to get daily data\
+  List<Widget> getItemLists(List<ItemTitleData> dailyLists) {
+    List<Widget> list = [];
+    for (var i = 0; i < dailyLists.length; i++) {
+      list.add(_ItemTile(
+          icon: itemIitles[i].icon,
+          title: itemIitles[i].title,
+          amount: itemIitles[i].amount,
+          color: itemIitles[i].color,
+          title2: itemIitles[i].title2,
+          remark: itemIitles[i].remark));
+    }
+    if (list.isEmpty == true) {
+      list.add(const Text("No Data Found!"));
+    }
+    return list;
+  }
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> itemIitlesWidget = getItemLists(itemIitles);
     return Padding(
       padding:
           const EdgeInsets.only(left: 0.0, top: 12.0, right: 20.0, bottom: 20),
@@ -254,16 +327,16 @@ class _DailyList extends StatelessWidget {
                           style: DefaultTextStyle.of(context).style.copyWith(
                                 color: const Color(0xFFBCC3A6),
                               ),
-                          children: const [
-                            TextSpan(
+                          children: [
+                            const TextSpan(
                               text: "\$NTD ",
                               style: TextStyle(
                                 fontSize: 15.0,
                               ),
                             ),
                             TextSpan(
-                              text: "3000",
-                              style: TextStyle(
+                              text: dailyIncoming.toString(),
+                              style: const TextStyle(
                                 fontSize: 22.0,
                               ),
                             ),
@@ -293,16 +366,16 @@ class _DailyList extends StatelessWidget {
                           style: DefaultTextStyle.of(context).style.copyWith(
                                 color: const Color(0xFFE19990),
                               ),
-                          children: const [
-                            TextSpan(
+                          children: [
+                            const TextSpan(
                               text: "\$NTD ",
                               style: TextStyle(
                                 fontSize: 15.0,
                               ),
                             ),
                             TextSpan(
-                              text: "100",
-                              style: TextStyle(
+                              text: "$dailyExpense",
+                              style: const TextStyle(
                                 fontSize: 22.0,
                               ),
                             ),
@@ -317,31 +390,7 @@ class _DailyList extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.only(left: 77),
-            child: Column(
-              children: const [
-                _ItemTile(
-                  icon: Icons.restaurant,
-                  title: "飲食",
-                  remark: "早餐",
-                  amount: 100,
-                  color: Color(0x4DFEC81A),
-                ),
-                _ItemTile(
-                  icon: Icons.wifi_protected_setup,
-                  title: "銀行",
-                  title2: "錢包",
-                  remark: "我愛轉帳",
-                  amount: 100,
-                  color: Color(0x8099D6EA),
-                ),
-                _ItemTile(
-                  icon: Icons.apartment,
-                  title: "薪水",
-                  amount: 3000,
-                  color: Color(0x80CBD7A4),
-                ),
-              ],
-            ),
+            child: Column(children: itemIitlesWidget),
           ),
         ],
       ),

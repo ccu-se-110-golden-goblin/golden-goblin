@@ -17,7 +17,7 @@ class AccountProvider {
               id: mapobj['id'],
               name: mapobj['name'],
               icon: IconData(mapobj['icon']),
-              iconColor: Color(mapobj['iconcolor']),
+              iconColor: Color(mapobj['iconColor']),
             ))
         .toList();
   }
