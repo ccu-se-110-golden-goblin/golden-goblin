@@ -4,6 +4,7 @@ import 'package:golden_goblin/src/icon_set.dart';
 import 'package:golden_goblin/src/models/account.dart';
 import 'package:golden_goblin/src/models/account_provider.dart';
 import 'package:golden_goblin/src/themes.dart';
+import 'package:provider/provider.dart';
 
 class AccountEditArguments {
   AccountEditArguments({
@@ -47,24 +48,24 @@ class _AccountEditState extends State<AccountEditView> {
     }
   }
 
-  void handleDelete() {
+  void handleDelete(AccountProvider accountProvider) {
     var account = args.account;
     if (account != null) {
-      AccountProvider()
+      accountProvider
           .deleteAccount(account.id)
           .then((value) => Navigator.pop(context));
     }
   }
 
-  void handleSave() {
+  void handleSave(AccountProvider accountProvider) {
     var account = args.account;
     if (account != null) {
-      AccountProvider()
+      accountProvider
           .updateAccount(account.id,
               Account(id: account.id, name: name, icon: icon, iconColor: color))
           .then((value) => Navigator.pop(context));
     } else {
-      AccountProvider()
+      accountProvider
           .addAccount(Account(id: 0, name: name, icon: icon, iconColor: color))
           .then((value) => Navigator.pop(context));
     }
@@ -72,6 +73,8 @@ class _AccountEditState extends State<AccountEditView> {
 
   @override
   Widget build(BuildContext context) {
+    AccountProvider accountProvider = Provider.of<AccountProvider>(context);
+
     var icons = MyIcons.icons;
     var colors = IconColors.allColors;
 
@@ -95,8 +98,12 @@ class _AccountEditState extends State<AccountEditView> {
                 Navigator.pop(context);
               },
             );
+
           }),
+
         ),
+
+
         body: Container(
           padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 30.0),
           child: Column(
@@ -169,14 +176,16 @@ class _AccountEditState extends State<AccountEditView> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         TextButton(
-                            onPressed:
-                                (args.account != null) ? handleDelete : null,
+                            onPressed: (args.account != null)
+                                ? () => handleDelete(accountProvider)
+                                : null,
                             child: const Text("刪除"),
                             style: GoldenGoblinThemes.dangerButtonLightStyle),
                         Padding(
                           padding: const EdgeInsets.only(left: 10),
                           child: TextButton(
-                              onPressed: handleSave, child: const Text("完成")),
+                              onPressed: () => handleSave(accountProvider),
+                              child: const Text("完成")),
                         ),
                       ],
                     ),
@@ -193,3 +202,6 @@ class _AccountEditState extends State<AccountEditView> {
         ));
   }
 }
+
+
+

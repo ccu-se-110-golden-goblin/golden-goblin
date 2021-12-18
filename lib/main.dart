@@ -23,7 +23,7 @@ void main() async {
 
   await settingsController.loadSettings();
 
-  final accountProvider = AccountProvider();
+  final accountProvider = DBAccountProvider();
 
   await accountProvider.loadAccounts();
 
@@ -36,7 +36,7 @@ void main() async {
   // SettingsView.
   runApp(MultiProvider(
     providers: [
-      Provider.value(value: accountProvider),
+      Provider<AccountProvider>.value(value: accountProvider),
       Provider<CategoryProvider>.value(value: categoryProvider),
       Provider<TransactionProvider>(
         create: (_) => TransactionProvider(),

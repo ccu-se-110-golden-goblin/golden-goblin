@@ -3,8 +3,8 @@ import 'package:golden_goblin/src/models/transaction.dart';
 import 'package:golden_goblin/src/models/transaction_provider.dart';
 import 'package:golden_goblin/src/views/account_view/account_edit_view.dart';
 import 'package:golden_goblin/src/views/common/sidebar.dart';
-import 'package:golden_goblin/src/models/account.dart';
 import 'package:golden_goblin/src/models/account_provider.dart';
+import 'package:provider/provider.dart';
 
 class AccountItem extends StatelessWidget {
   const AccountItem(
@@ -63,8 +63,6 @@ class _AccountViewState extends State<AccountView> {
   static const routeName = '/account';
   var calcResult = _TransactionCalcResult();
 
-  List<Account> accounts = [];
-
   void handleTransactionData(List<Transaction> transactions) {
     setState(() {
       calcResult = transactions.fold(_TransactionCalcResult(),
@@ -78,12 +76,6 @@ class _AccountViewState extends State<AccountView> {
   }
 
   void handleLoadData() {
-    AccountProvider().loadAccounts().then((value) {
-      setState(() {
-        accounts = AccountProvider().getAccounts;
-      });
-    });
-
     TransactionProvider.getTransactions()
         .then((transactions) => handleTransactionData(transactions));
   }
@@ -97,6 +89,8 @@ class _AccountViewState extends State<AccountView> {
 
   @override
   Widget build(BuildContext context) {
+    AccountProvider accountProvider = Provider.of<AccountProvider>(context);
+
     return Scaffold(
         appBar: AppBar(
             title: const Text("帳本管理"),
@@ -143,9 +137,9 @@ class _AccountViewState extends State<AccountView> {
                 )),
             ListView.builder(
               shrinkWrap: true,
-              itemCount: accounts.length,
+              itemCount: accountProvider.getAccounts.length,
               itemBuilder: (BuildContext context, int index) {
-                var account = accounts[index];
+                var account = accountProvider.getAccounts[index];
                 return AccountItem(
                   iconData: account.icon,
                   name: account.name,

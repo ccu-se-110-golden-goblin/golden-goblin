@@ -3,10 +3,25 @@ import 'package:flutter/material.dart';
 import 'account.dart';
 import '../helpers/db_helper.dart';
 
-class AccountProvider {
-  static List<Account> _accounts = [];
+abstract class AccountProvider {
+  Future<void> loadAccounts();
+
+  List<Account> get getAccounts;
+
+  Account getAccount(int accountId);
+
+  Future<int> addAccount(Account account);
+
+  Future<void> deleteAccount(int accountId);
+
+  Future<void> updateAccount(int accountId, Account newAccount);
+}
+
+class DBAccountProvider implements AccountProvider {
+  List<Account> _accounts = [];
 
   //This is only for init AccountProvider
+  @override
   Future<void> loadAccounts() async {
     var db = await DBHelper.opendb();
 
@@ -22,8 +37,10 @@ class AccountProvider {
         .toList();
   }
 
+  @override
   List<Account> get getAccounts => _accounts;
 
+  @override
   Account getAccount(int accountId) {
     assert(accountId >= 0, "accountId must >= 0");
 
@@ -31,6 +48,7 @@ class AccountProvider {
   }
 
   // When insert into database, id will be ignore and replaced, use getAccounts to get new list with new id
+  @override
   Future<int> addAccount(Account account) async {
     var db = await DBHelper.opendb();
 
@@ -47,6 +65,7 @@ class AccountProvider {
     return recordid;
   }
 
+  @override
   Future<void> deleteAccount(int accountId) async {
     var db = await DBHelper.opendb();
 
@@ -55,6 +74,7 @@ class AccountProvider {
     await loadAccounts();
   }
 
+  @override
   Future<void> updateAccount(int accountId, Account newAccount) async {
     var db = await DBHelper.opendb();
 
