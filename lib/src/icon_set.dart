@@ -98,5 +98,10 @@ class MyIcons {
     fix,
     computer,
     child,
+    wallet,
+    medical,
+    invest,
+    game,
+    wifi,
   ];
 }
