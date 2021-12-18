@@ -25,7 +25,7 @@ Future<void> _onCreate(Database db, int version) async {
     await db.execute("CREATE TABLE accounts ("
         "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, name TEXT NOT NULL, icon INTERGER NOT NULL, iconColor INTEGER NOT NULL)");
     await db.execute("CREATE TABLE categories ("
-        "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, name TEXT NOT NULL, type INTERGER NOT NULL, icon INTERGER NOT NULL, iconColor INTEGER NOT NULL)");
+        "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, name TEXT NOT NULL, type INTERGER NOT NULL, iconData INTERGER NOT NULL, iconColor INTEGER NOT NULL)");
     await db.execute("CREATE TABLE transactions ("
         "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, amount INTEGER NOT NULL, account INTEGER NOT NULL, category INTEGER NOT NULL, date INTEGER NOT NULL, remark TEXT, invoice TEXT)");
     await db.execute("CREATE TABLE transfers ("
