@@ -181,30 +181,14 @@ class _CategoryEditState extends State<CategoryEditView> {
                       TextButton(
                         onPressed:
                             (args.category != null) ? handleDelete : null,
-                        child: Text("刪除",
-                            style: TextStyle(
-                              color: args.category != null
-                                  ? const Color(0xFFFF0000)
-                                  : const Color(0x55000000),
-                            )),
-                        style: ButtonStyle(
-                          shape: MaterialStateProperty.resolveWith(
-                              (states) => const StadiumBorder()),
-                        ),
+                        child: const Text("刪除"),
+                        style: GoldenGoblinThemes.dangerButtonLightStyle,
                       ),
                       Padding(
                         padding: const EdgeInsets.only(left: 10),
                         child: TextButton(
                           onPressed: handleSave,
-                          child: const Text("完成",
-                              style: TextStyle(color: Color(0xFFFFFFFF))),
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.resolveWith(
-                                (states) =>
-                                    GoldenGoblinThemes.light.primaryColor),
-                            shape: MaterialStateProperty.resolveWith(
-                                (states) => const StadiumBorder()),
-                          ),
+                          child: const Text("完成"),
                         ),
                       ),
                     ],
