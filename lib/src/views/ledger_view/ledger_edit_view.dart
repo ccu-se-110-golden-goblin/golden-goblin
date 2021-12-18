@@ -35,14 +35,15 @@ class _LedgerEditViewState extends State<LedgerEditView>
   static DateTime date = DateTime.now();
   static var account = 0;
 
-  var categories = [];
-  var cateType = "支出";
+  static var categories = [];
+  Type cateType = Type.expenses;
+  var cateTypeName = "支出";
+  static var selectedCate = -1;
+
   void handleLoadData() {
     CategoryProvider().loadCategories().then((value) {
       setState(() {
         categories = CategoryProvider().getCategories;
-        print("cate:");
-        print(categories);
       });
     });
   }
@@ -196,8 +197,8 @@ class _LedgerEditViewState extends State<LedgerEditView>
                       ],
                     )),
                 //category
-                Container(
-                    padding: const EdgeInsets.symmetric(vertical: 12.0),
+                Expanded(
+                    // padding: const EdgeInsets.symmetric(vertical: 12.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -206,7 +207,7 @@ class _LedgerEditViewState extends State<LedgerEditView>
                             const Text("類別:", style: TextStyle(fontSize: 15)),
                             const SizedBox(width: 200,),
                             DropdownButton(
-                              value: cateType,
+                              value: cateTypeName,
                               icon: Icon(Icons.keyboard_arrow_down),
                               underline: Container(
                                   height: 2,
@@ -220,32 +221,58 @@ class _LedgerEditViewState extends State<LedgerEditView>
                               ).toList(),
                               onChanged: (String? v){
                                 setState(() {
-                                  cateType = v!;
+                                  if(v! == "支出") {
+                                    cateType = Type.expenses;
+                                    cateTypeName = "支出";
+                                  } else {
+                                    cateType = Type.income;
+                                    cateTypeName = "收入";
+                                  }
                                 });
                               },
                             ),
                           ],
                         ),
 
-                        GridView(
-                          padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
-                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 4,
-                              childAspectRatio: 0.7,),
-                          children: categories
-                              .where((value) => value.type == Type.income)
-                              .map(
-                                (category) => CategoryItem(
-                                  name: category.name,
-                                  iconData: category.iconData,
-                                  iconColor: category.iconColor,
-                                  onTap: () {},
-                                ),
-                              ).toList(),
-                        )
+                        Expanded(
+                          child: GridView.builder(
+                            itemCount: categories.where((value) => value.type == cateType).length,
+                            padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
+                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 5,
+                                childAspectRatio: 0.7,),
+
+                            itemBuilder: (BuildContext context, int ind){
+                                  var filterCateItem = categories.where((value) => value.type == cateType).elementAt(ind);
+                                  return GestureDetector(
+                                    onTap: (){
+                                      setState(() {
+                                        selectedCate = ind;
+                                      });
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(vertical: 2.5, horizontal: 5),
+                                      child: Container(
+                                        decoration: (ind == selectedCate) ? const BoxDecoration(
+                                            color: Color(0x6BD3CFBC),
+                                            borderRadius: BorderRadius.all(Radius.circular(10))) : null,
+                                        child: CategoryItem(
+                                          id: ind,
+                                          name: filterCateItem.name,
+                                          iconData: filterCateItem.iconData,
+                                          iconColor: filterCateItem.iconColor,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }
+
+                          ),
+
+                        ),
                       ],
                     )),
-
+                //comment
                 Container(
                     padding: const EdgeInsets.symmetric(vertical: 12.0),
                     child: Column(
@@ -433,6 +460,68 @@ class _AccountPickerState extends State<AccountPicker> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class CategoryIcon extends StatelessWidget {
+  const CategoryIcon({Key? key, required this.iconData, required this.color})
+      : super(key: key);
+
+  final IconData iconData;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+          border: Border.all(
+            color: color,
+          ),
+          color: color,
+          borderRadius: const BorderRadius.all(Radius.circular(5))),
+      child: Icon(
+        iconData,
+        color: const Color(0xFFFFFFFF),
+      ),
+    );
+  }
+}
+class CategoryItem extends StatefulWidget {
+  const CategoryItem(
+      {Key? key,
+        required this.iconData,
+        required this.name,
+        required this.iconColor,
+        required this.id})
+      : super(key: key);
+
+  final IconData iconData;
+  final Color iconColor;
+  final String name;
+  final int id;
+
+  @override
+  State<CategoryItem> createState() => _CategoryItemState();
+}
+
+class _CategoryItemState extends State<CategoryItem> {
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      child:
+         Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            CategoryIcon(
+              iconData: widget.iconData,
+              color: widget.iconColor,
+            ),
+            Text(widget.name),
+          ],
+        ),
     );
   }
 }
