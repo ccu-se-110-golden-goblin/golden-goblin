@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:golden_goblin/src/models/category.dart';
 import 'package:golden_goblin/src/models/category_provider.dart';
-import 'package:golden_goblin/src/themes.dart';
 import 'package:golden_goblin/src/views/category_view/category_edit_view.dart';
 import 'package:golden_goblin/src/views/common/sidebar.dart';
 
@@ -137,6 +136,7 @@ class _CategoryViewState extends State<CategoryView>
       body: Column(
         children: [
           TabBar(
+            controller: _tabController,
             tabs: Type.values.map((e) {
               if (e == Type.income) {
                 return const Tab(text: '收入');
