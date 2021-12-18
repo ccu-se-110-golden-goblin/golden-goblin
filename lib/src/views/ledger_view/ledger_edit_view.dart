@@ -1,10 +1,13 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:golden_goblin/src/models/account.dart';
 import 'package:golden_goblin/src/models/account_provider.dart';
+import 'package:golden_goblin/src/models/category_provider.dart';
+import 'package:golden_goblin/src/models/category.dart';
 import 'package:golden_goblin/src/models/transaction.dart';
 import 'package:golden_goblin/src/models/transaction_provider.dart';
+import 'package:golden_goblin/src/views/category_view/category_view.dart';
 import 'package:golden_goblin/src/views/ledger_view/ledger_transfer.dart';
-import 'package:golden_goblin/src/views/ledger_view/ledger_view.dart';
 import 'package:intl/intl.dart';
 
 import '../../themes.dart';
@@ -19,7 +22,8 @@ class LedgerEditView extends StatefulWidget {
   State<LedgerEditView> createState() => _LedgerEditViewState(args: argsId);
 }
 
-class _LedgerEditViewState extends State<LedgerEditView> {
+class _LedgerEditViewState extends State<LedgerEditView>
+    with SingleTickerProviderStateMixin {
   _LedgerEditViewState({required this.args});
 
   final args;
@@ -31,29 +35,69 @@ class _LedgerEditViewState extends State<LedgerEditView> {
   static DateTime date = DateTime.now();
   static var account = 0;
 
+  var categories = [];
+  var cateType = "支出";
+  void handleLoadData() {
+    CategoryProvider().loadCategories().then((value) {
+      setState(() {
+        categories = CategoryProvider().getCategories;
+        print("cate:");
+        print(categories);
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    handleLoadData();
+  }
+
   void handleSave() {
     if (args == -1) {
-      TransactionProvider.addTransaction(Transaction(id: 0,
-          amount: int.parse(dollarController.text),  account: account, category: category, date: date, remark: commentController.text))
+      TransactionProvider.addTransaction(Transaction(
+              id: 0,
+              amount: int.parse(dollarController.text),
+              account: account,
+              category: category,
+              date: date,
+              remark: commentController.text))
           .then((value) => Navigator.pop(context));
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('已新增交易', style: TextStyle(color:Colors.black),),
-          backgroundColor: Color(0xFFFFD344),),
+        const SnackBar(
+          content: Text(
+            '已新增交易',
+            style: TextStyle(color: Colors.black),
+          ),
+          backgroundColor: Color(0xFFFFD344),
+        ),
       );
     } else {
-      TransactionProvider.updateTransaction(args, Transaction(id: args,
-          amount: int.parse(dollarController.text),  account: account, category: category, date: date, remark: commentController.text))
+      TransactionProvider.updateTransaction(
+              args,
+              Transaction(
+                  id: args,
+                  amount: int.parse(dollarController.text),
+                  account: account,
+                  category: category,
+                  date: date,
+                  remark: commentController.text))
           .then((value) => Navigator.pop(context));
     }
   }
 
-  void handleDelete(){
+  void handleDelete() {
     TransactionProvider.deleteTransaction(args)
         .then((value) => Navigator.pop(context));
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('已刪除交易', style: TextStyle(color:Colors.black),),
-        backgroundColor: Color(0xFFFFD344),),
+      const SnackBar(
+        content: Text(
+          '已刪除交易',
+          style: TextStyle(color: Colors.black),
+        ),
+        backgroundColor: Color(0xFFFFD344),
+      ),
     );
   }
 
@@ -64,167 +108,200 @@ class _LedgerEditViewState extends State<LedgerEditView> {
     super.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
     print(ModalRoute.of(context)?.settings.name);
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("新增交易"),
-        leading: Builder(builder: (BuildContext context) {
-          return IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          );
-
-        }),
-        actions:  (args == -1) ? <Widget>[
-          Column(
-              mainAxisAlignment: MainAxisAlignment.start,
+        appBar: AppBar(
+          title: const Text("新增交易"),
+          leading: Builder(builder: (BuildContext context) {
+            return IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            );
+          }),
+          actions: (args == -1)
+              ? <Widget>[
+                  Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        IconButton(
+                            icon: const Icon(Icons.transform),
+                            padding: const EdgeInsets.only(
+                                top: 10, bottom: 0, left: 10, right: 10),
+                            constraints: const BoxConstraints(),
+                            onPressed: () {
+                              Navigator.pop(context);
+                              Navigator.pushNamed(
+                                  context, LedgerTransferView.routeName);
+                            }),
+                        const Text("轉帳", style: TextStyle(fontSize: 8)),
+                      ]),
+                ]
+              : null,
+        ),
+        body: Container(
+          padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 30.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-                IconButton(
-                    icon: const Icon(Icons.transform),
-                    padding: const EdgeInsets.only(top: 10, bottom: 0,left: 10, right: 10),
-                    constraints: const BoxConstraints(),
-                    onPressed: () {
-                      Navigator.pop(context);
-                      Navigator.pushNamed(context, LedgerTransferView.routeName);
-                    }),
-                const Text("轉帳" ,style: TextStyle(fontSize: 8)),
-              ]),
-        ] : null,
-      ),
-
-      body: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 30.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              //dollar
-              Container(
-                 padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 20.0),
-                 child: Row(
-                  children: [
-                    Flexible(
-                      child: TextFormField(
-                        keyboardType: TextInputType.number,
-                        controller: dollarController,
-                        decoration: const InputDecoration(
-                          border: UnderlineInputBorder(),
-                            hintText: "金額",
-                            icon: Icon(Icons.attach_money, color:Colors.black),),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return '請輸入金額';
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                    const Text("NTD"),
-                  ],
-
-                ),
-              ),
-              //date
-              Container(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Text("日期:", style: TextStyle(fontSize: 15)),
-                      DatePicker()
-                    ],
-                  )
-              ),
-              //account
-              Container(
-                  padding: const EdgeInsets.symmetric(vertical: 12.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Text("帳戶:", style: TextStyle(fontSize: 15)),
-                      AccountPicker()
-                    ],
-                  )
-              ),
-              //category
-              Container(
-                  padding: const EdgeInsets.symmetric(vertical: 12.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                        Text("類別:", style: TextStyle(fontSize: 15)),
-                    ],
-                  )
-              ),
-
-              Container(
-                  padding: const EdgeInsets.symmetric(vertical: 12.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                //dollar
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 12.0, horizontal: 20.0),
+                  child: Row(
                     children: [
-                      const Text("註解:", style: TextStyle(fontSize: 15)),
-
-                      TextFormField(
-                        controller: commentController,
-                        decoration: const InputDecoration(
-                          border: UnderlineInputBorder(),
-                          hintText: "無",
-
+                      Flexible(
+                        child: TextFormField(
+                          keyboardType: TextInputType.number,
+                          controller: dollarController,
+                          decoration: const InputDecoration(
+                            border: UnderlineInputBorder(),
+                            hintText: "金額",
+                            icon: Icon(Icons.attach_money, color: Colors.black),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return '請輸入金額';
+                            }
+                            return null;
+                          },
                         ),
                       ),
-
+                      const Text("NTD"),
                     ],
-                  )
-              ),
-
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  if (args != -1) TextButton(
-                    onPressed: handleDelete,
-                    child: const Text("刪除",
-                        style: TextStyle(color: Color(0xFFFF0000))),
-                    style: ButtonStyle(
-                      shape: MaterialStateProperty.resolveWith(
-                              (states) => const StadiumBorder()),
-                    ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: ElevatedButton(
-                      onPressed: (){
-                        if (_formKey.currentState!.validate()){
-                          handleSave();
-                        }
-                      },
-                      child: const Text("完成",
-                          style: TextStyle(color: Color(0xFFFFFFFF))),
-                      style: ButtonStyle(
-                        backgroundColor:
-                        MaterialStateProperty.resolveWith((states) =>
-                        GoldenGoblinThemes.light.primaryColor),
-                        shape: MaterialStateProperty.resolveWith(
-                                (states) => const StadiumBorder()),
+                ),
+                //date
+                Container(
+                    child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const [
+                    Text("日期:", style: TextStyle(fontSize: 15)),
+                    DatePicker()
+                  ],
+                )),
+                //account
+                Container(
+                    padding: const EdgeInsets.symmetric(vertical: 12.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: const [
+                        Text("帳戶:", style: TextStyle(fontSize: 15)),
+                        AccountPicker()
+                      ],
+                    )),
+                //category
+                Container(
+                    padding: const EdgeInsets.symmetric(vertical: 12.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            const Text("類別:", style: TextStyle(fontSize: 15)),
+                            const SizedBox(width: 200,),
+                            DropdownButton(
+                              value: cateType,
+                              icon: Icon(Icons.keyboard_arrow_down),
+                              underline: Container(
+                                  height: 2,
+                                  color: Colors.amber),
+                              items:["支出","收入"].map((String items) {
+                                return DropdownMenuItem(
+                                    value: items,
+                                    child: Text(items)
+                                );
+                              }
+                              ).toList(),
+                              onChanged: (String? v){
+                                setState(() {
+                                  cateType = v!;
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+
+                        GridView(
+                          padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
+                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 4,
+                              childAspectRatio: 0.7,),
+                          children: categories
+                              .where((value) => value.type == Type.income)
+                              .map(
+                                (category) => CategoryItem(
+                                  name: category.name,
+                                  iconData: category.iconData,
+                                  iconColor: category.iconColor,
+                                  onTap: () {},
+                                ),
+                              ).toList(),
+                        )
+                      ],
+                    )),
+
+                Container(
+                    padding: const EdgeInsets.symmetric(vertical: 12.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text("註解:", style: TextStyle(fontSize: 15)),
+                        TextFormField(
+                          controller: commentController,
+                          decoration: const InputDecoration(
+                            border: UnderlineInputBorder(),
+                            hintText: "無",
+                          ),
+                        ),
+                      ],
+                    )),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    if (args != -1)
+                      TextButton(
+                        onPressed: handleDelete,
+                        child: const Text("刪除",
+                            style: TextStyle(color: Color(0xFFFF0000))),
+                        style: ButtonStyle(
+                          shape: MaterialStateProperty.resolveWith(
+                              (states) => const StadiumBorder()),
+                        ),
+                      ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            handleSave();
+                          }
+                        },
+                        child: const Text("完成",
+                            style: TextStyle(color: Color(0xFFFFFFFF))),
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.resolveWith(
+                              (states) =>
+                                  GoldenGoblinThemes.light.primaryColor),
+                          shape: MaterialStateProperty.resolveWith(
+                              (states) => const StadiumBorder()),
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
-        ),
-      )
-
-    );
+        ));
   }
 }
-
 
 class DatePicker extends StatefulWidget {
   const DatePicker({Key? key}) : super(key: key);
@@ -233,12 +310,11 @@ class DatePicker extends StatefulWidget {
 }
 
 class _DatePickerState extends State<DatePicker> {
-
   @override
   Widget build(BuildContext context) {
     return Center(
       child: InkWell(
-        onTap: () async{
+        onTap: () async {
           final newDate = await showDatePicker(
             context: context,
             initialDate: _LedgerEditViewState.date,
@@ -258,7 +334,11 @@ class _DatePickerState extends State<DatePicker> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               const Icon(Icons.event),
-              Text( DateFormat('MM / dd / yyyy').format(_LedgerEditViewState.date).toString(), style: const TextStyle(fontSize: 20)),
+              Text(
+                  DateFormat('MM / dd / yyyy')
+                      .format(_LedgerEditViewState.date)
+                      .toString(),
+                  style: const TextStyle(fontSize: 20)),
               const Icon(Icons.expand_more),
             ],
           ),
@@ -288,7 +368,6 @@ class _AccountPickerState extends State<AccountPicker> {
         iconColor = accounts[0].iconColor;
         print(accounts);
       });
-
     });
   }
 
@@ -297,6 +376,7 @@ class _AccountPickerState extends State<AccountPicker> {
     handleLoadData();
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -315,7 +395,10 @@ class _AccountPickerState extends State<AccountPicker> {
                       itemBuilder: (BuildContext context, int index) {
                         return ListTile(
                           title: Text(accounts[index].name),
-                          leading: Icon(accounts[index].icon, color: accounts[index].iconColor,),
+                          leading: Icon(
+                            accounts[index].icon,
+                            color: accounts[index].iconColor,
+                          ),
                           onTap: () {
                             setState(() {
                               account = accounts[index].name;
@@ -325,7 +408,6 @@ class _AccountPickerState extends State<AccountPicker> {
                             });
 
                             Navigator.pop(context, accounts[index]);
-
                           },
                         );
                       },
@@ -340,8 +422,11 @@ class _AccountPickerState extends State<AccountPicker> {
           color: Color(0x1FF0D821),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children:<Widget>[
-              Icon(icon, color: iconColor,),
+            children: <Widget>[
+              Icon(
+                icon,
+                color: iconColor,
+              ),
               Text(account),
               Icon(Icons.expand_more),
             ],
@@ -351,6 +436,3 @@ class _AccountPickerState extends State<AccountPicker> {
     );
   }
 }
-
-
-
