@@ -19,7 +19,7 @@ class AccountEditView extends StatefulWidget {
   static const routeName = '/account_edit';
 
   final AccountEditArguments args;
-  static List<IconColor> colors = IconColors.allColors;
+  static List<MyColor> colors = IconColors.allColors;
 
   @override
   State<AccountEditView> createState() => _AccountEditState(args: args);
@@ -82,7 +82,7 @@ class _AccountEditState extends State<AccountEditView> {
 
     if (colors.where((element) => element.color == color).isEmpty) {
       colors = List.from(colors);
-      colors.add(IconColor(color: color, name: "unknown"));
+      colors.add(MyColor(color: color, name: "unknown"));
     }
 
     return Scaffold(
@@ -95,12 +95,8 @@ class _AccountEditState extends State<AccountEditView> {
                 Navigator.pop(context);
               },
             );
-
           }),
-
         ),
-
-
         body: Container(
           padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 30.0),
           child: Column(
@@ -173,17 +169,14 @@ class _AccountEditState extends State<AccountEditView> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         TextButton(
-                          onPressed:
-                              (args.account != null) ? handleDelete : null,
-                          child: const Text("刪除"),
-                          style: GoldenGoblinThemes.dangerButtonLightStyle
-                        ),
+                            onPressed:
+                                (args.account != null) ? handleDelete : null,
+                            child: const Text("刪除"),
+                            style: GoldenGoblinThemes.dangerButtonLightStyle),
                         Padding(
                           padding: const EdgeInsets.only(left: 10),
                           child: TextButton(
-                            onPressed: handleSave,
-                            child: const Text("完成")
-                          ),
+                              onPressed: handleSave, child: const Text("完成")),
                         ),
                       ],
                     ),
@@ -200,6 +193,3 @@ class _AccountEditState extends State<AccountEditView> {
         ));
   }
 }
-
-
-

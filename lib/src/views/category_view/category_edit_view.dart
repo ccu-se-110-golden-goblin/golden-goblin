@@ -101,7 +101,7 @@ class _CategoryEditState extends State<CategoryEditView> {
 
     if (colors.where((element) => element.color == color).isEmpty) {
       colors = List.from(colors);
-      colors.add(IconColor(color: color, name: "unknown"));
+      colors.add(MyColor(color: color, name: "unknown"));
     }
 
     return Scaffold(
