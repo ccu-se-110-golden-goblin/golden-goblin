@@ -60,11 +60,18 @@ class _CategoryEditState extends State<CategoryEditView> {
                 id: category.id,
                 type: category.type,
                 name: name,
+                iconData: icon,
+                iconColor: color,
               ))
           .then((value) => Navigator.pop(context));
     } else {
       CategoryProvider()
-          .addCategory(Category(id: 0, type: args.type, name: name))
+          .addCategory(Category(
+              id: 0,
+              type: args.type,
+              name: name,
+              iconData: icon,
+              iconColor: color))
           .then((value) => Navigator.pop(context));
     }
   }
