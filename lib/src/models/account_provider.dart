@@ -4,7 +4,7 @@ import 'account.dart';
 import '../helpers/db_helper.dart';
 
 class AccountProvider {
-  List<Account> _accounts = [];
+  static List<Account> _accounts = [];
 
   //This is only for init AccountProvider
   Future<void> loadAccounts() async {

@@ -68,8 +68,9 @@ class _LedgerViewState extends State<LedgerView> {
           IconButton(
             icon: const Icon(Icons.filter_list),
             onPressed: () {
-              viewModelProvider.addMock();
-              setMonth(DateTime.now());
+              viewModelProvider
+                  .addMock()
+                  .then((value) => setMonth(DateTime.now()));
             },
           )
         ],
@@ -84,10 +85,11 @@ class _LedgerViewState extends State<LedgerView> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(
-            height: 85,
-            child: BudgetTile(),
-          ),
+          // FixMe: Temporary hide budget tile
+          // const SizedBox(
+          //   height: 85,
+          //   child: BudgetTile(),
+          // ),
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 8.0),
             child: Divider(
@@ -100,28 +102,29 @@ class _LedgerViewState extends State<LedgerView> {
                 future: viewModelProvider.getDailyLists(),
                 builder: (BuildContext context,
                     AsyncSnapshot<List<DailyListData>> snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done) {
-                    if (snapshot.hasData && snapshot.data != null) {
-                      return ListView.builder(
-                          itemCount: snapshot.data!.length,
-                          itemBuilder: (context, index) {
-                            return _DailyList(
-                                date: snapshot.data![index].date,
-                                itemTitles: snapshot.data![index].itemTitleList,
-                                dailyExpense:
-                                    snapshot.data![index].totalExpense,
-                                dailyIncoming:
-                                    snapshot.data![index].totalIncoming);
-                          });
-                    } else {
-                      return const Text("No Date!");
-                    }
-                  }
                   if (snapshot.connectionState == ConnectionState.waiting ||
                       snapshot.connectionState == ConnectionState.active) {
-                    return const Text("Loading!");
+                    return const Center(
+                      child: Text("載入中.."),
+                    );
                   }
-                  return const Text("No Date!");
+
+                  if (snapshot.hasData && snapshot.data != null) {
+                    return ListView.builder(
+                        itemCount: snapshot.data!.length,
+                        itemBuilder: (context, index) {
+                          return _DailyList(
+                              date: snapshot.data![index].date,
+                              itemTitles: snapshot.data![index].itemTitleList,
+                              dailyExpense: snapshot.data![index].totalExpense,
+                              dailyIncoming:
+                                  snapshot.data![index].totalIncoming);
+                        });
+                  } else {
+                    return const Center(
+                      child: Text("沒有記帳紀錄"),
+                    );
+                  }
                 }),
           ),
         ],

@@ -148,7 +148,7 @@ class LedgerViewModel {
   }
 
   // MockData for debug Only
-  void addMock() async {
+  Future<void> addMock() async {
     if (kReleaseMode) return;
     var now = DateTime.now();
     var dayA = DateTime(now.year, now.month, now.day);
@@ -166,22 +166,24 @@ class LedgerViewModel {
         Category(id: 1, name: "TestIncoming", type: Type.income);
     Category categoryB =
         Category(id: 2, name: "TestExpenses", type: Type.expenses);
-    Transfer transferA =
-        Transfer(id: 0, src: 1, dst: 2, amount: 300, date: dayA);
-    Transfer transferB =
-        Transfer(id: 1, src: 2, dst: 1, amount: 500, date: dayB);
-    Transaction transactionA =
-        Transaction(id: 0, amount: 1000, account: 1, category: 1, date: dayA);
-    Transaction transactionB =
-        Transaction(id: 1, amount: 1500, account: 1, category: 2, date: dayB);
 
     AccountProvider accountProvider = AccountProvider();
     CategoryProvider categoryProvider = CategoryProvider();
 
-    await accountProvider.addAccount(accountA);
-    await accountProvider.addAccount(accountB);
-    await categoryProvider.addCategory(categoryA);
-    await categoryProvider.addCategory(categoryB);
+    var accountAId = await accountProvider.addAccount(accountA);
+    var accountBId = await accountProvider.addAccount(accountB);
+    var categoryAId = await categoryProvider.addCategory(categoryA);
+    var categoryBId = await categoryProvider.addCategory(categoryB);
+
+    Transfer transferA =
+    Transfer(id: 0, src: accountAId, dst: accountBId, amount: 300, date: dayA);
+    Transfer transferB =
+    Transfer(id: 1, src: accountBId, dst: accountAId, amount: 500, date: dayB);
+    Transaction transactionA =
+    Transaction(id: 0, amount: 1000, account: accountAId, category: categoryAId, date: dayA);
+    Transaction transactionB =
+    Transaction(id: 1, amount: 1500, account: accountAId, category: categoryBId, date: dayB);
+
     await TransferProvider.addTransfer(transferA);
     await TransferProvider.addTransfer(transferB);
     await TransactionProvider.addTransaction(transactionA);
