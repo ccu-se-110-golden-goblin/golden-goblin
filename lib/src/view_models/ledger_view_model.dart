@@ -67,10 +67,6 @@ class LedgerViewModel {
 
   // need to setDate before use
   Future<List<DailyListData>>? getDailyLists() async {
-    if (!kReleaseMode) {
-      addMock();
-    }
-
     final transfer = await TransferProvider.getTransfers(
         startDate: _startOfMonth, endDate: _endOfMonth);
     final transaction = await TransactionProvider.getTransactions(
