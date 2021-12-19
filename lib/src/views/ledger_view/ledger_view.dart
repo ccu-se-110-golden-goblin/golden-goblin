@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
-import 'package:provider/provider.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
 import '../../view_models/ledger_view_model.dart';
@@ -28,6 +26,13 @@ class _LedgerViewState extends State<LedgerView> {
     viewModelProvider.setDate(DateTime(now.year, now.month));
   }
 
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    viewModelProvider.initProviders(context);
+  }
+
   void setMonth(DateTime month) {
     DateTime newMonth = DateTime(month.year, month.month);
     viewModelProvider.setDate(newMonth);
@@ -53,8 +58,6 @@ class _LedgerViewState extends State<LedgerView> {
 
   @override
   Widget build(BuildContext context) {
-    TransactionProvider transactionProvider = Provider.of<TransactionProvider>(context);
-
     return Scaffold(
       appBar: AppBar(
         title: const Text("Golden Goblin"),
@@ -111,7 +114,7 @@ class _LedgerViewState extends State<LedgerView> {
                     );
                   }
 
-                  if (snapshot.hasData && snapshot.data != null) {
+                  if (snapshot.hasData && snapshot.data!.isNotEmpty) {
                     return ListView.builder(
                         itemCount: snapshot.data!.length,
                         itemBuilder: (context, index) {
