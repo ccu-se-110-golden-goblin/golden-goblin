@@ -7,13 +7,12 @@ import 'package:golden_goblin/src/models/account_provider.dart';
 import 'package:provider/provider.dart';
 
 class AccountItem extends StatelessWidget {
-  const AccountItem(
-      {Key? key,
-      required this.iconData,
-      required this.name,
-      required this.iconColor,
-      this.accountAsset,
-      this.onTap})
+  const AccountItem({Key? key,
+    required this.iconData,
+    required this.name,
+    required this.iconColor,
+    this.accountAsset,
+    this.onTap})
       : super(key: key);
 
   final IconData iconData;
@@ -60,29 +59,33 @@ class _TransactionCalcResult {
 }
 
 class _AccountViewState extends State<AccountView> {
+  late TransactionProvider transactionProvider;
+
   static const routeName = '/account';
   var calcResult = _TransactionCalcResult();
 
   void handleTransactionData(List<Transaction> transactions) {
     setState(() {
       calcResult = transactions.fold(_TransactionCalcResult(),
-          (_TransactionCalcResult previousValue, element) {
-        previousValue.totalAsset += element.amount;
-        previousValue.accountCount[element.account] =
-            (previousValue.accountCount[element.account] ?? 0) + element.amount;
-        return previousValue;
-      });
+              (_TransactionCalcResult previousValue, element) {
+            previousValue.totalAsset += element.amount;
+            previousValue.accountCount[element.account] =
+                (previousValue.accountCount[element.account] ?? 0) +
+                    element.amount;
+            return previousValue;
+          });
     });
   }
 
   void handleLoadData() {
-    TransactionProvider.getTransactions()
+    transactionProvider.getTransactions()
         .then((transactions) => handleTransactionData(transactions));
   }
 
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    transactionProvider = Provider.of<TransactionProvider>(context);
 
     handleLoadData();
   }
@@ -122,7 +125,7 @@ class _AccountViewState extends State<AccountView> {
           children: [
             Container(
                 padding:
-                    const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+                const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

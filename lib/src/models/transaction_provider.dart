@@ -3,8 +3,26 @@ import 'package:flutter/foundation.dart';
 import 'transaction.dart';
 import '../helpers/db_helper.dart';
 
-class TransactionProvider {
-  static Future<List<Transaction>> getTransactions({
+abstract class TransactionProvider {
+  Future<List<Transaction>> getTransactions({
+    List<int>? accounts,
+    List<int>? categories,
+    DateTime? startDate,
+    DateTime? endDate,
+    int? offset,
+    int? limit,
+  });
+
+  Future<int> addTransaction(Transaction transaction);
+
+  Future<void> deleteTransaction(int transactionId);
+
+  Future<void> updateTransaction(int transactionId, Transaction newTransaction);
+}
+
+class DBTransactionProvider implements TransactionProvider {
+  @override
+  Future<List<Transaction>> getTransactions({
     List<int>? accounts,
     List<int>? categories,
     DateTime? startDate,
@@ -102,7 +120,8 @@ class TransactionProvider {
   }
 
   // When insert into database, id will be ignore and replaced, use getAccounts to get new list with new id
-  static Future<int> addTransaction(Transaction transaction) async {
+  @override
+  Future<int> addTransaction(Transaction transaction) async {
     var db = await DBHelper.opendb();
 
     var transactionMap = transaction.toMap();
@@ -115,14 +134,16 @@ class TransactionProvider {
     return recordid;
   }
 
-  static Future<void> deleteTransaction(int transactionId) async {
+  @override
+  Future<void> deleteTransaction(int transactionId) async {
     var db = await DBHelper.opendb();
 
     await db
         .delete('transactions', where: 'id = ?', whereArgs: [transactionId]);
   }
 
-  static Future<void> updateTransaction(
+  @override
+  Future<void> updateTransaction(
       int transactionId, Transaction newTransaction) async {
     var db = await DBHelper.opendb();
 

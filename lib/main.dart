@@ -39,11 +39,11 @@ void main() async {
       Provider<AccountProvider>.value(value: accountProvider),
       Provider<CategoryProvider>.value(value: categoryProvider),
       Provider<TransactionProvider>(
-        create: (_) => TransactionProvider(),
+        create: (_) => DBTransactionProvider(),
         lazy: false,
       ),
       Provider<TransferProvider>(
-        create: (_) => TransferProvider(),
+        create: (_) => DBTransferProvider(),
         lazy: false,
       ),
     ],

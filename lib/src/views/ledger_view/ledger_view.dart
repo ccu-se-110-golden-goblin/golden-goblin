@@ -53,6 +53,8 @@ class _LedgerViewState extends State<LedgerView> {
 
   @override
   Widget build(BuildContext context) {
+    TransactionProvider transactionProvider = Provider.of<TransactionProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Golden Goblin"),
