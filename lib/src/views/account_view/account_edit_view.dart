@@ -1,35 +1,90 @@
 import 'package:flutter/material.dart';
+import 'package:golden_goblin/src/color.dart';
+import 'package:golden_goblin/src/icon_set.dart';
+import 'package:golden_goblin/src/models/account.dart';
+import 'package:golden_goblin/src/models/account_provider.dart';
+import 'package:golden_goblin/src/themes.dart';
 
-import '../../themes.dart';
-class AccountEditView extends StatefulWidget {
-  const AccountEditView({Key? key}) : super(key: key);
+class AccountEditArguments {
+  AccountEditArguments({
+    this.account,
+  });
 
-  static const routeName = '/account_edit_view';
-  static List<IconData> icons = [
-    Icons.equalizer_rounded,
-    Icons.wifi_lock,
-    Icons.mail,
-  ];
-  static List<Color> colors = [
-    Colors.amberAccent,
-    Colors.blueAccent,
-    Colors.teal,
-  ];
-  static List<String> colorString = [
-    "黃色","藍色","綠色"
-  ];
-  static List<String> accounts = ["錢包", "悠遊卡", "銀行"];
-  static IconData icon = Icons.account_balance_wallet;
-  static Color color = Colors.grey;
-  static var accountName = "";
-
-  @override
-  State<AccountEditView> createState() => _AccountEditViewState();
+  final Account? account;
 }
 
-class _AccountEditViewState extends State<AccountEditView> {
+class AccountEditView extends StatefulWidget {
+  const AccountEditView({Key? key, required this.args}) : super(key: key);
+
+  static const routeName = '/account_edit';
+
+  final AccountEditArguments args;
+  static List<IconColor> colors = IconColors.allColors;
+
+  @override
+  State<AccountEditView> createState() => _AccountEditState(args: args);
+}
+
+class _AccountEditState extends State<AccountEditView> {
+  _AccountEditState({required this.args});
+
+  final AccountEditArguments args;
+
+  String name = "";
+  IconData icon = MyIcons.icons[0].icon;
+  Color color = IconColors.allColors[0].color;
+
+  @override
+  void initState() {
+    super.initState();
+    var account = args.account;
+    if (account != null) {
+      setState(() {
+        name = account.name;
+        icon = account.icon;
+        color = account.iconColor;
+      });
+    }
+  }
+
+  void handleDelete() {
+    var account = args.account;
+    if (account != null) {
+      AccountProvider()
+          .deleteAccount(account.id)
+          .then((value) => Navigator.pop(context));
+    }
+  }
+
+  void handleSave() {
+    var account = args.account;
+    if (account != null) {
+      AccountProvider()
+          .updateAccount(account.id,
+              Account(id: account.id, name: name, icon: icon, iconColor: color))
+          .then((value) => Navigator.pop(context));
+    } else {
+      AccountProvider()
+          .addAccount(Account(id: 0, name: name, icon: icon, iconColor: color))
+          .then((value) => Navigator.pop(context));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    var icons = MyIcons.icons;
+    var colors = IconColors.allColors;
+
+    if (icons.where((element) => element.icon == icon).isEmpty) {
+      icons = List.from(icons);
+      icons.add(MyIcon(icon: icon, name: "unknown"));
+    }
+
+    if (colors.where((element) => element.color == color).isEmpty) {
+      colors = List.from(colors);
+      colors.add(IconColor(color: color, name: "unknown"));
+    }
+
     return Scaffold(
         appBar: AppBar(
           title: const Text("編輯帳本"),
@@ -55,96 +110,94 @@ class _AccountEditViewState extends State<AccountEditView> {
                 child: Column(
                   children: [
                     TextFormField(
-                      initialValue: AccountEditView.accountName,
+                      initialValue: name,
                       decoration: InputDecoration(
-                        icon: Icon(AccountEditView.icon, color: AccountEditView.color),
+                        icon: Icon(icon, color: color),
                         labelText: "帳本名稱",
                       ),
+                      onChanged: (v) {
+                        setState(() {
+                          name = v;
+                        });
+                      },
                     ),
-                    DropdownButtonFormField<int>(
-                      value: 0,
+                    DropdownButtonFormField<IconData>(
+                      value: icon,
                       decoration: const InputDecoration(
                         labelText: "帳本圖示",
                         border: OutlineInputBorder(),
                       ),
-                        onChanged: (int? v) {
-                          setState((){
-                            AccountEditView.icon =  AccountEditView.icons[v!];
+                      onChanged: (IconData? v) {
+                        if (v != null) {
+                          setState(() {
+                            icon = v;
                           });
-
-                        },
-                        items: [for (var i = 0; i < AccountEditView.icons.length; i++) i].map((int val) {
-                          return DropdownMenuItem<int>(
-                            value: val,
-                            child: Row(
-                              children: [
-                                Icon(AccountEditView.icons[val]),
-                                const SizedBox(width: 30),
-                                Text(AccountEditView.accounts[val]),
-                              ],
-                            ),
-                          );
-                        }).toList()
+                        }
+                      },
+                      items: icons
+                          .map((e) => DropdownMenuItem(
+                                value: e.icon,
+                                child: Row(
+                                  children: [
+                                    Icon(e.icon),
+                                    const SizedBox(width: 30),
+                                    Text(e.name),
+                                  ],
+                                ),
+                              ))
+                          .toList(),
                     ),
-                    DropdownButtonFormField<int>(
-                      value: 0,
+                    DropdownButtonFormField<Color>(
+                      value: color,
                       decoration: const InputDecoration(
                         labelText: "圖示顏色",
                         border: OutlineInputBorder(),
                       ),
-                      onChanged: (int? v) {
-                        setState((){
-                          AccountEditView.color =  AccountEditView.colors[v!];
-                        });
-
+                      onChanged: (Color? v) {
+                        if (v != null) {
+                          setState(() {
+                            color = v;
+                          });
+                        }
                       },
-                      items: [for (var i = 0; i < AccountEditView.colorString.length; i++) i].map((int val) {
-                        return DropdownMenuItem<int>(
-                          value: val,
-                          child: Text(AccountEditView.colorString[val]),
-                        );
-                      }).toList(),
-
+                      items: colors
+                          .map(
+                            (e) => DropdownMenuItem(
+                              value: e.color,
+                              child: Text(e.name),
+                            ),
+                          )
+                          .toList(),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         TextButton(
-                          onPressed: () {},
-                          child: const Text("刪除",
-                              style: TextStyle(color: Color(0xFFFF0000))),
-                          style: ButtonStyle(
-                            shape: MaterialStateProperty.resolveWith(
-                                    (states) => const StadiumBorder()),
-                          ),
+                          onPressed:
+                              (args.account != null) ? handleDelete : null,
+                          child: const Text("刪除"),
+                          style: GoldenGoblinThemes.dangerButtonLightStyle
                         ),
                         Padding(
                           padding: const EdgeInsets.only(left: 10),
                           child: TextButton(
-                            onPressed: () {},
-                            child: const Text("完成",
-                                style: TextStyle(color: Color(0xFFFFFFFF))),
-                            style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.resolveWith(
-                                      (states) =>
-                                  GoldenGoblinThemes.light.primaryColor),
-                              shape: MaterialStateProperty.resolveWith(
-                                      (states) => const StadiumBorder()),
-                            ),
+                            onPressed: handleSave,
+                            child: const Text("完成")
                           ),
                         ),
                       ],
                     ),
-                  ].map((e) => Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 15),
-                    child: e,
-                  )).toList(),
+                  ]
+                      .map((e) => Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 15),
+                            child: e,
+                          ))
+                      .toList(),
                 ),
               ),
             ],
           ),
-        )
-    );
+        ));
   }
 }
 

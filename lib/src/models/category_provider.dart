@@ -1,9 +1,11 @@
+import 'package:flutter/material.dart';
+
 import 'category.dart';
 
 import '../helpers/db_helper.dart';
 
 class CategoryProvider {
-  List<Category> _categories = [];
+  static List<Category> _categories = [];
 
   Future<void> loadCategories() async {
     var db = await DBHelper.opendb();
@@ -15,6 +17,9 @@ class CategoryProvider {
               id: mapobj['id'],
               name: mapobj['name'],
               type: Type.values[mapobj['type']],
+              iconData:
+                  IconData(mapobj['iconData'], fontFamily: 'MaterialIcons'),
+              iconColor: Color(mapobj['iconColor']),
             ))
         .toList();
   }
@@ -35,6 +40,8 @@ class CategoryProvider {
 
     categoryMap.remove('id');
     categoryMap['type'] = (categoryMap['type'] as Type).index;
+    categoryMap['iconData'] = (categoryMap['iconData'] as IconData).codePoint;
+    categoryMap['iconColor'] = (categoryMap['iconColor'] as Color).value;
 
     var recordid = await db.insert('categories', categoryMap);
 
@@ -58,6 +65,8 @@ class CategoryProvider {
 
     categoryMap.remove('id');
     categoryMap['type'] = (categoryMap['type'] as Type).index;
+    categoryMap['iconData'] = (categoryMap['iconData'] as IconData).codePoint;
+    categoryMap['iconColor'] = (categoryMap['iconColor'] as Color).value;
 
     await db.update('categories', categoryMap,
         where: 'id = ?', whereArgs: [categoryId]);

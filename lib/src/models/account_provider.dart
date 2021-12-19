@@ -16,7 +16,7 @@ class AccountProvider {
         .map((mapobj) => Account(
               id: mapobj['id'],
               name: mapobj['name'],
-              icon: IconData(mapobj['icon']),
+              icon: IconData(mapobj['icon'], fontFamily: 'MaterialIcons'),
               iconColor: Color(mapobj['iconColor']),
             ))
         .toList();
