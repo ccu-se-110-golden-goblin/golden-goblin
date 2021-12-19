@@ -78,9 +78,9 @@ class LedgerViewModel {
 
     // init category
     CategoryProvider categoryProvider = CategoryProvider();
-    AccountProvider accountPorvider = AccountProvider();
+    AccountProvider accountProvider = AccountProvider();
     await categoryProvider.loadCategories();
-    await accountPorvider.loadAccounts();
+    await accountProvider.loadAccounts();
 
     // Prepare ItemTitleData
     Map<DateTime, List<ItemTitleData>> itemLists = {};
@@ -88,7 +88,7 @@ class LedgerViewModel {
 
     // setup transactionData
     for (var transactionData in transaction) {
-      Account account = accountPorvider.getAccount(transactionData.account);
+      Account account = accountProvider.getAccount(transactionData.account);
       String title =
           categoryProvider.getCategory(transactionData.category).name;
       Type type = categoryProvider.getCategory(transactionData.category).type;
@@ -107,8 +107,8 @@ class LedgerViewModel {
 
     // setup transferData
     for (var transferData in transfer) {
-      Account srcAccount = accountPorvider.getAccount(transferData.src);
-      Account dstAccount = accountPorvider.getAccount(transferData.dst);
+      Account srcAccount = accountProvider.getAccount(transferData.src);
+      Account dstAccount = accountProvider.getAccount(transferData.dst);
       ItemTitleData itemTile = ItemTitleData(
           icon: _iconList[0],
           title: srcAccount.name,
@@ -131,14 +131,14 @@ class LedgerViewModel {
       if (dailyItemLists == null) continue;
       if (dailyItemLists.isNotEmpty) {
         dailyLists.add(
-            DailyListData(imputdate: i, inputItemTitleList: dailyItemLists));
-        //caculate daily incoming and outgoing
-        for (var x in dailyLists[dailyCounter].itemTilteList) {
+            DailyListData(inputDate: i, inputItemTitleList: dailyItemLists));
+        // calculate daily incoming and outgoing
+        for (var x in dailyLists[dailyCounter].itemTitleList) {
           if (x.type == null) {
             continue;
           }
           if (x.type == Type.income) {
-            dailyLists[dailyCounter].totalIcoming += x.amount;
+            dailyLists[dailyCounter].totalIncoming += x.amount;
           }
           if (x.type == Type.expenses) {
             dailyLists[dailyCounter].totalExpense += x.amount;
@@ -216,16 +216,16 @@ class ItemTitleData {
 // connect with itemTitleData in view(include ItemTitleData in a day)
 class DailyListData {
   DateTime date;
-  int totalIcoming;
+  int totalIncoming;
   int totalExpense;
 
-  List<ItemTitleData> itemTilteList;
+  List<ItemTitleData> itemTitleList;
 
   DailyListData(
-      {required DateTime imputdate,
+      {required DateTime inputDate,
       required List<ItemTitleData> inputItemTitleList})
-      : date = imputdate,
-        itemTilteList = inputItemTitleList,
-        totalIcoming = 0,
+      : date = inputDate,
+        itemTitleList = inputItemTitleList,
+        totalIncoming = 0,
         totalExpense = 0;
 }

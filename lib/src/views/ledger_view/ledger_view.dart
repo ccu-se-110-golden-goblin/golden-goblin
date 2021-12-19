@@ -36,13 +36,13 @@ class _LedgerViewState extends State<LedgerView> {
     });
   }
 
-  List<Widget> getDailyListWidgit(List<DailyListData> dailyLists) {
+  List<Widget> getDailyListWidget(List<DailyListData> dailyLists) {
     List<Widget> list = [];
     for (var i = 0; i < dailyLists.length; i++) {
       list.add(_DailyList(
           date: dailyLists[i].date,
-          itemIitles: dailyLists[i].itemTilteList,
-          dailyIncoming: dailyLists[i].totalIcoming,
+          itemTitles: dailyLists[i].itemTitleList,
+          dailyIncoming: dailyLists[i].totalIncoming,
           dailyExpense: dailyLists[i].totalExpense));
     }
     if (list.isEmpty == true) {
@@ -107,11 +107,11 @@ class _LedgerViewState extends State<LedgerView> {
                           itemBuilder: (context, index) {
                             return _DailyList(
                                 date: snapshot.data![index].date,
-                                itemIitles: snapshot.data![index].itemTilteList,
+                                itemTitles: snapshot.data![index].itemTitleList,
                                 dailyExpense:
                                     snapshot.data![index].totalExpense,
                                 dailyIncoming:
-                                    snapshot.data![index].totalIcoming);
+                                    snapshot.data![index].totalIncoming);
                           });
                     } else {
                       return const Text("No Date!");
@@ -228,13 +228,13 @@ class _DailyList extends StatelessWidget {
   const _DailyList(
       {Key? key,
       required this.date,
-      required this.itemIitles,
+      required this.itemTitles,
       required this.dailyIncoming,
       required this.dailyExpense})
       : super(key: key);
 
   final DateTime date;
-  final List<ItemTitleData> itemIitles;
+  final List<ItemTitleData> itemTitles;
   final int dailyIncoming;
   final int dailyExpense;
 
@@ -254,12 +254,12 @@ class _DailyList extends StatelessWidget {
     List<Widget> list = [];
     for (var i = 0; i < dailyLists.length; i++) {
       list.add(_ItemTile(
-          icon: itemIitles[i].icon,
-          title: itemIitles[i].title,
-          amount: itemIitles[i].amount,
-          color: itemIitles[i].color,
-          title2: itemIitles[i].title2,
-          remark: itemIitles[i].remark));
+          icon: itemTitles[i].icon,
+          title: itemTitles[i].title,
+          amount: itemTitles[i].amount,
+          color: itemTitles[i].color,
+          title2: itemTitles[i].title2,
+          remark: itemTitles[i].remark));
     }
     if (list.isEmpty == true) {
       list.add(const Text("No Data Found!"));
@@ -269,7 +269,7 @@ class _DailyList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> itemIitlesWidget = getItemLists(itemIitles);
+    List<Widget> itemTitlesWidget = getItemLists(itemTitles);
     return Padding(
       padding:
           const EdgeInsets.only(left: 0.0, top: 12.0, right: 20.0, bottom: 20),
@@ -387,7 +387,7 @@ class _DailyList extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.only(left: 77),
-            child: Column(children: itemIitlesWidget),
+            child: Column(children: itemTitlesWidget),
           ),
         ],
       ),
