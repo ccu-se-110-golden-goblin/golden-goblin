@@ -60,9 +60,22 @@ class _LedgerEditViewState extends State<LedgerEditView>
         accountList = accountProvider.getAccounts;
         categoryList = categoryProvider.getCategories;
 
-        account = accountList.first;
-        category =
-            categoryList.where((element) => element.type == cateType).first;
+        if (args.transaction != null) {
+          account = accountList
+              .where((element) => element.id == args.transaction!.account)
+              .first;
+          category = categoryList
+              .where((element) => element.id == args.transaction!.category)
+              .first;
+
+          date = args.transaction!.date;
+          cateType = category!.type;
+          commentController.text = args.transaction!.remark ?? "";
+        } else {
+          account = accountList.first;
+          category =
+              categoryList.where((element) => element.type == cateType).first;
+        }
       });
     });
   }
@@ -386,6 +399,16 @@ class DatePicker extends StatelessWidget {
             initialDate: initialDate,
             firstDate: DateTime(DateTime.now().year - 5),
             lastDate: DateTime(DateTime.now().year + 1),
+            builder: (context, child) {
+              return Theme(
+                data: Theme.of(context).copyWith(
+                  textButtonTheme: TextButtonThemeData(
+                    style: TextButton.styleFrom(),
+                  ),
+                ),
+                child: child!,
+              );
+            },
           ).then((value) => onUpdate(value));
         },
         child: Container(
