@@ -31,19 +31,19 @@ class _LedgerEditViewState extends State<LedgerEditView>
   var dollarController = TextEditingController();
   final commentController = TextEditingController();
 
-  var category = 0;
   static DateTime date = DateTime.now();
   static var account = 0;
 
   List<Category> categories = [];
   Type cateType = Type.expenses;
   var cateTypeName = "支出";
-  var selectedCate = -1;
+  static var selectedCate = -1;
 
   void handleLoadData() {
     CategoryProvider().loadCategories().then((value) {
       setState(() {
         categories = CategoryProvider().getCategories;
+        selectedCate = categories[0].id;
       });
     });
   }
@@ -60,7 +60,7 @@ class _LedgerEditViewState extends State<LedgerEditView>
               id: 0,
               amount: int.parse(dollarController.text),
               account: account,
-              category: category,
+              category: selectedCate,
               date: date,
               remark: commentController.text))
           .then((value) => Navigator.pop(context));
@@ -81,7 +81,7 @@ class _LedgerEditViewState extends State<LedgerEditView>
                   id: args,
                   amount: int.parse(dollarController.text),
                   account: account,
-                  category: category,
+                  category: selectedCate,
                   date: date,
                   remark: commentController.text))
           .then((value) => Navigator.pop(context));
@@ -250,20 +250,13 @@ class _LedgerEditViewState extends State<LedgerEditView>
                                         selectedCate = filterCateItem.id;
                                       });
                                     },
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(vertical: 2.5, horizontal: 5),
-                                      child: Container(
-                                        decoration: (ind == selectedCate) ? const BoxDecoration(
-                                            color: Color(0x6BD3CFBC),
-                                            borderRadius: BorderRadius.all(Radius.circular(10))) : null,
-                                        child: CategoryItem(
+                                    child:
+                                        CategoryItem(
                                           id: filterCateItem.id,
                                           name: filterCateItem.name,
                                           iconData: filterCateItem.iconData,
                                           iconColor: filterCateItem.iconColor,
                                         ),
-                                      ),
-                                    ),
                                   );
                                 }
 
@@ -510,18 +503,26 @@ class _CategoryItemState extends State<CategoryItem> {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      child:
-         Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            CategoryIcon(
-              iconData: widget.iconData,
-              color: widget.iconColor,
+    return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 2.5, horizontal: 5),
+        child: Container(
+          decoration: (widget.id == _LedgerEditViewState.selectedCate) ? const BoxDecoration(
+            color: Color(0x6BD3CFBC),
+            borderRadius: BorderRadius.all(Radius.circular(10))) : null,
+        child: InkWell(
+          child:
+             Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                CategoryIcon(
+                  iconData: widget.iconData,
+                  color: widget.iconColor,
+                ),
+                Text(widget.name),
+              ],
             ),
-            Text(widget.name),
-          ],
-        ),
+      )
+    )
     );
   }
 }
