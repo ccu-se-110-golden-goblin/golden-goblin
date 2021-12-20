@@ -35,10 +35,10 @@ class _LedgerEditViewState extends State<LedgerEditView>
   static DateTime date = DateTime.now();
   static var account = 0;
 
-  static var categories = [];
+  var categories = [];
   Type cateType = Type.expenses;
   var cateTypeName = "支出";
-  static var selectedCate = -1;
+  var selectedCate = -1;
 
   void handleLoadData() {
     CategoryProvider().loadCategories().then((value) {

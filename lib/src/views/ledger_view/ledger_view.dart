@@ -43,7 +43,7 @@ class LedgerView extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         child: const Icon(Icons.add),
         onPressed: () {
-          Navigator.pushNamed(context, LedgerEditView.routeName, arguments: -1);
+          Navigator.pushNamed(context, LedgerEditView.routeName, arguments: 4);
         },
       ),
       body: Column(
