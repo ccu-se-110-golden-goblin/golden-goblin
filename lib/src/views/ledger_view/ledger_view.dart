@@ -84,7 +84,8 @@ class _LedgerViewState extends State<LedgerView> {
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () {
-          Navigator.pushNamed(context, LedgerEditView.routeName, arguments: 4);
+          Navigator.pushNamed(context, LedgerEditView.routeName,
+              arguments: LedgerEditViewArgs());
         },
       ),
       body: Column(
