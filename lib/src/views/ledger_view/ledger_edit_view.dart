@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' hide Category;
 import 'package:flutter/material.dart';
 import 'package:golden_goblin/src/models/account.dart';
 import 'package:golden_goblin/src/models/account_provider.dart';
@@ -6,7 +6,7 @@ import 'package:golden_goblin/src/models/category_provider.dart';
 import 'package:golden_goblin/src/models/category.dart';
 import 'package:golden_goblin/src/models/transaction.dart';
 import 'package:golden_goblin/src/models/transaction_provider.dart';
-import 'package:golden_goblin/src/views/category_view/category_view.dart';
+
 import 'package:golden_goblin/src/views/ledger_view/ledger_transfer.dart';
 import 'package:intl/intl.dart';
 
@@ -35,7 +35,7 @@ class _LedgerEditViewState extends State<LedgerEditView>
   static DateTime date = DateTime.now();
   static var account = 0;
 
-  var categories = [];
+  List<Category> categories = [];
   Type cateType = Type.expenses;
   var cateTypeName = "支出";
   var selectedCate = -1;
@@ -243,11 +243,11 @@ class _LedgerEditViewState extends State<LedgerEditView>
                                 childAspectRatio: 0.7,),
 
                             itemBuilder: (BuildContext context, int ind){
-                                  var filterCateItem = categories.where((value) => value.type == cateType).elementAt(ind);
+                                  Category filterCateItem = categories.where((value) => value.type == cateType).elementAt(ind);
                                   return GestureDetector(
                                     onTap: (){
                                       setState(() {
-                                        selectedCate = ind;
+                                        selectedCate = filterCateItem.id;
                                       });
                                     },
                                     child: Padding(
@@ -257,7 +257,7 @@ class _LedgerEditViewState extends State<LedgerEditView>
                                             color: Color(0x6BD3CFBC),
                                             borderRadius: BorderRadius.all(Radius.circular(10))) : null,
                                         child: CategoryItem(
-                                          id: ind,
+                                          id: filterCateItem.id,
                                           name: filterCateItem.name,
                                           iconData: filterCateItem.iconData,
                                           iconColor: filterCateItem.iconColor,
