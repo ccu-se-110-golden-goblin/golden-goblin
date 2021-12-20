@@ -76,7 +76,7 @@ class MyApp extends StatelessWidget {
                   case LedgerView.routeName:
                     return LedgerView();
                   case LedgerEditView.routeName:
-                    return LedgerEditView();
+                    return LedgerEditView(argsId: routeSettings.arguments! as int,);
                   case LedgerTransferView.routeName:
                     return LedgerTransferView();
                   case AccountView.routeName:

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:golden_goblin/src/models/transfer_provider.dart';
 import 'package:golden_goblin/src/views/ledger_view/ledger_edit_view.dart';
 import 'package:golden_goblin/src/views/ledger_view/ledger_view.dart';
 import 'package:intl/intl.dart';
+
+import '../../themes.dart';
 
 class LedgerTransferView extends StatefulWidget {
   const LedgerTransferView({Key? key}) : super(key: key);
@@ -23,9 +26,18 @@ class LedgerTransferView extends StatefulWidget {
 
 class _LedgerTransferViewState extends State<LedgerTransferView> {
   var dollar = "";
-
   var comment = "";
-
+  void handleSave() {
+  //   if (args == -1) {
+  //     TransferProvider
+  //         .addTransaction(Transaction(id: 0,
+  //         amount: dollar,  account: account, category: category, date: date, remark: commentController.text));
+  //   } else {
+  //     TransferProvider
+  //         .updateTransaction(args, Transaction(id: args,
+  //         amount: dollar,  account: account, category: category, date: date, remark: commentController.text));
+  //   }
+  }
   @override
   Widget build(BuildContext context) {
     print(ModalRoute.of(context)?.settings.name);
@@ -51,7 +63,7 @@ class _LedgerTransferViewState extends State<LedgerTransferView> {
                       constraints: const BoxConstraints(),
                       onPressed: () {
                     Navigator.pop(context);
-                    Navigator.pushNamed(context, LedgerEditView.routeName);
+                    Navigator.pushNamed(context, LedgerEditView.routeName, arguments: -1);
                   }),
                   const Text("交易" ,style: TextStyle(fontSize: 8)),
             ]),
@@ -137,20 +149,26 @@ class _LedgerTransferViewState extends State<LedgerTransferView> {
                   )
               ),
 
-              ElevatedButton(
-                  onPressed: (){
-                    Navigator.pop(context);
-                  },
-                  child: const Text("完成"),
-                  style: ButtonStyle(
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12.0),
-                              side: const BorderSide(color: Color(0x00ffd344))
-                          )
-                      )
-                  )
-              )
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: ElevatedButton(
+                      onPressed: handleSave,
+                      child: const Text("完成",
+                          style: TextStyle(color: Color(0xFFFFFFFF))),
+                      style: ButtonStyle(
+                        backgroundColor:
+                        MaterialStateProperty.resolveWith((states) =>
+                        GoldenGoblinThemes.light.primaryColor),
+                        shape: MaterialStateProperty.resolveWith(
+                                (states) => const StadiumBorder()),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ]
           ),
         )
