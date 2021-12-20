@@ -19,7 +19,7 @@ class AccountEditView extends StatefulWidget {
   static const routeName = '/account_edit';
 
   final AccountEditArguments args;
-  static List<IconColor> colors = IconColors.allColors;
+  static List<MyColor> colors = IconColors.allColors;
 
   @override
   State<AccountEditView> createState() => _AccountEditState(args: args);
@@ -82,7 +82,7 @@ class _AccountEditState extends State<AccountEditView> {
 
     if (colors.where((element) => element.color == color).isEmpty) {
       colors = List.from(colors);
-      colors.add(IconColor(color: color, name: "unknown"));
+      colors.add(MyColor(color: color, name: "unknown"));
     }
 
     return Scaffold(
@@ -169,29 +169,14 @@ class _AccountEditState extends State<AccountEditView> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         TextButton(
-                          onPressed:
-                              (args.account != null) ? handleDelete : null,
-                          child: const Text("刪除",
-                              style: TextStyle(color: Color(0xFFFF0000))),
-                          style: ButtonStyle(
-                            shape: MaterialStateProperty.resolveWith(
-                                (states) => const StadiumBorder()),
-                          ),
-                        ),
+                            onPressed:
+                                (args.account != null) ? handleDelete : null,
+                            child: const Text("刪除"),
+                            style: GoldenGoblinThemes.dangerButtonLightStyle),
                         Padding(
                           padding: const EdgeInsets.only(left: 10),
                           child: TextButton(
-                            onPressed: handleSave,
-                            child: const Text("完成",
-                                style: TextStyle(color: Color(0xFFFFFFFF))),
-                            style: ButtonStyle(
-                              backgroundColor:
-                                  MaterialStateProperty.resolveWith((states) =>
-                                      GoldenGoblinThemes.light.primaryColor),
-                              shape: MaterialStateProperty.resolveWith(
-                                  (states) => const StadiumBorder()),
-                            ),
-                          ),
+                              onPressed: handleSave, child: const Text("完成")),
                         ),
                       ],
                     ),

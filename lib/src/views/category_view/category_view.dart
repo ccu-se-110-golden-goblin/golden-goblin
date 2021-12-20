@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:golden_goblin/src/models/category.dart';
 import 'package:golden_goblin/src/models/category_provider.dart';
-import 'package:golden_goblin/src/themes.dart';
 import 'package:golden_goblin/src/views/category_view/category_edit_view.dart';
 import 'package:golden_goblin/src/views/common/sidebar.dart';
 
@@ -121,9 +120,6 @@ class _CategoryViewState extends State<CategoryView>
       ),
       drawer: const Sidebar(currentRouteName: routeName),
       floatingActionButton: FloatingActionButton(
-        foregroundColor: const Color(0xFFFFD344),
-        backgroundColor: const Color(0xFF000000),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         child: const Icon(Icons.add),
         onPressed: () {
           Navigator.pushNamed(
@@ -141,9 +137,6 @@ class _CategoryViewState extends State<CategoryView>
         children: [
           TabBar(
             controller: _tabController,
-            indicatorColor: GoldenGoblinThemes.light.primaryColor,
-            labelColor: GoldenGoblinThemes.light.primaryColor,
-            unselectedLabelColor: const Color(0x99000000),
             tabs: Type.values.map((e) {
               if (e == Type.income) {
                 return const Tab(text: '收入');
