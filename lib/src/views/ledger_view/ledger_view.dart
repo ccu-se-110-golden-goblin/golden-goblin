@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
-import 'package:provider/provider.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
 import '../../view_models/ledger_view_model.dart';
@@ -26,6 +24,13 @@ class _LedgerViewState extends State<LedgerView> {
     super.initState();
     DateTime now = DateTime.now();
     viewModelProvider.setDate(DateTime(now.year, now.month));
+  }
+
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    viewModelProvider.initProviders(context);
   }
 
   void setMonth(DateTime month) {
@@ -79,7 +84,8 @@ class _LedgerViewState extends State<LedgerView> {
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () {
-          Navigator.pushNamed(context, LedgerEditView.routeName, arguments: 4);
+          Navigator.pushNamed(context, LedgerEditView.routeName,
+              arguments: LedgerEditViewArgs());
         },
       ),
       body: Column(
@@ -109,7 +115,7 @@ class _LedgerViewState extends State<LedgerView> {
                     );
                   }
 
-                  if (snapshot.hasData && snapshot.data != null) {
+                  if (snapshot.hasData && snapshot.data!.isNotEmpty) {
                     return ListView.builder(
                         itemCount: snapshot.data!.length,
                         itemBuilder: (context, index) {

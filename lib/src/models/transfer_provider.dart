@@ -3,8 +3,26 @@ import 'package:flutter/foundation.dart';
 import 'transfer.dart';
 import '../helpers/db_helper.dart';
 
-class TransferProvider {
-  static Future<List<Transfer>> getTransfers({
+abstract class TransferProvider {
+  Future<List<Transfer>> getTransfers({
+    List<int>? srcAccounts,
+    List<int>? dstAccounts,
+    DateTime? startDate,
+    DateTime? endDate,
+    int? offset,
+    int? limit,
+  });
+
+  Future<int> addTransfer(Transfer transfer);
+
+  Future<void> deleteTransfer(int transferId);
+
+  Future<void> updateTransfer(int transferId, Transfer newTransfer);
+}
+
+class DBTransferProvider implements TransferProvider {
+  @override
+  Future<List<Transfer>> getTransfers({
     List<int>? srcAccounts,
     List<int>? dstAccounts,
     DateTime? startDate,
@@ -101,7 +119,8 @@ class TransferProvider {
   }
 
   // When insert into database, id will be ignore and replaced, use getAccounts to get new list with new id
-  static Future<int> addTransfer(Transfer transfer) async {
+  @override
+  Future<int> addTransfer(Transfer transfer) async {
     var db = await DBHelper.opendb();
 
     var transferMap = transfer.toMap();
@@ -114,14 +133,15 @@ class TransferProvider {
     return recordid;
   }
 
-  static Future<void> deleteTransfer(int transferId) async {
+  @override
+  Future<void> deleteTransfer(int transferId) async {
     var db = await DBHelper.opendb();
 
     await db.delete('transfers', where: 'id = ?', whereArgs: [transferId]);
   }
 
-  static Future<void> updateTransfer(
-      int transferId, Transfer newTransfer) async {
+  @override
+  Future<void> updateTransfer(int transferId, Transfer newTransfer) async {
     var db = await DBHelper.opendb();
 
     var transferMap = newTransfer.toMap();

@@ -3,6 +3,7 @@ import 'package:golden_goblin/src/models/category.dart';
 import 'package:golden_goblin/src/models/category_provider.dart';
 import 'package:golden_goblin/src/views/category_view/category_edit_view.dart';
 import 'package:golden_goblin/src/views/common/sidebar.dart';
+import 'package:provider/provider.dart';
 
 class CategoryIcon extends StatelessWidget {
   const CategoryIcon({Key? key, required this.iconData, required this.color})
@@ -77,24 +78,11 @@ class _CategoryViewState extends State<CategoryView>
     with SingleTickerProviderStateMixin {
   static const routeName = "/category";
 
-  List<Category> categories = [];
-
   late TabController _tabController;
-
-  void handleLoadData() {
-    CategoryProvider().loadCategories().then((value) {
-      setState(() {
-        categories = CategoryProvider().getCategories;
-      });
-    });
-  }
 
   @override
   void initState() {
     super.initState();
-
-    handleLoadData();
-
     _tabController = TabController(length: Type.values.length, vsync: this);
   }
 
@@ -106,6 +94,10 @@ class _CategoryViewState extends State<CategoryView>
 
   @override
   Widget build(BuildContext context) {
+    CategoryProvider categoryProvider = Provider.of<CategoryProvider>(context);
+
+    var categories = categoryProvider.getCategories;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("類別"),
@@ -128,9 +120,7 @@ class _CategoryViewState extends State<CategoryView>
             arguments: CategoryEditArguments(
               type: Type.values[_tabController.index],
             ),
-          ).then((value) {
-            handleLoadData();
-          });
+          );
         },
       ),
       body: Column(
@@ -171,9 +161,7 @@ class _CategoryViewState extends State<CategoryView>
                                       category: category,
                                       type: category.type,
                                     ),
-                                  ).then((value) {
-                                    handleLoadData();
-                                  });
+                                  );
                                 },
                               ),
                             )

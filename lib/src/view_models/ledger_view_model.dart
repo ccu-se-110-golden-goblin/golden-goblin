@@ -14,6 +14,7 @@ import 'package:golden_goblin/src/models/transfer_provider.dart';
 
 import 'package:golden_goblin/src/models/category.dart';
 import 'package:golden_goblin/src/models/transfer.dart';
+import 'package:provider/provider.dart';
 
 class LedgerViewModel {
   // CategoryProvider category;
@@ -23,9 +24,23 @@ class LedgerViewModel {
   DateTime _startOfMonth;
   DateTime _endOfMonth;
 
-  LedgerViewModel({required this.now})
-      : _startOfMonth = now,
+  // Providers
+  late final TransferProvider _transferProvider;
+  late final TransactionProvider _transactionProvider;
+  late final AccountProvider _accountProvider;
+  late final CategoryProvider _categoryProvider;
+
+  LedgerViewModel({
+    required this.now,
+  })  : _startOfMonth = now,
         _endOfMonth = now;
+
+  void initProviders(BuildContext context) {
+    _transferProvider = Provider.of<TransferProvider>(context);
+    _transactionProvider = Provider.of<TransactionProvider>(context);
+    _accountProvider = Provider.of<AccountProvider>(context);
+    _categoryProvider = Provider.of<CategoryProvider>(context);
+  }
 
   // color List
   static const List<Color> _colorList = [
@@ -67,16 +82,14 @@ class LedgerViewModel {
 
   // need to setDate before use
   Future<List<DailyListData>>? getDailyLists() async {
-    final transfer = await TransferProvider.getTransfers(
+    final transfer = await _transferProvider.getTransfers(
         startDate: _startOfMonth, endDate: _endOfMonth);
-    final transaction = await TransactionProvider.getTransactions(
+    final transaction = await _transactionProvider.getTransactions(
         startDate: _startOfMonth, endDate: _endOfMonth);
 
     // init category
-    CategoryProvider categoryProvider = CategoryProvider();
-    AccountProvider accountProvider = AccountProvider();
-    await categoryProvider.loadCategories();
-    await accountProvider.loadAccounts();
+    await _categoryProvider.loadCategories();
+    await _accountProvider.loadAccounts();
 
     // Prepare ItemTitleData
     Map<DateTime, List<ItemTitleData>> itemLists = {};
@@ -84,10 +97,10 @@ class LedgerViewModel {
 
     // setup transactionData
     for (var transactionData in transaction) {
-      Account account = accountProvider.getAccount(transactionData.account);
+      Account account = _accountProvider.getAccount(transactionData.account);
       String title =
-          categoryProvider.getCategory(transactionData.category).name;
-      Type type = categoryProvider.getCategory(transactionData.category).type;
+          _categoryProvider.getCategory(transactionData.category).name;
+      Type type = _categoryProvider.getCategory(transactionData.category).type;
       ItemTitleData itemTile = ItemTitleData(
           icon: _iconList[0],
           title: title,
@@ -103,8 +116,8 @@ class LedgerViewModel {
 
     // setup transferData
     for (var transferData in transfer) {
-      Account srcAccount = accountProvider.getAccount(transferData.src);
-      Account dstAccount = accountProvider.getAccount(transferData.dst);
+      Account srcAccount = _accountProvider.getAccount(transferData.src);
+      Account dstAccount = _accountProvider.getAccount(transferData.dst);
       ItemTitleData itemTile = ItemTitleData(
           icon: _iconList[0],
           title: srcAccount.name,
@@ -167,27 +180,32 @@ class LedgerViewModel {
     Category categoryB =
         Category(id: 2, name: "TestExpenses", type: Type.expenses);
 
-    AccountProvider accountProvider = AccountProvider();
-    CategoryProvider categoryProvider = CategoryProvider();
+    var accountAId = await _accountProvider.addAccount(accountA);
+    var accountBId = await _accountProvider.addAccount(accountB);
+    var categoryAId = await _categoryProvider.addCategory(categoryA);
+    var categoryBId = await _categoryProvider.addCategory(categoryB);
 
-    var accountAId = await accountProvider.addAccount(accountA);
-    var accountBId = await accountProvider.addAccount(accountB);
-    var categoryAId = await categoryProvider.addCategory(categoryA);
-    var categoryBId = await categoryProvider.addCategory(categoryB);
+    Transfer transferA = Transfer(
+        id: 0, src: accountAId, dst: accountBId, amount: 300, date: dayA);
+    Transfer transferB = Transfer(
+        id: 1, src: accountBId, dst: accountAId, amount: 500, date: dayB);
+    Transaction transactionA = Transaction(
+        id: 0,
+        amount: 1000,
+        account: accountAId,
+        category: categoryAId,
+        date: dayA);
+    Transaction transactionB = Transaction(
+        id: 1,
+        amount: 1500,
+        account: accountAId,
+        category: categoryBId,
+        date: dayB);
 
-    Transfer transferA =
-    Transfer(id: 0, src: accountAId, dst: accountBId, amount: 300, date: dayA);
-    Transfer transferB =
-    Transfer(id: 1, src: accountBId, dst: accountAId, amount: 500, date: dayB);
-    Transaction transactionA =
-    Transaction(id: 0, amount: 1000, account: accountAId, category: categoryAId, date: dayA);
-    Transaction transactionB =
-    Transaction(id: 1, amount: 1500, account: accountAId, category: categoryBId, date: dayB);
-
-    await TransferProvider.addTransfer(transferA);
-    await TransferProvider.addTransfer(transferB);
-    await TransactionProvider.addTransaction(transactionA);
-    await TransactionProvider.addTransaction(transactionB);
+    await _transferProvider.addTransfer(transferA);
+    await _transferProvider.addTransfer(transferB);
+    await _transactionProvider.addTransaction(transactionA);
+    await _transactionProvider.addTransaction(transactionB);
   }
 }
 
