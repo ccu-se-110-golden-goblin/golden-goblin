@@ -70,6 +70,7 @@ class _LedgerTransferViewState extends State<LedgerTransferView> {
 
           date = args.transfer!.date;
 
+          dollarController.text = "${args.transfer!.amount}";
           commentController.text = args.transfer!.remark ?? "";
         } else {
           accountSrc = accountList.first;

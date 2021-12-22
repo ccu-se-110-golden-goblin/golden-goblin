@@ -86,6 +86,7 @@ class _LedgerEditViewState extends State<LedgerEditView>
 
           date = args.transaction!.date;
           cateType = category!.type;
+          dollarController.text = "${args.transaction!.amount}";
           commentController.text = args.transaction!.remark ?? "";
         } else {
           account = accountList.first;
