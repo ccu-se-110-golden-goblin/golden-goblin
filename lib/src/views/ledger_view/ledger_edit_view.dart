@@ -8,7 +8,7 @@ import 'package:golden_goblin/src/models/transaction.dart';
 import 'package:golden_goblin/src/models/transaction_provider.dart';
 import 'package:golden_goblin/src/views/category_view/category_view.dart';
 
-import 'package:golden_goblin/src/views/ledger_view/ledger_transfer.dart';
+import 'package:golden_goblin/src/views/ledger_view/ledger_transfer_view.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -37,7 +37,7 @@ class _LedgerEditViewState extends State<LedgerEditView>
   LedgerEditViewArgs args;
 
   final _formKey = GlobalKey<FormState>();
-  var dollarController = TextEditingController();
+  final dollarController = TextEditingController();
   final commentController = TextEditingController();
 
   DateTime date = DateTime.now();
@@ -95,6 +95,7 @@ class _LedgerEditViewState extends State<LedgerEditView>
                     date: date,
                     remark: commentController.text))
             .then((value) => Navigator.pop(context));
+
       } else {
         transactionProvider
             .addTransaction(Transaction(
@@ -153,6 +154,7 @@ class _LedgerEditViewState extends State<LedgerEditView>
     super.dispose();
     // Clean up the controller when the widget is disposed.
     commentController.dispose();
+    dollarController.dispose();
   }
 
   @override
@@ -186,7 +188,7 @@ class _LedgerEditViewState extends State<LedgerEditView>
                           onPressed: () {
                             Navigator.pop(context);
                             Navigator.pushNamed(
-                                context, LedgerTransferView.routeName);
+                                context, LedgerTransferView.routeName, arguments: LedgerTransferViewArgs());
                           }),
                       const Text("轉帳", style: TextStyle(fontSize: 8)),
                     ]),
@@ -354,10 +356,8 @@ class _LedgerEditViewState extends State<LedgerEditView>
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  TextButton(
-                    onPressed: args.transaction == null
-                        ? null
-                        : () => handleDelete(transactionProvider),
+                  if(args.transaction != null)TextButton(
+                    onPressed: () => handleDelete(transactionProvider),
                     child: const Text("刪除"),
                     style: GoldenGoblinThemes.dangerButtonLightStyle,
                   ),
