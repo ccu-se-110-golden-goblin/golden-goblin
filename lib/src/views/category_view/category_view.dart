@@ -56,7 +56,8 @@ class CategoryItem extends StatelessWidget {
               iconData: iconData,
               color: iconColor,
             ),
-            Text(name),
+            Text(name,
+                textAlign: TextAlign.center, overflow: TextOverflow.ellipsis),
           ],
         ),
       ),
@@ -139,8 +140,8 @@ class _CategoryViewState extends State<CategoryView>
               controller: _tabController,
               children: Type.values
                   .map((type) => GridView(
-                        padding: const EdgeInsets.only(
-                            top: 10, left: 10, right: 10),
+                        padding:
+                            const EdgeInsets.only(top: 10, left: 10, right: 10),
                         gridDelegate:
                             const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 5,
