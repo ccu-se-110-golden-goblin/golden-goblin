@@ -6,10 +6,16 @@ import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import 'package:provider/provider.dart';
+
 import 'src/app.dart';
 import 'firebase_options.dart';
 import 'src/settings/settings_controller.dart';
 import 'src/settings/settings_service.dart';
+import 'src/models/account_provider.dart';
+import 'src/models/category_provider.dart';
+import 'src/models/transaction_provider.dart';
+import 'src/models/transfer_provider.dart';
 
 void main() async {
   // Set up the SettingsController, which will glue user settings to multiple
@@ -35,9 +41,29 @@ void main() async {
 
     await settingsController.loadSettings();
 
-    // Run the app and pass in the SettingsController. The app listens to the
+    final accountProvider = DBAccountProvider();
+
+  await accountProvider.loadAccounts();
+
+  final categoryProvider = DBCategoryProvider();
+
+  await categoryProvider.loadCategories();// Run the app and pass in the SettingsController. The app listens to the
     // SettingsController for changes, then passes it further down to the
     // SettingsView.
-    runApp(MyApp(settingsController: settingsController));
+    runApp(MultiProvider(
+    providers: [
+      Provider<AccountProvider>.value(value: accountProvider),
+      Provider<CategoryProvider>.value(value: categoryProvider),
+      Provider<TransactionProvider>(
+        create: (_) => DBTransactionProvider(),
+        lazy: false,
+      ),
+      Provider<TransferProvider>(
+        create: (_) => DBTransferProvider(),
+        lazy: false,
+      ),
+    ],
+    child: MyApp(settingsController: settingsController),
+  ));
   }, (error, stack) => FirebaseCrashlytics.instance.recordError(error, stack));
 }

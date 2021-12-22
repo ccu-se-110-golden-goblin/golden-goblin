@@ -7,6 +7,7 @@ import 'package:golden_goblin/src/views/account_view/account_view.dart';
 import 'package:golden_goblin/src/views/category_view/category_edit_view.dart';
 import 'package:golden_goblin/src/views/category_view/category_view.dart';
 import 'package:golden_goblin/src/views/ledger_view/ledger_edit_view.dart';
+import 'package:golden_goblin/src/views/ledger_view/ledger_transfer.dart';
 
 import 'themes.dart';
 import 'views/ledger_view/ledger_view.dart';
@@ -26,8 +27,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     // Glue the SettingsController to the MaterialApp.
     //
-    // The AnimatedBuilder Widget listens to the SettingsController for changes.
-    // Whenever the user updates their settings, the MaterialApp is rebuilt.
     return AnimatedBuilder(
       animation: settingsController,
       builder: (BuildContext context, Widget? child) {
@@ -82,15 +81,23 @@ class MyApp extends StatelessWidget {
                   case LedgerView.routeName:
                     return const LedgerView();
                   case LedgerEditView.routeName:
-                    return LedgerEditView();
+                    return LedgerEditView(
+                        args: routeSettings.arguments! as LedgerEditViewArgs);
+                  case LedgerTransferView.routeName:
+                    return const LedgerTransferView();
                   case AccountView.routeName:
-                    return AccountView();
+                    return const AccountView();
                   case AccountEditView.routeName:
-                    return AccountEditView();
+                    return AccountEditView(
+                      args: (routeSettings.arguments! as AccountEditArguments),
+                    );
                   case CategoryView.routeName:
                     return const CategoryView();
                   case CategoryEditView.routeName:
-                    return const CategoryEditView();
+                    return CategoryEditView(
+                      args: (routeSettings.arguments! as CategoryEditArguments),
+                    );
+
                   default:
                     return const LedgerView();
                 }
