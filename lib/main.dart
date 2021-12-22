@@ -43,27 +43,28 @@ void main() async {
 
     final accountProvider = DBAccountProvider();
 
-  await accountProvider.loadAccounts();
+    await accountProvider.loadAccounts();
 
-  final categoryProvider = DBCategoryProvider();
+    final categoryProvider = DBCategoryProvider();
 
-  await categoryProvider.loadCategories();// Run the app and pass in the SettingsController. The app listens to the
+    await categoryProvider
+        .loadCategories(); // Run the app and pass in the SettingsController. The app listens to the
     // SettingsController for changes, then passes it further down to the
     // SettingsView.
     runApp(MultiProvider(
-    providers: [
-      Provider<AccountProvider>.value(value: accountProvider),
-      Provider<CategoryProvider>.value(value: categoryProvider),
-      Provider<TransactionProvider>(
-        create: (_) => DBTransactionProvider(),
-        lazy: false,
-      ),
-      Provider<TransferProvider>(
-        create: (_) => DBTransferProvider(),
-        lazy: false,
-      ),
-    ],
-    child: MyApp(settingsController: settingsController),
-  ));
+      providers: [
+        Provider<AccountProvider>.value(value: accountProvider),
+        Provider<CategoryProvider>.value(value: categoryProvider),
+        Provider<TransactionProvider>(
+          create: (_) => DBTransactionProvider(),
+          lazy: false,
+        ),
+        Provider<TransferProvider>(
+          create: (_) => DBTransferProvider(),
+          lazy: false,
+        ),
+      ],
+      child: MyApp(settingsController: settingsController),
+    ));
   }, (error, stack) => FirebaseCrashlytics.instance.recordError(error, stack));
 }
