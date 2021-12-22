@@ -3,6 +3,8 @@ import 'package:golden_goblin/src/models/category.dart';
 import 'package:golden_goblin/src/models/category_provider.dart';
 import 'package:golden_goblin/src/models/transaction.dart';
 import 'package:golden_goblin/src/models/transaction_provider.dart';
+import 'package:golden_goblin/src/models/transfer.dart';
+import 'package:golden_goblin/src/models/transfer_provider.dart';
 import 'package:golden_goblin/src/views/account_view/account_edit_view.dart';
 import 'package:golden_goblin/src/views/common/sidebar.dart';
 import 'package:golden_goblin/src/models/account_provider.dart';
@@ -63,43 +65,51 @@ class _TransactionCalcResult {
 
 class _AccountViewState extends State<AccountView> {
   late TransactionProvider transactionProvider;
+  late TransferProvider transferProvider;
   late CategoryProvider categoryProvider;
 
   static const routeName = '/account';
   var calcResult = _TransactionCalcResult();
 
-  void handleTransactionData(
-      List<Transaction> transactions, List<Category> categories) {
-    print(transactions);
-
+  void handleTransactionData(List<Transaction> transactions,
+      List<Transfer> transfers, List<Category> categories) {
     setState(() {
       calcResult = transactions.fold(_TransactionCalcResult(),
           (_TransactionCalcResult previousValue, element) {
         var category =
             categories.where((cate) => cate.id == element.category).first;
 
-        var amount = (category.type == Type.income ? 1 : -1) *  element.amount;
+        var amount = (category.type == Type.income ? 1 : -1) * element.amount;
 
         previousValue.totalAsset += amount;
         previousValue.accountCount[element.account] =
             (previousValue.accountCount[element.account] ?? 0) + amount;
         return previousValue;
       });
+
+      for (var element in transfers) {
+        calcResult.accountCount[element.src] =
+            (calcResult.accountCount[element.src] ?? 0) - element.amount;
+        calcResult.accountCount[element.dst] =
+            (calcResult.accountCount[element.dst] ?? 0) + element.amount;
+      }
     });
   }
 
   void handleLoadData() {
     Future.wait([
       transactionProvider.getTransactions(),
+      transferProvider.getTransfers(),
       categoryProvider.loadCategories()
-    ]).then((value) => handleTransactionData(
-        value[0] as List<Transaction>, categoryProvider.getCategories));
+    ]).then((value) => handleTransactionData(value[0] as List<Transaction>,
+        value[1] as List<Transfer>, categoryProvider.getCategories));
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     transactionProvider = Provider.of<TransactionProvider>(context);
+    transferProvider = Provider.of<TransferProvider>(context);
     categoryProvider = Provider.of<CategoryProvider>(context);
 
     handleLoadData();
