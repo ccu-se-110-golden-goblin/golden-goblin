@@ -44,15 +44,15 @@ class LedgerViewModel {
 
   // color List
   static const List<Color> _colorList = [
-    Color(0x4DFEC81A), // yellow
-    Color(0x8099D6EA), // blue
-    Color(0x80CBD7A4) // green
+    Color(0x80CBD7A4), // green, imcome
+    Color(0x4DFEC81A), // yellow, expense
+    Color(0x8099D6EA) // blue , transfer
   ];
 
   // iconList
   static const List<IconData> _iconList = [
+    Icons.wifi_protected_setup, // transfer Icon
     Icons.restaurant,
-    Icons.wifi_protected_setup,
     Icons.apartment
   ];
 
@@ -64,12 +64,12 @@ class LedgerViewModel {
 
     if ((setDate.month == now.month) && (setDate.year == now.year)) {
       // if is current
-      _endOfMonth = DateTime(now.year, now.month, now.day, 0, 0, 0);
+      _endOfMonth = DateTime(now.year, now.month, now.day + 1, 0, 0, 0, 0, -1);
     } else {
       // Find the last day of the month.
       _endOfMonth = (setDate.month < 12)
-          ? DateTime(setDate.year, setDate.month + 1, 0)
-          : DateTime(setDate.year + 1, 1, 0);
+          ? DateTime(setDate.year, setDate.month + 1, 0, 23, 59, 59, 999, 999)
+          : DateTime(setDate.year + 1, 1, 0, 23, 59, 59, 999, 999);
     }
 
     // DEBUG
@@ -100,40 +100,50 @@ class LedgerViewModel {
       Account account = _accountProvider.getAccount(transactionData.account);
       String title =
           _categoryProvider.getCategory(transactionData.category).name;
-      Type type = _categoryProvider.getCategory(transactionData.category).type;
+      Category category =
+          _categoryProvider.getCategory(transactionData.category);
+      Color color =
+          (category.type == Type.income) ? _colorList[0] : _colorList[1];
+      DateTime index = DateTime(transactionData.date.year,
+          transactionData.date.month, transactionData.date.day);
       ItemTitleData itemTile = ItemTitleData(
-          icon: _iconList[0],
+          id: transactionData.id,
+          icon: category.iconData,
           title: title,
           amount: transactionData.amount,
-          color: _colorList[0],
+          color: color,
           remark: transactionData.remark,
-          type: type);
-      if (itemLists[transactionData.date] == null) {
-        itemLists[transactionData.date] = [];
+          type: category.type);
+      if (itemLists[index] == null) {
+        itemLists[index] = [];
       }
-      itemLists[transactionData.date]!.add(itemTile);
+      itemLists[index]!.add(itemTile);
     }
 
     // setup transferData
     for (var transferData in transfer) {
       Account srcAccount = _accountProvider.getAccount(transferData.src);
       Account dstAccount = _accountProvider.getAccount(transferData.dst);
+      DateTime index = DateTime(transferData.date.year, transferData.date.month,
+          transferData.date.day);
       ItemTitleData itemTile = ItemTitleData(
-          icon: _iconList[0],
+          id: transferData.id,
+          icon: _iconList[0], // transferIcon
           title: srcAccount.name,
           amount: transferData.amount,
-          color: _colorList[0],
+          color: _colorList[2], // transfer color
           title2: dstAccount.name,
           remark: transferData.remark);
-      if (itemLists[transferData.date] == null) {
-        itemLists[transferData.date] = [];
+      if (itemLists[index] == null) {
+        itemLists[index] = [];
       }
-      itemLists[transferData.date]!.add(itemTile);
+      itemLists[index]!.add(itemTile);
     }
 
     // put into DailyListData
     int dailyCounter = 0;
-    for (DateTime i = _endOfMonth;
+    for (DateTime i =
+            DateTime(_endOfMonth.year, _endOfMonth.month, _endOfMonth.hour);
         !i.isBefore(_startOfMonth);
         i = i.subtract(const Duration(days: 1))) {
       var dailyItemLists = itemLists[i];
@@ -175,10 +185,16 @@ class LedgerViewModel {
         iconColor: colorA);
     Account accountB = Account(
         id: 1, name: "AccountB", icon: Icons.wifi_lock, iconColor: colorB);
-    Category categoryA =
-        Category(id: 1, name: "TestIncoming", type: Type.income);
-    Category categoryB =
-        Category(id: 2, name: "TestExpenses", type: Type.expenses);
+    Category categoryA = Category(
+        id: 1,
+        name: "TestIncoming",
+        type: Type.income,
+        iconData: Icons.apartment);
+    Category categoryB = Category(
+        id: 2,
+        name: "TestExpenses",
+        type: Type.expenses,
+        iconData: Icons.restaurant);
 
     var accountAId = await _accountProvider.addAccount(accountA);
     var accountBId = await _accountProvider.addAccount(accountB);
@@ -212,7 +228,8 @@ class LedgerViewModel {
 // connect with itemTitleData in view
 class ItemTitleData {
   const ItemTitleData(
-      {required this.icon,
+      {required this.id,
+      required this.icon,
       required this.title,
       required this.amount,
       required this.color,
@@ -220,6 +237,7 @@ class ItemTitleData {
       this.remark,
       this.type});
 
+  final int id; // id is transferID or transactionID
   final IconData icon;
   final String title;
   final String? title2;
