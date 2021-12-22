@@ -84,7 +84,8 @@ class _LedgerViewState extends State<LedgerView> {
         child: const Icon(Icons.add),
         onPressed: () {
           Navigator.pushNamed(context, LedgerEditView.routeName,
-              arguments: LedgerEditViewArgs());
+                  arguments: LedgerEditViewArgs())
+              .then((value) => setState(() {})); // force rebuild
         },
       ),
       body: Column(
@@ -168,13 +169,13 @@ class _LedgerViewState extends State<LedgerView> {
           //   height: 85,
           //   child: BudgetTile(),
           // ),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8.0),
-            child: Divider(
-              height: 2.0,
-              thickness: 2.0,
-            ),
-          ),
+          // const Padding(
+          //   padding: EdgeInsets.symmetric(horizontal: 8.0),
+          //   child: Divider(
+          //     height: 2.0,
+          //     thickness: 2.0,
+          //   ),
+          // ),
           Expanded(
             child: FutureBuilder(
                 future: viewModelProvider.getDailyLists(),
@@ -213,6 +214,7 @@ class _LedgerViewState extends State<LedgerView> {
 
 class BudgetTile extends StatelessWidget {
   const BudgetTile({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Padding(
