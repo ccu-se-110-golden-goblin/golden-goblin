@@ -32,6 +32,7 @@ class CategoryEditView extends StatefulWidget {
 class _CategoryEditState extends State<CategoryEditView> {
   _CategoryEditState({required this.args});
 
+  final _formKey = GlobalKey<FormState>();
   final CategoryEditArguments args;
 
   String name = "";
@@ -52,28 +53,30 @@ class _CategoryEditState extends State<CategoryEditView> {
   }
 
   void handleSave(CategoryProvider categoryProvider) {
-    var category = args.category;
-    if (category != null) {
-      categoryProvider
-          .updateCategory(
-              category.id,
-              Category(
-                id: category.id,
-                type: category.type,
+    if (_formKey.currentState?.validate() ?? false) {
+      var category = args.category;
+      if (category != null) {
+        categoryProvider
+            .updateCategory(
+                category.id,
+                Category(
+                  id: category.id,
+                  type: category.type,
+                  name: name,
+                  iconData: icon,
+                  iconColor: color,
+                ))
+            .then((value) => Navigator.pop(context));
+      } else {
+        categoryProvider
+            .addCategory(Category(
+                id: 0,
+                type: args.type,
                 name: name,
                 iconData: icon,
-                iconColor: color,
-              ))
-          .then((value) => Navigator.pop(context));
-    } else {
-      categoryProvider
-          .addCategory(Category(
-              id: 0,
-              type: args.type,
-              name: name,
-              iconData: icon,
-              iconColor: color))
-          .then((value) => Navigator.pop(context));
+                iconColor: color))
+            .then((value) => Navigator.pop(context));
+      }
     }
   }
 
@@ -124,92 +127,101 @@ class _CategoryEditState extends State<CategoryEditView> {
           children: [
             Padding(
               padding: const EdgeInsets.only(top: 10, left: 40, right: 40),
-              child: Column(
-                children: [
-                  TextFormField(
-                    initialValue: name,
-                    decoration: InputDecoration(
-                      icon: CategoryIcon(
-                        iconData: icon,
-                        color: color,
-                      ),
-                      labelText: "類別名稱",
-                    ),
-                    onChanged: (v) {
-                      setState(() {
-                        name = v;
-                      });
-                    },
-                  ),
-                  DropdownButtonFormField(
-                    value: icon,
-                    decoration: const InputDecoration(
-                      labelText: "類別圖示",
-                      border: OutlineInputBorder(),
-                    ),
-                    items: icons
-                        .map(
-                          (e) => DropdownMenuItem(
-                            child: Text(e.name),
-                            value: e.icon,
-                          ),
-                        )
-                        .toList(),
-                    onChanged: (IconData? v) {
-                      if (v != null) {
-                        setState(() {
-                          icon = v;
-                        });
-                      }
-                    },
-                  ),
-                  DropdownButtonFormField(
-                    value: color,
-                    decoration: const InputDecoration(
-                      labelText: "圖示顏色",
-                      border: OutlineInputBorder(),
-                    ),
-                    items: colors
-                        .map(
-                          (e) => DropdownMenuItem(
-                            child: Text(e.name),
-                            value: e.color,
-                          ),
-                        )
-                        .toList(),
-                    onChanged: (Color? v) {
-                      if (v != null) {
-                        setState(() {
-                          color = v;
-                        });
-                      }
-                    },
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton(
-                        onPressed: (args.category != null)
-                            ? () => handleDelete(categoryProvider)
-                            : null,
-                        child: const Text("刪除"),
-                        style: GoldenGoblinThemes.dangerButtonLightStyle,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 10),
-                        child: TextButton(
-                          onPressed: () => handleSave(categoryProvider),
-                          child: const Text("完成"),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    TextFormField(
+                      initialValue: name,
+                      decoration: InputDecoration(
+                        icon: CategoryIcon(
+                          iconData: icon,
+                          color: color,
                         ),
+                        labelText: "類別名稱",
                       ),
-                    ],
-                  ),
-                ]
-                    .map((e) => Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 15),
-                          child: e,
-                        ))
-                    .toList(),
+                      onChanged: (v) {
+                        setState(() {
+                          name = v;
+                        });
+                      },
+                      validator: (String? v) {
+                        if (v == null || v.isEmpty) {
+                          return "請輸入類別名稱";
+                        }
+                        return null;
+                      },
+                    ),
+                    DropdownButtonFormField(
+                      value: icon,
+                      decoration: const InputDecoration(
+                        labelText: "類別圖示",
+                        border: OutlineInputBorder(),
+                      ),
+                      items: icons
+                          .map(
+                            (e) => DropdownMenuItem(
+                              child: Text(e.name),
+                              value: e.icon,
+                            ),
+                          )
+                          .toList(),
+                      onChanged: (IconData? v) {
+                        if (v != null) {
+                          setState(() {
+                            icon = v;
+                          });
+                        }
+                      },
+                    ),
+                    DropdownButtonFormField(
+                      value: color,
+                      decoration: const InputDecoration(
+                        labelText: "圖示顏色",
+                        border: OutlineInputBorder(),
+                      ),
+                      items: colors
+                          .map(
+                            (e) => DropdownMenuItem(
+                              child: Text(e.name),
+                              value: e.color,
+                            ),
+                          )
+                          .toList(),
+                      onChanged: (Color? v) {
+                        if (v != null) {
+                          setState(() {
+                            color = v;
+                          });
+                        }
+                      },
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                          onPressed: (args.category != null)
+                              ? () => handleDelete(categoryProvider)
+                              : null,
+                          child: const Text("刪除"),
+                          style: GoldenGoblinThemes.dangerButtonLightStyle,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 10),
+                          child: TextButton(
+                            onPressed: () => handleSave(categoryProvider),
+                            child: const Text("完成"),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ]
+                      .map((e) => Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 15),
+                            child: e,
+                          ))
+                      .toList(),
+                ),
               ),
             ),
           ],

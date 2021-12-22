@@ -29,6 +29,7 @@ class AccountEditView extends StatefulWidget {
 class _AccountEditState extends State<AccountEditView> {
   _AccountEditState({required this.args});
 
+  final _formKey = GlobalKey<FormState>();
   final AccountEditArguments args;
 
   String name = "";
@@ -58,16 +59,21 @@ class _AccountEditState extends State<AccountEditView> {
   }
 
   void handleSave(AccountProvider accountProvider) {
-    var account = args.account;
-    if (account != null) {
-      accountProvider
-          .updateAccount(account.id,
-              Account(id: account.id, name: name, icon: icon, iconColor: color))
-          .then((value) => Navigator.pop(context));
-    } else {
-      accountProvider
-          .addAccount(Account(id: 0, name: name, icon: icon, iconColor: color))
-          .then((value) => Navigator.pop(context));
+    if (_formKey.currentState?.validate() ?? false) {
+      var account = args.account;
+      if (account != null) {
+        accountProvider
+            .updateAccount(
+                account.id,
+                Account(
+                    id: account.id, name: name, icon: icon, iconColor: color))
+            .then((value) => Navigator.pop(context));
+      } else {
+        accountProvider
+            .addAccount(
+                Account(id: 0, name: name, icon: icon, iconColor: color))
+            .then((value) => Navigator.pop(context));
+      }
     }
   }
 
@@ -98,18 +104,14 @@ class _AccountEditState extends State<AccountEditView> {
                 Navigator.pop(context);
               },
             );
-
           }),
-
         ),
-
-
-        body: Container(
-          padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 30.0),
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 10, left: 40, right: 40),
+        body: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 10, left: 40, right: 40),
+              child: Form(
+                key: _formKey,
                 child: Column(
                   children: [
                     TextFormField(
@@ -122,6 +124,10 @@ class _AccountEditState extends State<AccountEditView> {
                         setState(() {
                           name = v;
                         });
+                      },
+                      validator: (String? v) {
+                        if (v == null || v.isEmpty) return "請輸入帳本名稱";
+                        return null;
                       },
                     ),
                     DropdownButtonFormField<IconData>(
@@ -197,11 +203,8 @@ class _AccountEditState extends State<AccountEditView> {
                       .toList(),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ));
   }
 }
-
-
-
