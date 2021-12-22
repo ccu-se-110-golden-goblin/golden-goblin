@@ -17,6 +17,16 @@ import '../../themes.dart';
 class LedgerEditViewArgs {
   LedgerEditViewArgs({this.transaction});
 
+  static TransactionProvider provider = DBTransactionProvider();
+
+  static Future<LedgerEditViewArgs> getFromId(int id) async {
+    var allTransactions = await provider.getTransactions();
+
+    return LedgerEditViewArgs(
+      transaction: allTransactions.where((element) => element.id == id).first,
+    );
+  }
+
   final Transaction? transaction;
 }
 

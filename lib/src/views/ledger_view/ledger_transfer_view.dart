@@ -12,6 +12,16 @@ import '../../themes.dart';
 class LedgerTransferViewArgs {
   LedgerTransferViewArgs({this.transfer});
 
+  static TransferProvider provider = DBTransferProvider();
+
+  static Future<LedgerTransferViewArgs> getFromId(int id) async {
+    var allTransfer = await provider.getTransfers();
+
+    return LedgerTransferViewArgs(
+      transfer: allTransfer.where((element) => element.id == id).first,
+    );
+  }
+
   final Transfer? transfer;
 }
 
