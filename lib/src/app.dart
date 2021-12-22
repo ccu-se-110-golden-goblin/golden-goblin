@@ -7,7 +7,7 @@ import 'package:golden_goblin/src/views/account_view/account_view.dart';
 import 'package:golden_goblin/src/views/category_view/category_edit_view.dart';
 import 'package:golden_goblin/src/views/category_view/category_view.dart';
 import 'package:golden_goblin/src/views/ledger_view/ledger_edit_view.dart';
-import 'package:golden_goblin/src/views/ledger_view/ledger_transfer.dart';
+import 'package:golden_goblin/src/views/ledger_view/ledger_transfer_view.dart';
 
 import 'themes.dart';
 import 'views/ledger_view/ledger_view.dart';
@@ -82,9 +82,12 @@ class MyApp extends StatelessWidget {
                     return const LedgerView();
                   case LedgerEditView.routeName:
                     return LedgerEditView(
-                        args: routeSettings.arguments! as LedgerEditViewArgs);
+                        args: routeSettings.arguments! as LedgerEditViewArgs,
+                    );
                   case LedgerTransferView.routeName:
-                    return const LedgerTransferView();
+                    return LedgerTransferView(
+                      args: routeSettings.arguments! as LedgerTransferViewArgs,
+                    );
                   case AccountView.routeName:
                     return const AccountView();
                   case AccountEditView.routeName:
