@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:golden_goblin/src/views/ledger_view/ledger_transfer_view.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
 import '../../view_models/ledger_view_model.dart';
@@ -18,7 +19,6 @@ class LedgerView extends StatefulWidget {
 class _LedgerViewState extends State<LedgerView> {
   LedgerViewModel viewModelProvider = LedgerViewModel(now: DateTime.now());
   DateTime _month = DateTime.now();
-
   @override
   void initState() {
     super.initState();
@@ -504,7 +504,19 @@ class _ItemTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(5),
         child: InkWell(
           borderRadius: BorderRadius.circular(5),
-          onTap: () {},
+          onTap: () {
+            bool isTransfer = (title2 != null) ? true : false;
+
+            if (isTransfer) {
+              LedgerTransferViewArgs.getFromId(id).then((value) =>
+                  Navigator.pushNamed(context, LedgerTransferView.routeName,
+                      arguments: value));
+            } else {
+              LedgerEditViewArgs.getFromId(id).then((value) =>
+                  Navigator.pushNamed(context, LedgerEditView.routeName,
+                      arguments: value));
+            }
+          },
           child: SizedBox(
             height: 50.0,
             child: Row(

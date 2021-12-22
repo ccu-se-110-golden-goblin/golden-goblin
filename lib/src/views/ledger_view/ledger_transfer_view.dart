@@ -4,6 +4,7 @@ import 'package:golden_goblin/src/models/account_provider.dart';
 import 'package:golden_goblin/src/models/transfer.dart';
 import 'package:golden_goblin/src/models/transfer_provider.dart';
 import 'package:golden_goblin/src/views/ledger_view/ledger_edit_view.dart';
+import 'package:golden_goblin/src/views/ledger_view/ledger_view.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -11,6 +12,16 @@ import '../../themes.dart';
 
 class LedgerTransferViewArgs {
   LedgerTransferViewArgs({this.transfer});
+
+  static TransferProvider provider = DBTransferProvider();
+
+  static Future<LedgerTransferViewArgs> getFromId(int id) async {
+    var allTransfer = await provider.getTransfers();
+
+    return LedgerTransferViewArgs(
+      transfer: allTransfer.where((element) => element.id == id).first,
+    );
+  }
 
   final Transfer? transfer;
 }
@@ -59,6 +70,7 @@ class _LedgerTransferViewState extends State<LedgerTransferView> {
 
           date = args.transfer!.date;
 
+          dollarController.text = "${args.transfer!.amount}";
           commentController.text = args.transfer!.remark ?? "";
         } else {
           accountSrc = accountList.first;
@@ -66,6 +78,11 @@ class _LedgerTransferViewState extends State<LedgerTransferView> {
         }
       });
     });
+  }
+
+  void returnHomePage() {
+    Navigator.pop(context);
+    Navigator.restorablePushReplacementNamed(context, LedgerView.routeName);
   }
 
   void handleSave(TransferProvider transferProvider) {
@@ -102,7 +119,7 @@ class _LedgerTransferViewState extends State<LedgerTransferView> {
               amount: int.parse(dollarController.text),
               date: date,
               remark: commentController.text))
-          .then((value) => Navigator.pop(context));
+          .then((value) => returnHomePage());
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
@@ -123,7 +140,7 @@ class _LedgerTransferViewState extends State<LedgerTransferView> {
                   amount: int.parse(dollarController.text),
                   date: date,
                   remark: commentController.text))
-          .then((value) => Navigator.pop(context));
+          .then((value) => returnHomePage());
     }
   }
 
@@ -152,7 +169,7 @@ class _LedgerTransferViewState extends State<LedgerTransferView> {
             return IconButton(
               icon: const Icon(Icons.arrow_back),
               onPressed: () {
-                Navigator.pop(context);
+                returnHomePage();
               },
             );
           }),
