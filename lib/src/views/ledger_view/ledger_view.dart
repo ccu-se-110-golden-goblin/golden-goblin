@@ -26,7 +26,6 @@ class _LedgerViewState extends State<LedgerView> {
     viewModelProvider.setDate(DateTime(now.year, now.month));
   }
 
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -91,6 +90,79 @@ class _LedgerViewState extends State<LedgerView> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Container(
+            height: 40,
+            color: Colors.grey[300],
+            child: Padding(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 4.0, horizontal: 20.0),
+              child: Center(
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 90.0,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "${_month.year}年${_month.month}月",
+                            style: const TextStyle(
+                                fontSize: 16.0,
+                                color: Colors.black,
+                                fontWeight: FontWeight.w600),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          TextButton(
+                            onPressed: () {
+                              setState(() {
+                                setMonth(
+                                    DateTime(_month.year, _month.month - 1));
+                              });
+                            },
+                            style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all(
+                                    Colors.grey[300])),
+                            child: const Text(
+                              "<",
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              setMonth(DateTime(_month.year, _month.month + 1));
+                            },
+                            style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all(
+                                    Colors.grey[300])),
+                            child: const Text(
+                              ">",
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
           // FixMe: Temporary hide budget tile
           // const SizedBox(
           //   height: 85,
@@ -141,9 +213,6 @@ class _LedgerViewState extends State<LedgerView> {
 
 class BudgetTile extends StatelessWidget {
   const BudgetTile({Key? key}) : super(key: key);
-
-  // TODO: connect to viewModel to get current month data
-
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -258,11 +327,11 @@ class _DailyList extends StatelessWidget {
     "SUN",
   ];
 
-  // TODO: connect to viewModel to get daily data\
   List<Widget> getItemLists(List<ItemTitleData> dailyLists) {
     List<Widget> list = [];
     for (var i = 0; i < dailyLists.length; i++) {
       list.add(_ItemTile(
+          id: itemTitles[i].id,
           icon: itemTitles[i].icon,
           title: itemTitles[i].title,
           amount: itemTitles[i].amount,
@@ -407,6 +476,7 @@ class _DailyList extends StatelessWidget {
 class _ItemTile extends StatelessWidget {
   const _ItemTile({
     Key? key,
+    required this.id,
     required this.icon,
     required this.title,
     required this.amount,
@@ -415,6 +485,7 @@ class _ItemTile extends StatelessWidget {
     this.remark,
   }) : super(key: key);
 
+  final int id;
   final IconData icon;
   final String title;
   final String? title2;
