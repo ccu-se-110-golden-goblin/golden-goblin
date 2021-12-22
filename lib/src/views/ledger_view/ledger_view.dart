@@ -19,7 +19,6 @@ class LedgerView extends StatefulWidget {
 class _LedgerViewState extends State<LedgerView> {
   LedgerViewModel viewModelProvider = LedgerViewModel(now: DateTime.now());
   DateTime _month = DateTime.now();
-
   @override
   void initState() {
     super.initState();
@@ -506,17 +505,17 @@ class _ItemTile extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(5),
           onTap: () {
-            // TODO: change these to actual logic
-            bool isTransfer = false;
-            int id = 0;
+            bool isTransfer = (title2 != null) ? true : false;
 
             if (isTransfer) {
-              LedgerTransferViewArgs.getFromId(id).then(
-                (value) => Navigator.pushNamed(
-                    context, LedgerTransferView.routeName,
-                    arguments: value),
-              );
-            } else {}
+              LedgerTransferViewArgs.getFromId(id).then((value) =>
+                  Navigator.pushNamed(context, LedgerTransferView.routeName,
+                      arguments: value));
+            } else {
+              LedgerEditViewArgs.getFromId(id).then((value) =>
+                  Navigator.pushNamed(context, LedgerEditView.routeName,
+                      arguments: value));
+            }
           },
           child: SizedBox(
             height: 50.0,

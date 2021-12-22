@@ -9,6 +9,7 @@ import 'package:golden_goblin/src/models/transaction_provider.dart';
 import 'package:golden_goblin/src/views/category_view/category_view.dart';
 
 import 'package:golden_goblin/src/views/ledger_view/ledger_transfer_view.dart';
+import 'package:golden_goblin/src/views/ledger_view/ledger_view.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -58,6 +59,11 @@ class _LedgerEditViewState extends State<LedgerEditView>
   List<Account> accountList = [];
   List<Category> categoryList = [];
 
+  void returnHomePage() {
+    Navigator.pop(context);
+    Navigator.restorablePushReplacementNamed(context, LedgerView.routeName);
+  }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -104,7 +110,7 @@ class _LedgerEditViewState extends State<LedgerEditView>
                     category: category!.id,
                     date: date,
                     remark: commentController.text))
-            .then((value) => Navigator.pop(context));
+            .then((value) => returnHomePage());
       } else {
         transactionProvider
             .addTransaction(Transaction(
@@ -114,7 +120,7 @@ class _LedgerEditViewState extends State<LedgerEditView>
                 category: category!.id,
                 date: date,
                 remark: commentController.text))
-            .then((value) => Navigator.pop(context));
+            .then((value) => returnHomePage());
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -145,7 +151,7 @@ class _LedgerEditViewState extends State<LedgerEditView>
     if (transaction != null) {
       transactionProvider
           .deleteTransaction(transaction.id)
-          .then((value) => Navigator.pop(context));
+          .then((value) => returnHomePage());
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
@@ -367,7 +373,9 @@ class _LedgerEditViewState extends State<LedgerEditView>
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   TextButton(
-                    onPressed: args.transaction == null ? null :() => handleDelete(transactionProvider),
+                    onPressed: args.transaction == null
+                        ? null
+                        : () => handleDelete(transactionProvider),
                     child: const Text("刪除"),
                     style: GoldenGoblinThemes.dangerButtonLightStyle,
                   ),
