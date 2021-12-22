@@ -95,7 +95,6 @@ class _LedgerEditViewState extends State<LedgerEditView>
                     date: date,
                     remark: commentController.text))
             .then((value) => Navigator.pop(context));
-
       } else {
         transactionProvider
             .addTransaction(Transaction(
@@ -188,7 +187,8 @@ class _LedgerEditViewState extends State<LedgerEditView>
                           onPressed: () {
                             Navigator.pop(context);
                             Navigator.pushNamed(
-                                context, LedgerTransferView.routeName, arguments: LedgerTransferViewArgs());
+                                context, LedgerTransferView.routeName,
+                                arguments: LedgerTransferViewArgs());
                           }),
                       const Text("轉帳", style: TextStyle(fontSize: 8)),
                     ]),
@@ -356,18 +356,21 @@ class _LedgerEditViewState extends State<LedgerEditView>
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  if(args.transaction != null)TextButton(
-                    onPressed: () => handleDelete(transactionProvider),
+                  TextButton(
+                    onPressed: args.transaction == null ? null :() => handleDelete(transactionProvider),
                     child: const Text("刪除"),
                     style: GoldenGoblinThemes.dangerButtonLightStyle,
                   ),
-                  TextButton(
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        handleSave(transactionProvider);
-                      }
-                    },
-                    child: const Text("完成"),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: TextButton(
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          handleSave(transactionProvider);
+                        }
+                      },
+                      child: const Text("完成"),
+                    ),
                   ),
                 ],
               ),
