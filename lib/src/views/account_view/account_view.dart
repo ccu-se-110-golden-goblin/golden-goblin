@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:golden_goblin/src/models/category.dart';
+import 'package:golden_goblin/src/models/category_provider.dart';
 import 'package:golden_goblin/src/models/transaction.dart';
 import 'package:golden_goblin/src/models/transaction_provider.dart';
 import 'package:golden_goblin/src/views/account_view/account_edit_view.dart';
@@ -7,12 +9,13 @@ import 'package:golden_goblin/src/models/account_provider.dart';
 import 'package:provider/provider.dart';
 
 class AccountItem extends StatelessWidget {
-  const AccountItem({Key? key,
-    required this.iconData,
-    required this.name,
-    required this.iconColor,
-    this.accountAsset,
-    this.onTap})
+  const AccountItem(
+      {Key? key,
+      required this.iconData,
+      required this.name,
+      required this.iconColor,
+      this.accountAsset,
+      this.onTap})
       : super(key: key);
 
   final IconData iconData;
@@ -60,32 +63,44 @@ class _TransactionCalcResult {
 
 class _AccountViewState extends State<AccountView> {
   late TransactionProvider transactionProvider;
+  late CategoryProvider categoryProvider;
 
   static const routeName = '/account';
   var calcResult = _TransactionCalcResult();
 
-  void handleTransactionData(List<Transaction> transactions) {
+  void handleTransactionData(
+      List<Transaction> transactions, List<Category> categories) {
+    print(transactions);
+
     setState(() {
       calcResult = transactions.fold(_TransactionCalcResult(),
-              (_TransactionCalcResult previousValue, element) {
-            previousValue.totalAsset += element.amount;
-            previousValue.accountCount[element.account] =
-                (previousValue.accountCount[element.account] ?? 0) +
-                    element.amount;
-            return previousValue;
-          });
+          (_TransactionCalcResult previousValue, element) {
+        var category =
+            categories.where((cate) => cate.id == element.category).first;
+
+        var amount = (category.type == Type.income ? 1 : -1) *  element.amount;
+
+        previousValue.totalAsset += amount;
+        previousValue.accountCount[element.account] =
+            (previousValue.accountCount[element.account] ?? 0) + amount;
+        return previousValue;
+      });
     });
   }
 
   void handleLoadData() {
-    transactionProvider.getTransactions()
-        .then((transactions) => handleTransactionData(transactions));
+    Future.wait([
+      transactionProvider.getTransactions(),
+      categoryProvider.loadCategories()
+    ]).then((value) => handleTransactionData(
+        value[0] as List<Transaction>, categoryProvider.getCategories));
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     transactionProvider = Provider.of<TransactionProvider>(context);
+    categoryProvider = Provider.of<CategoryProvider>(context);
 
     handleLoadData();
   }
@@ -125,7 +140,7 @@ class _AccountViewState extends State<AccountView> {
           children: [
             Container(
                 padding:
-                const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+                    const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
