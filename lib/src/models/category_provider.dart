@@ -4,6 +4,8 @@ import 'category.dart';
 
 import '../helpers/db_helper.dart';
 
+import 'package:firebase_analytics/firebase_analytics.dart';
+
 abstract class CategoryProvider {
   Future<void> loadCategories();
 
@@ -52,6 +54,7 @@ class DBCategoryProvider implements CategoryProvider {
   // When insert into database, id will be ignore and replaced, use getAccounts to get new list with new id
   @override
   Future<int> addCategory(Category category) async {
+    FirebaseAnalytics.instance.logEvent(name: 'add_category', parameters: {});
     var db = await DBHelper.opendb();
 
     var categoryMap = category.toMap();
@@ -70,6 +73,8 @@ class DBCategoryProvider implements CategoryProvider {
 
   @override
   Future<void> deleteCategory(int categoryId) async {
+    FirebaseAnalytics.instance
+        .logEvent(name: 'delete_category', parameters: {});
     var db = await DBHelper.opendb();
 
     await db.delete('categories', where: 'id = ?', whereArgs: [categoryId]);
@@ -79,6 +84,8 @@ class DBCategoryProvider implements CategoryProvider {
 
   @override
   Future<void> updateCategory(int categoryId, Category newCategory) async {
+    FirebaseAnalytics.instance
+        .logEvent(name: 'update_category', parameters: {});
     var db = await DBHelper.opendb();
 
     var categoryMap = newCategory.toMap();

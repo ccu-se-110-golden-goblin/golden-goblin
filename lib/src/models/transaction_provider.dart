@@ -3,6 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'transaction.dart';
 import '../helpers/db_helper.dart';
 
+import 'package:firebase_analytics/firebase_analytics.dart';
+
 abstract class TransactionProvider {
   Future<List<Transaction>> getTransactions({
     List<int>? accounts,
@@ -122,6 +124,8 @@ class DBTransactionProvider implements TransactionProvider {
   // When insert into database, id will be ignore and replaced, use getAccounts to get new list with new id
   @override
   Future<int> addTransaction(Transaction transaction) async {
+    FirebaseAnalytics.instance
+        .logEvent(name: 'add_transaction', parameters: {});
     var db = await DBHelper.opendb();
 
     var transactionMap = transaction.toMap();
@@ -136,6 +140,8 @@ class DBTransactionProvider implements TransactionProvider {
 
   @override
   Future<void> deleteTransaction(int transactionId) async {
+    FirebaseAnalytics.instance
+        .logEvent(name: 'delete_transaction', parameters: {});
     var db = await DBHelper.opendb();
 
     await db
@@ -145,6 +151,8 @@ class DBTransactionProvider implements TransactionProvider {
   @override
   Future<void> updateTransaction(
       int transactionId, Transaction newTransaction) async {
+    FirebaseAnalytics.instance
+        .logEvent(name: 'update_transaction', parameters: {});
     var db = await DBHelper.opendb();
 
     var transactionMap = newTransaction.toMap();

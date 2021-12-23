@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1021086297106",
+    "project_id": "golden-goblin",
+    "storage_bucket": "golden-goblin.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1021086297106:android:0aef15cfbb113d7bba7ccb",
+        "android_client_info": {
+          "package_name": "io.csie.goldengoblin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1021086297106-cln1kana5k96e2m9o6289qpfhg26rpov.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDJ5lYT-Gz1Z6xxkFaH4SVPtl3zZGhSjBI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1021086297106-cln1kana5k96e2m9o6289qpfhg26rpov.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -3,6 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'transfer.dart';
 import '../helpers/db_helper.dart';
 
+import 'package:firebase_analytics/firebase_analytics.dart';
+
 abstract class TransferProvider {
   Future<List<Transfer>> getTransfers({
     List<int>? srcAccounts,
@@ -121,6 +123,7 @@ class DBTransferProvider implements TransferProvider {
   // When insert into database, id will be ignore and replaced, use getAccounts to get new list with new id
   @override
   Future<int> addTransfer(Transfer transfer) async {
+    FirebaseAnalytics.instance.logEvent(name: 'add_tranfer', parameters: {});
     var db = await DBHelper.opendb();
 
     var transferMap = transfer.toMap();
@@ -135,6 +138,7 @@ class DBTransferProvider implements TransferProvider {
 
   @override
   Future<void> deleteTransfer(int transferId) async {
+    FirebaseAnalytics.instance.logEvent(name: 'delete_tranfer', parameters: {});
     var db = await DBHelper.opendb();
 
     await db.delete('transfers', where: 'id = ?', whereArgs: [transferId]);
@@ -142,6 +146,7 @@ class DBTransferProvider implements TransferProvider {
 
   @override
   Future<void> updateTransfer(int transferId, Transfer newTransfer) async {
+    FirebaseAnalytics.instance.logEvent(name: 'update_tranfer', parameters: {});
     var db = await DBHelper.opendb();
 
     var transferMap = newTransfer.toMap();

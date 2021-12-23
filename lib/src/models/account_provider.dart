@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'account.dart';
 import '../helpers/db_helper.dart';
 
+import 'package:firebase_analytics/firebase_analytics.dart';
+
 abstract class AccountProvider {
   Future<void> loadAccounts();
 
@@ -50,6 +52,8 @@ class DBAccountProvider implements AccountProvider {
   // When insert into database, id will be ignore and replaced, use getAccounts to get new list with new id
   @override
   Future<int> addAccount(Account account) async {
+    FirebaseAnalytics.instance.logEvent(name: 'add_account', parameters: {});
+
     var db = await DBHelper.opendb();
 
     var accountMap = account.toMap();
@@ -67,6 +71,7 @@ class DBAccountProvider implements AccountProvider {
 
   @override
   Future<void> deleteAccount(int accountId) async {
+    FirebaseAnalytics.instance.logEvent(name: 'delete_account', parameters: {});
     var db = await DBHelper.opendb();
 
     await db.delete('accounts', where: 'id = ?', whereArgs: [accountId]);
@@ -76,6 +81,7 @@ class DBAccountProvider implements AccountProvider {
 
   @override
   Future<void> updateAccount(int accountId, Account newAccount) async {
+    FirebaseAnalytics.instance.logEvent(name: 'update_account', parameters: {});
     var db = await DBHelper.opendb();
 
     var accountMap = newAccount.toMap();
