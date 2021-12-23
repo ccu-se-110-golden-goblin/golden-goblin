@@ -52,9 +52,7 @@ class DBAccountProvider implements AccountProvider {
   // When insert into database, id will be ignore and replaced, use getAccounts to get new list with new id
   @override
   Future<int> addAccount(Account account) async {
-    FirebaseAnalytics.instance.logEvent(name: 'add_account', parameters: {
-      'account_name': account.name,
-    });
+    FirebaseAnalytics.instance.logEvent(name: 'add_account', parameters: {});
 
     var db = await DBHelper.opendb();
 
@@ -73,9 +71,7 @@ class DBAccountProvider implements AccountProvider {
 
   @override
   Future<void> deleteAccount(int accountId) async {
-    FirebaseAnalytics.instance.logEvent(name: 'delete_account', parameters: {
-      'account_name': getAccount(accountId).name,
-    });
+    FirebaseAnalytics.instance.logEvent(name: 'delete_account', parameters: {});
     var db = await DBHelper.opendb();
 
     await db.delete('accounts', where: 'id = ?', whereArgs: [accountId]);
@@ -85,10 +81,7 @@ class DBAccountProvider implements AccountProvider {
 
   @override
   Future<void> updateAccount(int accountId, Account newAccount) async {
-    FirebaseAnalytics.instance.logEvent(name: 'update_account', parameters: {
-      'old_account_name': getAccount(accountId).name,
-      'new_account_name': newAccount.name,
-    });
+    FirebaseAnalytics.instance.logEvent(name: 'update_account', parameters: {});
     var db = await DBHelper.opendb();
 
     var accountMap = newAccount.toMap();

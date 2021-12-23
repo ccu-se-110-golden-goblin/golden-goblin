@@ -123,12 +123,7 @@ class DBTransferProvider implements TransferProvider {
   // When insert into database, id will be ignore and replaced, use getAccounts to get new list with new id
   @override
   Future<int> addTransfer(Transfer transfer) async {
-    FirebaseAnalytics.instance.logEvent(name: 'add_tranfer', parameters: {
-      'transfer_amount': transfer.amount,
-      'transfer_source': transfer.src,
-      'transfer_destination': transfer.dst,
-      'transfer_date': transfer.date,
-    });
+    FirebaseAnalytics.instance.logEvent(name: 'add_tranfer', parameters: {});
     var db = await DBHelper.opendb();
 
     var transferMap = transfer.toMap();
@@ -143,9 +138,7 @@ class DBTransferProvider implements TransferProvider {
 
   @override
   Future<void> deleteTransfer(int transferId) async {
-    FirebaseAnalytics.instance.logEvent(name: 'delete_tranfer', parameters: {
-      'transfer_id': transferId,
-    });
+    FirebaseAnalytics.instance.logEvent(name: 'delete_tranfer', parameters: {});
     var db = await DBHelper.opendb();
 
     await db.delete('transfers', where: 'id = ?', whereArgs: [transferId]);
@@ -153,13 +146,7 @@ class DBTransferProvider implements TransferProvider {
 
   @override
   Future<void> updateTransfer(int transferId, Transfer newTransfer) async {
-    FirebaseAnalytics.instance.logEvent(name: 'update_tranfer', parameters: {
-      'old_transfer_id': transferId,
-      'new_transfer_amount': newTransfer.amount,
-      'new_transfer_source': newTransfer.src,
-      'new_transfer_destination': newTransfer.dst,
-      'new_transfer_date': newTransfer.date,
-    });
+    FirebaseAnalytics.instance.logEvent(name: 'update_tranfer', parameters: {});
     var db = await DBHelper.opendb();
 
     var transferMap = newTransfer.toMap();
