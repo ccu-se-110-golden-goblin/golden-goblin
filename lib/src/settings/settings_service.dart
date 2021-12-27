@@ -44,4 +44,31 @@ class SettingsService {
     var prefs = await SharedPreferences.getInstance();
     prefs.setBool(assetHiddenKey, assetHidden);
   }
+
+  static const budgetAmountKey = "budgetAmount";
+
+  Future<int> budgetAmount() async {
+    var prefs = await SharedPreferences.getInstance();
+    var budgetAmountNum = prefs.getInt(budgetAmountKey) ?? 0;
+    return budgetAmountNum;
+  }
+
+  Future<void> updateBudgetAmount(int budgetAmount) async {
+    var prefs = await SharedPreferences.getInstance();
+    prefs.setInt(budgetAmountKey, budgetAmount);
+  }
+
+  static const budgetHiddenKey = "budgetHidden";
+
+  Future<bool> budgetHidden() async {
+    var prefs = await SharedPreferences.getInstance();
+    var budgetHidden = prefs.getBool(budgetHiddenKey) ?? false;
+
+    return budgetHidden;
+  }
+
+  Future<void> updateBudgetHidden(bool budgetHidden) async {
+    var prefs = await SharedPreferences.getInstance();
+    prefs.setBool(budgetHiddenKey, budgetHidden);
+  }
 }

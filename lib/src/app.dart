@@ -8,6 +8,7 @@ import 'package:golden_goblin/src/views/category_view/category_edit_view.dart';
 import 'package:golden_goblin/src/views/category_view/category_view.dart';
 import 'package:golden_goblin/src/views/ledger_view/ledger_edit_view.dart';
 import 'package:golden_goblin/src/views/ledger_view/ledger_transfer_view.dart';
+import 'package:golden_goblin/src/views/budget_view/budget_view.dart';
 
 import 'themes.dart';
 import 'views/ledger_view/ledger_view.dart';
@@ -26,7 +27,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Glue the SettingsController to the MaterialApp.
-    //
     return AnimatedBuilder(
       animation: settingsController,
       builder: (BuildContext context, Widget? child) {
@@ -82,7 +82,7 @@ class MyApp extends StatelessWidget {
                     return const LedgerView();
                   case LedgerEditView.routeName:
                     return LedgerEditView(
-                        args: routeSettings.arguments! as LedgerEditViewArgs,
+                      args: routeSettings.arguments! as LedgerEditViewArgs,
                     );
                   case LedgerTransferView.routeName:
                     return LedgerTransferView(
@@ -100,6 +100,8 @@ class MyApp extends StatelessWidget {
                     return CategoryEditView(
                       args: (routeSettings.arguments! as CategoryEditArguments),
                     );
+                  case BudgetView.routeName:
+                    return BudgetView(controller: settingsController);
 
                   default:
                     return const LedgerView();

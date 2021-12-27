@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:golden_goblin/src/views/account_view/account_view.dart';
+import 'package:golden_goblin/src/views/budget_view/budget_view.dart';
 import 'package:golden_goblin/src/views/category_view/category_view.dart';
 
 import '../../widgets/sidebar_tile.dart';
@@ -86,7 +87,7 @@ class Sidebar extends StatelessWidget {
                           print("帳本管理 tapped");
                           Navigator.pop(context);
                           Navigator.restorablePushNamed(
-                            context, AccountView.routeName);
+                              context, AccountView.routeName);
                         },
                       ),
                       SidebarTile(
@@ -107,7 +108,8 @@ class Sidebar extends StatelessWidget {
                             vertical: 12.0, horizontal: 30.0),
                         onTap: () {
                           print("預算控制 tapped");
-                          Navigator.pop(context);
+                          Navigator.pushReplacementNamed(
+                              context, BudgetView.routeName);
                         },
                       ),
                       SidebarTile(

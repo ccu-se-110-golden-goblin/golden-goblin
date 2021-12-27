@@ -51,12 +51,49 @@ class SettingsController with ChangeNotifier {
     await _settingsService.updateAssetHidden(newAssetHidden);
   }
 
-  Future<void> loadSettings() async {
-    _themeMode = await _settingsService.themeMode();
-    _assetHidden = await _settingsService.assetHidden();
+  late int _budgetAmount;
+
+  int get budgetAmount => _budgetAmount;
+
+  Future<void> updateBudgetAmount(int? newBudgetAmount) async {
+    if (newBudgetAmount == null) return;
+
+    // Dot not perform any work if new and old ThemeMode are identical
+    if (newBudgetAmount == _budgetAmount) return;
+
+    // Otherwise, store the new theme mode in memory
+    _budgetAmount = newBudgetAmount;
 
     // Important! Inform listeners a change has occurred.
     notifyListeners();
+
+    // Persist the changes to a local database or the internet using the
+    // SettingService.
+    await _settingsService.updateBudgetAmount(newBudgetAmount);
   }
 
+  late bool _budgetHidden;
+
+  bool get budgetHidden => _budgetHidden;
+
+  Future<void> updateBudgetHidden(bool? newBudgetHidden) async {
+    if (newBudgetHidden == null) return;
+
+    if (newBudgetHidden == _budgetHidden) return;
+
+    _budgetHidden = newBudgetHidden;
+
+    notifyListeners();
+
+    await _settingsService.updateBudgetHidden(newBudgetHidden);
+  }
+
+  Future<void> loadSettings() async {
+    _themeMode = await _settingsService.themeMode();
+    _assetHidden = await _settingsService.assetHidden();
+    _budgetAmount = await _settingsService.budgetAmount();
+    _budgetHidden = await _settingsService.budgetHidden();
+    // Important! Inform listeners a change has occurred.
+    notifyListeners();
+  }
 }
