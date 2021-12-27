@@ -4,7 +4,7 @@ description: A brief yet powerful money manager.
 # Prevent accidental publishing to pub.dev.
 publish_to: 'none'
 
-version: 0.0.1+20211124
+version: 0.1.0+20211223
 
 environment:
   sdk: ">=2.12.0 <3.0.0"

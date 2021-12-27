@@ -1,4 +1,4 @@
-package com.example.golden_goblin
+package io.csie.goldengoblin
 
 import io.flutter.embedding.android.FlutterActivity
 
