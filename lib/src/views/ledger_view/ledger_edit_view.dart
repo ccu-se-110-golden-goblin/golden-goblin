@@ -182,7 +182,7 @@ class _LedgerEditViewState extends State<LedgerEditView>
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("新增交易"),
+        title: (args.transaction == null)? const Text("新增交易"):const Text("編輯交易"),
         leading: Builder(builder: (BuildContext context) {
           return IconButton(
             icon: const Icon(Icons.arrow_back),
@@ -232,7 +232,7 @@ class _LedgerEditViewState extends State<LedgerEditView>
                         decoration: const InputDecoration(
                           border: UnderlineInputBorder(),
                           hintText: "金額",
-                          icon: Icon(Icons.attach_money, color: Colors.black),
+                          icon: Icon(Icons.attach_money),
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -373,13 +373,12 @@ class _LedgerEditViewState extends State<LedgerEditView>
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  TextButton(
-                    onPressed: args.transaction == null
-                        ? null
-                        : () => handleDelete(transactionProvider),
-                    child: const Text("刪除"),
-                    style: GoldenGoblinThemes.dangerButtonLightStyle,
-                  ),
+                  if(args.transaction == null)
+                    TextButton(
+                      onPressed: () => handleDelete(transactionProvider),
+                      child: const Text("刪除"),
+                      style: GoldenGoblinThemes.dangerButtonLightStyle,
+                    ),
                   Padding(
                     padding: const EdgeInsets.only(left: 10),
                     child: TextButton(
