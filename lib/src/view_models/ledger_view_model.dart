@@ -58,19 +58,11 @@ class LedgerViewModel {
 
   // init or change month
   void setDate(DateTime setDate) {
-    final now = DateTime.now();
-
     _startOfMonth = DateTime(setDate.year, setDate.month, 1);
 
-    if ((setDate.month == now.month) && (setDate.year == now.year)) {
-      // if is current
-      _endOfMonth = DateTime(now.year, now.month, now.day + 1, 0, 0, 0, 0, -1);
-    } else {
-      // Find the last day of the month.
-      _endOfMonth = (setDate.month < 12)
-          ? DateTime(setDate.year, setDate.month + 1, 0, 23, 59, 59, 999, 999)
-          : DateTime(setDate.year + 1, 1, 0, 23, 59, 59, 999, 999);
-    }
+    _endOfMonth = (setDate.month < 12)
+        ? DateTime(setDate.year, setDate.month + 1, 0, 23, 59, 59, 999, 999)
+        : DateTime(setDate.year + 1, 1, 0, 23, 59, 59, 999, 999);
 
     // DEBUG
     if (!kReleaseMode) {
@@ -143,7 +135,7 @@ class LedgerViewModel {
     // put into DailyListData
     int dailyCounter = 0;
     for (DateTime i =
-            DateTime(_endOfMonth.year, _endOfMonth.month, _endOfMonth.hour);
+            DateTime(_endOfMonth.year, _endOfMonth.month, _endOfMonth.day);
         !i.isBefore(_startOfMonth);
         i = i.subtract(const Duration(days: 1))) {
       var dailyItemLists = itemLists[i];
