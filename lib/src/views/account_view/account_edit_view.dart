@@ -9,9 +9,11 @@ import 'package:provider/provider.dart';
 class AccountEditArguments {
   AccountEditArguments({
     this.account,
+    this.preventDelete,
   });
 
   final Account? account;
+  final bool? preventDelete;
 }
 
 class AccountEditView extends StatefulWidget {
@@ -181,7 +183,7 @@ class _AccountEditState extends State<AccountEditView> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       TextButton(
-                          onPressed: (args.account != null)
+                          onPressed: (args.account != null && args.preventDelete != true)
                               ? () => handleDelete(accountProvider)
                               : null,
                           child: const Text("刪除"),

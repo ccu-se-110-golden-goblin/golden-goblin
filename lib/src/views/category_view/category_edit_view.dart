@@ -12,10 +12,12 @@ class CategoryEditArguments {
   CategoryEditArguments({
     this.category,
     required this.type,
+    this.preventDelete,
   });
 
   final Category? category;
   final Type type;
+  final bool? preventDelete;
 }
 
 class CategoryEditView extends StatefulWidget {
@@ -206,7 +208,8 @@ class _CategoryEditState extends State<CategoryEditView> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         TextButton(
-                          onPressed: (args.category != null)
+                          onPressed: (args.category != null &&
+                                  args.preventDelete != true)
                               ? () => handleDelete(categoryProvider)
                               : null,
                           child: const Text("刪除"),

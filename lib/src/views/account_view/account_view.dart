@@ -179,6 +179,8 @@ class _AccountViewState extends State<AccountView> {
                         "/account_edit",
                         arguments: AccountEditArguments(
                           account: account,
+                          preventDelete:
+                              accountProvider.getAccounts.length <= 1,
                         ),
                       ).then((value) {
                         handleLoadData();
