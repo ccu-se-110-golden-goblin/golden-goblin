@@ -325,13 +325,15 @@ class _DailyList extends StatelessWidget {
     List<Widget> list = [];
     for (var i = 0; i < dailyLists.length; i++) {
       list.add(_ItemTile(
-          id: itemTitles[i].id,
-          icon: itemTitles[i].icon,
-          title: itemTitles[i].title,
-          amount: itemTitles[i].amount,
-          color: itemTitles[i].color,
-          title2: itemTitles[i].title2,
-          remark: itemTitles[i].remark));
+        id: itemTitles[i].id,
+        isTransfer: itemTitles[i].isTransfer,
+        icon: itemTitles[i].icon,
+        title: itemTitles[i].title,
+        amount: itemTitles[i].amount,
+        color: itemTitles[i].color,
+        title2: itemTitles[i].title2,
+        remark: itemTitles[i].remark,
+      ));
     }
     if (list.isEmpty == true) {
       list.add(const Text("No Data Found!"));
@@ -475,11 +477,13 @@ class _ItemTile extends StatelessWidget {
     required this.title,
     required this.amount,
     required this.color,
+    required this.isTransfer,
     this.title2,
     this.remark,
   }) : super(key: key);
 
   final int id;
+  final bool isTransfer;
   final IconData icon;
   final String title;
   final String? title2;
@@ -526,41 +530,62 @@ class _ItemTile extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     text: TextSpan(
                       style: DefaultTextStyle.of(context).style,
-                      children: [
-                        /* title */
-                        TextSpan(
-                          text: title,
-                          style: const TextStyle(
-                            fontSize: 16.0,
-                          ),
-                        ),
-                        /* has title2 */
-                        if (title2 != null)
-                          const TextSpan(
-                            text: "  >  ",
-                            style: TextStyle(
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        if (title2 != null)
-                          TextSpan(
-                            text: title2,
-                            style: const TextStyle(
-                              fontSize: 16.0,
-                            ),
-                          ),
-                        /* has remark */
-                        if (remark != null)
-                          TextSpan(
-                            text: "\n$remark",
-                            style: const TextStyle(
-                              fontSize: 11.0,
-                              color: Colors.grey,
-                            ),
-                          ),
-                      ],
+                      children: isTransfer
+                          ? [
+                              /* src account */
+                              TextSpan(
+                                text: title,
+                                style: const TextStyle(
+                                  fontSize: 16.0,
+                                ),
+                              ),
+                              /* the ">" symbol */
+                              const TextSpan(
+                                text: "  >  ",
+                                style: TextStyle(
+                                  fontSize: 16.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                              /* dest account */
+                              TextSpan(
+                                text: title2,
+                                style: const TextStyle(
+                                  fontSize: 16.0,
+                                ),
+                              ),
+                            ]
+                          : [
+                              /* category */
+                              TextSpan(
+                                text: title,
+                                style: const TextStyle(
+                                  fontSize: 16.0,
+                                ),
+                              ),
+                              /* has remark */
+                              if (remark != null)
+                                TextSpan(
+                                  text: "  $remark",
+                                  style: const TextStyle(
+                                    fontSize: 11.0,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              /* newline */
+                              const TextSpan(
+                                text: "\n",
+                              ),
+                              /* account name */
+                              TextSpan(
+                                text: title2,
+                                style: const TextStyle(
+                                  fontSize: 11.0,
+                                  color: Colors.black54,
+                                ),
+                              ),
+                            ],
                     ),
                   ),
                 ),
