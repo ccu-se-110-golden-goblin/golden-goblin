@@ -43,17 +43,17 @@ class Sidebar extends StatelessWidget {
                           }
                         },
                       ),
-                      SidebarTile(
-                        leading: const Icon(Icons.insights, size: 16),
-                        title: const Text("分析圖表"),
-                        isSelected: false,
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 12.0, horizontal: 30.0),
-                        onTap: () {
-                          print("分析圖表 tapped");
-                          Navigator.pop(context);
-                        },
-                      ),
+                      // SidebarTile(
+                      //   leading: const Icon(Icons.insights, size: 16),
+                      //   title: const Text("分析圖表"),
+                      //   isSelected: false,
+                      //   padding: const EdgeInsets.symmetric(
+                      //       vertical: 12.0, horizontal: 30.0),
+                      //   onTap: () {
+                      //     print("分析圖表 tapped");
+                      //     Navigator.pop(context);
+                      //   },
+                      // ),
                       const Padding(
                         padding: EdgeInsets.symmetric(horizontal: 8.0),
                         child: Divider(thickness: 2),
@@ -68,58 +68,70 @@ class Sidebar extends StatelessWidget {
                       SidebarTile(
                         leading: const Icon(Icons.construction, size: 16),
                         title: const Text("一般"),
+                        isSelected: currentRouteName == SettingsView.routeName,
                         padding: const EdgeInsets.symmetric(
                             vertical: 12.0, horizontal: 30.0),
                         onTap: () {
                           print("一般 tapped");
                           Navigator.pop(context);
-                          Navigator.restorablePushReplacementNamed(
-                              context, SettingsView.routeName);
+                          if (currentRouteName != SettingsView.routeName) {
+                            Navigator.restorablePushReplacementNamed(
+                                context, SettingsView.routeName);
+                          }
                         },
                       ),
                       SidebarTile(
                         leading: const Icon(Icons.import_contacts, size: 16),
                         title: const Text("帳本管理"),
+                        isSelected: currentRouteName == AccountView.routeName,
                         padding: const EdgeInsets.symmetric(
                             vertical: 12.0, horizontal: 30.0),
                         onTap: () {
                           print("帳本管理 tapped");
                           Navigator.pop(context);
-                          Navigator.restorablePushNamed(
-                            context, AccountView.routeName);
+                          if (currentRouteName != AccountView.routeName) {
+                            Navigator.restorablePushNamed(
+                                context, AccountView.routeName);
+                          }
                         },
                       ),
                       SidebarTile(
                         leading: const Icon(Icons.flag_outlined, size: 16),
                         title: const Text("類別管理"),
+                        isSelected: currentRouteName == CategoryView.routeName,
                         padding: const EdgeInsets.symmetric(
                             vertical: 12.0, horizontal: 30.0),
                         onTap: () {
                           print("類別管理 tapped");
-                          Navigator.pushReplacementNamed(
-                              context, CategoryView.routeName);
-                        },
-                      ),
-                      SidebarTile(
-                        leading: const Icon(Icons.savings_outlined, size: 16),
-                        title: const Text("預算控制"),
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 12.0, horizontal: 30.0),
-                        onTap: () {
-                          print("預算控制 tapped");
                           Navigator.pop(context);
+                          if (currentRouteName != CategoryView.routeName) {
+                            Navigator.pushReplacementNamed(
+                                context, CategoryView.routeName);
+                          }
                         },
                       ),
-                      SidebarTile(
-                        leading: const Icon(Icons.view_headline, size: 16),
-                        title: const Text("載具設定"),
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 12.0, horizontal: 30.0),
-                        onTap: () {
-                          print("載具設定 tapped");
-                          Navigator.pop(context);
-                        },
-                      ),
+                      // TODO
+                      // SidebarTile(
+                      //   leading: const Icon(Icons.savings_outlined, size: 16),
+                      //   title: const Text("預算控制"),
+                      //   padding: const EdgeInsets.symmetric(
+                      //       vertical: 12.0, horizontal: 30.0),
+                      //   onTap: () {
+                      //     print("預算控制 tapped");
+                      //     Navigator.pop(context);
+                      //   },
+                      // ),
+                      // TODO
+                      // SidebarTile(
+                      //   leading: const Icon(Icons.view_headline, size: 16),
+                      //   title: const Text("載具設定"),
+                      //   padding: const EdgeInsets.symmetric(
+                      //       vertical: 12.0, horizontal: 30.0),
+                      //   onTap: () {
+                      //     print("載具設定 tapped");
+                      //     Navigator.pop(context);
+                      //   },
+                      // ),
                     ],
                   ),
                 ),
