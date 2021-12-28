@@ -100,8 +100,10 @@ class LedgerViewModel {
           transactionData.date.month, transactionData.date.day);
       ItemTitleData itemTile = ItemTitleData(
           id: transactionData.id,
+          isTransfer: false,
           icon: category.iconData,
           title: title,
+          title2: account.name,
           amount: transactionData.amount,
           color: color,
           remark: transactionData.remark,
@@ -120,10 +122,13 @@ class LedgerViewModel {
           transferData.date.day);
       ItemTitleData itemTile = ItemTitleData(
           id: transferData.id,
-          icon: _iconList[0], // transferIcon
+          isTransfer: true,
+          icon: _iconList[0],
+          // transferIcon
           title: srcAccount.name,
           amount: transferData.amount,
-          color: _colorList[2], // transfer color
+          color: _colorList[2],
+          // transfer color
           title2: dstAccount.name,
           remark: transferData.remark);
       if (itemLists[index] == null) {
@@ -221,6 +226,7 @@ class LedgerViewModel {
 class ItemTitleData {
   const ItemTitleData(
       {required this.id,
+      required this.isTransfer,
       required this.icon,
       required this.title,
       required this.amount,
@@ -230,6 +236,7 @@ class ItemTitleData {
       this.type});
 
   final int id; // id is transferID or transactionID
+  final bool isTransfer;
   final IconData icon;
   final String title;
   final String? title2;
