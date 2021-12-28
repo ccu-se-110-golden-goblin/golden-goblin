@@ -161,6 +161,12 @@ class _CategoryViewState extends State<CategoryView>
                                     arguments: CategoryEditArguments(
                                       category: category,
                                       type: category.type,
+                                      preventDelete: categories
+                                              .where(
+                                                (value) => value.type == type,
+                                              )
+                                              .length <=
+                                          1,
                                     ),
                                   );
                                 },
