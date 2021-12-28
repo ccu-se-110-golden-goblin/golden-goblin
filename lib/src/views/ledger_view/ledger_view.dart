@@ -7,9 +7,12 @@ import '../../view_models/ledger_view_model.dart';
 import '../common/sidebar.dart';
 import 'ledger_edit_view.dart';
 
-class LedgerView extends StatefulWidget {
-  const LedgerView({Key? key}) : super(key: key);
+import '../../settings/settings_controller.dart';
 
+class LedgerView extends StatefulWidget {
+  const LedgerView({Key? key, required this.controller}) : super(key: key);
+
+  final SettingsController controller;
   static const routeName = '/ledger';
 
   @override
@@ -19,6 +22,7 @@ class LedgerView extends StatefulWidget {
 class _LedgerViewState extends State<LedgerView> {
   LedgerViewModel viewModelProvider = LedgerViewModel(now: DateTime.now());
   DateTime _month = DateTime.now();
+
   @override
   void initState() {
     super.initState();
@@ -164,18 +168,21 @@ class _LedgerViewState extends State<LedgerView> {
               ),
             ),
           ),
-          // FixMe: Temporary hide budget tile
-          // const SizedBox(
-          //   height: 85,
-          //   child: BudgetTile(),
-          // ),
-          // const Padding(
-          //   padding: EdgeInsets.symmetric(horizontal: 8.0),
-          //   child: Divider(
-          //     height: 2.0,
-          //     thickness: 2.0,
-          //   ),
-          // ),
+          if (!widget.controller.budgetHidden)
+            SizedBox(
+              height: 85,
+              child: BudgetTile(
+                budget: widget.controller.budgetAmount,
+              ),
+            ),
+          if (!widget.controller.budgetHidden)
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 8.0),
+              child: Divider(
+                height: 2.0,
+                thickness: 2.0,
+              ),
+            ),
           Expanded(
             child: FutureBuilder(
                 future: viewModelProvider.getDailyLists(),
@@ -213,10 +220,13 @@ class _LedgerViewState extends State<LedgerView> {
 }
 
 class BudgetTile extends StatelessWidget {
-  const BudgetTile({Key? key}) : super(key: key);
+  const BudgetTile({Key? key, required this.budget}) : super(key: key);
+
+  final int budget;
 
   @override
   Widget build(BuildContext context) {
+    DateTime _month = DateTime.now();
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 20.0),
       child: Center(
@@ -229,7 +239,7 @@ class BudgetTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "8月的支出",
+                    "${_month.month}月的支出",
                     style: TextStyle(
                       fontSize: 11.0,
                       color: Colors.grey[500],
@@ -246,6 +256,7 @@ class BudgetTile extends StatelessWidget {
                             fontSize: 20.0,
                           ),
                         ),
+                        /* TODO: Sum all transaction */
                         TextSpan(
                           text: "700",
                           style: TextStyle(
@@ -266,7 +277,7 @@ class BudgetTile extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 5.0),
                     child: Text(
-                      "預算 \$NTD 1000",
+                      "預算 \$NTD $budget",
                       style: TextStyle(
                         fontSize: 11.0,
                         color: Colors.grey[500],

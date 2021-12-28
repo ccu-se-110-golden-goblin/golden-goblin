@@ -79,7 +79,7 @@ class MyApp extends StatelessWidget {
                   case SettingsView.routeName:
                     return SettingsView(controller: settingsController);
                   case LedgerView.routeName:
-                    return const LedgerView();
+                    return LedgerView(controller: settingsController);
                   case LedgerEditView.routeName:
                     return LedgerEditView(
                       args: routeSettings.arguments! as LedgerEditViewArgs,
@@ -104,7 +104,7 @@ class MyApp extends StatelessWidget {
                     return BudgetView(controller: settingsController);
 
                   default:
-                    return const LedgerView();
+                    return LedgerView(controller: settingsController);
                 }
               },
             );

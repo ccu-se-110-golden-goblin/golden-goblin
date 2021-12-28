@@ -4,58 +4,61 @@ import 'package:golden_goblin/src/views/common/sidebar.dart';
 import '../../settings/settings_controller.dart';
 
 class BudgetAmount extends StatelessWidget {
-  const BudgetAmount({Key? key, required this.controller}) : super(key: key);
+  BudgetAmount({Key? key, required this.controller}) : super(key: key);
 
   final SettingsController controller;
+
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     int? newBudgetAmount = controller.budgetAmount;
     AlertDialog budgetAmountInsertDialog = AlertDialog(
-      title: const Text('預算設定'),
-      content: Container(
-          padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 20.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextFormField(
-                initialValue: newBudgetAmount.toString(),
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  border: UnderlineInputBorder(),
-                  hintText: "預算金額",
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return '請輸入金額';
-                  }
-                  return null;
-                },
-                onChanged: (value) {
-                  if (newBudgetAmount != null) {
-                    newBudgetAmount = int.parse(value);
-                  }
-                },
+      title: const Text('每月預算'),
+      content: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextFormField(
+              initialValue: newBudgetAmount.toString(),
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                border: UnderlineInputBorder(),
+                hintText: "預算金額",
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(0.0, 12.0, 0.0, 0.0),
-                    child: TextButton(
-                        onPressed: () {
+              validator: (_) {
+                if (newBudgetAmount == null) {
+                  return '請輸入有效金額';
+                }
+                return null;
+              },
+              onChanged: (value) {
+                newBudgetAmount = int.tryParse(value);
+              },
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0.0, 12.0, 0.0, 0.0),
+                  child: TextButton(
+                      onPressed: () {
+                        if (_formKey.currentState?.validate() ?? false) {
                           controller.updateBudgetAmount(newBudgetAmount);
                           Navigator.of(context).pop();
-                        },
-                        child: const Text(
-                          "完成",
-                          style: TextStyle(fontSize: 12),
-                        )),
-                  )
-                ],
-              )
-            ],
-          )),
+                        }
+                      },
+                      child: const Text(
+                        "儲存",
+                        style: TextStyle(fontSize: 12),
+                      )),
+                )
+              ],
+            )
+          ],
+        ),
+      ),
     );
     return ListTile(
       title: const Text('每月預算'),
@@ -77,7 +80,7 @@ class BudgetHiddenSwitch extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SwitchListTile(
-      title: const Text('顯示預算'),
+      title: const Text('隱藏預算'),
       value: controller.budgetHidden,
       onChanged: controller.updateBudgetHidden,
     );
