@@ -106,105 +106,103 @@ class _AccountEditState extends State<AccountEditView> {
             );
           }),
         ),
-        body: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 10, left: 40, right: 40),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    TextFormField(
-                      initialValue: name,
-                      decoration: InputDecoration(
-                        icon: Icon(icon, color: color),
-                        labelText: "帳本名稱",
-                      ),
-                      onChanged: (v) {
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.only(top: 10, left: 40, right: 40),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  TextFormField(
+                    initialValue: name,
+                    decoration: InputDecoration(
+                      icon: Icon(icon, color: color),
+                      labelText: "帳本名稱",
+                    ),
+                    onChanged: (v) {
+                      setState(() {
+                        name = v;
+                      });
+                    },
+                    validator: (String? v) {
+                      if (v == null || v.isEmpty) return "請輸入帳本名稱";
+                      return null;
+                    },
+                  ),
+                  DropdownButtonFormField<IconData>(
+                    value: icon,
+                    decoration: const InputDecoration(
+                      labelText: "帳本圖示",
+                      border: OutlineInputBorder(),
+                    ),
+                    onChanged: (IconData? v) {
+                      if (v != null) {
                         setState(() {
-                          name = v;
+                          icon = v;
                         });
-                      },
-                      validator: (String? v) {
-                        if (v == null || v.isEmpty) return "請輸入帳本名稱";
-                        return null;
-                      },
+                      }
+                    },
+                    items: icons
+                        .map((e) => DropdownMenuItem(
+                              value: e.icon,
+                              child: Row(
+                                children: [
+                                  Icon(e.icon),
+                                  const SizedBox(width: 30),
+                                  Text(e.name),
+                                ],
+                              ),
+                            ))
+                        .toList(),
+                  ),
+                  DropdownButtonFormField<Color>(
+                    value: color,
+                    decoration: const InputDecoration(
+                      labelText: "圖示顏色",
+                      border: OutlineInputBorder(),
                     ),
-                    DropdownButtonFormField<IconData>(
-                      value: icon,
-                      decoration: const InputDecoration(
-                        labelText: "帳本圖示",
-                        border: OutlineInputBorder(),
+                    onChanged: (Color? v) {
+                      if (v != null) {
+                        setState(() {
+                          color = v;
+                        });
+                      }
+                    },
+                    items: colors
+                        .map(
+                          (e) => DropdownMenuItem(
+                            value: e.color,
+                            child: Text(e.name),
+                          ),
+                        )
+                        .toList(),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                          onPressed: (args.account != null)
+                              ? () => handleDelete(accountProvider)
+                              : null,
+                          child: const Text("刪除"),
+                          style: GoldenGoblinThemes.dangerButtonLightStyle),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10),
+                        child: TextButton(
+                            onPressed: () => handleSave(accountProvider),
+                            child: const Text("完成")),
                       ),
-                      onChanged: (IconData? v) {
-                        if (v != null) {
-                          setState(() {
-                            icon = v;
-                          });
-                        }
-                      },
-                      items: icons
-                          .map((e) => DropdownMenuItem(
-                                value: e.icon,
-                                child: Row(
-                                  children: [
-                                    Icon(e.icon),
-                                    const SizedBox(width: 30),
-                                    Text(e.name),
-                                  ],
-                                ),
-                              ))
-                          .toList(),
-                    ),
-                    DropdownButtonFormField<Color>(
-                      value: color,
-                      decoration: const InputDecoration(
-                        labelText: "圖示顏色",
-                        border: OutlineInputBorder(),
-                      ),
-                      onChanged: (Color? v) {
-                        if (v != null) {
-                          setState(() {
-                            color = v;
-                          });
-                        }
-                      },
-                      items: colors
-                          .map(
-                            (e) => DropdownMenuItem(
-                              value: e.color,
-                              child: Text(e.name),
-                            ),
-                          )
-                          .toList(),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        TextButton(
-                            onPressed: (args.account != null)
-                                ? () => handleDelete(accountProvider)
-                                : null,
-                            child: const Text("刪除"),
-                            style: GoldenGoblinThemes.dangerButtonLightStyle),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 10),
-                          child: TextButton(
-                              onPressed: () => handleSave(accountProvider),
-                              child: const Text("完成")),
-                        ),
-                      ],
-                    ),
-                  ]
-                      .map((e) => Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 15),
-                            child: e,
-                          ))
-                      .toList(),
-                ),
+                    ],
+                  ),
+                ]
+                    .map((e) => Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          child: e,
+                        ))
+                    .toList(),
               ),
             ),
-          ],
+          ),
         ));
   }
 }
