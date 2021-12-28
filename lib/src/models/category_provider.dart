@@ -78,6 +78,8 @@ class DBCategoryProvider implements CategoryProvider {
     var db = await DBHelper.opendb();
 
     await db.delete('categories', where: 'id = ?', whereArgs: [categoryId]);
+    await db
+        .delete('transactions', where: 'category = ?', whereArgs: [categoryId]);
 
     await loadCategories();
   }
