@@ -163,29 +163,30 @@ class _AccountViewState extends State<AccountView> {
                     const Divider(thickness: 0.5, height: 0),
                   ],
                 )),
-            ListView.builder(
-              shrinkWrap: true,
-              itemCount: accountProvider.getAccounts.length,
-              itemBuilder: (BuildContext context, int index) {
-                var account = accountProvider.getAccounts[index];
-                return AccountItem(
-                  iconData: account.icon,
-                  name: account.name,
-                  iconColor: account.iconColor,
-                  accountAsset: calcResult.accountCount[account.id],
-                  onTap: () {
-                    Navigator.pushNamed(
-                      context,
-                      "/account_edit",
-                      arguments: AccountEditArguments(
-                        account: account,
-                      ),
-                    ).then((value) {
-                      handleLoadData();
-                    });
-                  },
-                );
-              },
+            Expanded(
+              child: ListView.builder(
+                itemCount: accountProvider.getAccounts.length,
+                itemBuilder: (BuildContext context, int index) {
+                  var account = accountProvider.getAccounts[index];
+                  return AccountItem(
+                    iconData: account.icon,
+                    name: account.name,
+                    iconColor: account.iconColor,
+                    accountAsset: calcResult.accountCount[account.id],
+                    onTap: () {
+                      Navigator.pushNamed(
+                        context,
+                        "/account_edit",
+                        arguments: AccountEditArguments(
+                          account: account,
+                        ),
+                      ).then((value) {
+                        handleLoadData();
+                      });
+                    },
+                  );
+                },
+              ),
             ),
           ],
         ));

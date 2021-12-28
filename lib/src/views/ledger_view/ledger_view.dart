@@ -103,7 +103,7 @@ class _LedgerViewState extends State<LedgerView> {
                 child: Row(
                   children: [
                     SizedBox(
-                      width: 90.0,
+                      width: 120.0,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,

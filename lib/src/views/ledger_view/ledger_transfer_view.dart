@@ -164,7 +164,7 @@ class _LedgerTransferViewState extends State<LedgerTransferView> {
 
     return Scaffold(
         appBar: AppBar(
-          title: const Text("新增轉帳"),
+          title: (args.transfer == null)? const Text("新增轉帳"):const Text("編輯轉帳"),
           leading: Builder(builder: (BuildContext context) {
             return IconButton(
               icon: const Icon(Icons.arrow_back),
