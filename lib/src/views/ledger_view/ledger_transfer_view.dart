@@ -194,126 +194,128 @@ class _LedgerTransferViewState extends State<LedgerTransferView> {
                 ]
               : null,
         ),
-        body: Container(
-          padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 30.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 12.0, horizontal: 20.0),
-                    child: Row(
+        body: SingleChildScrollView(
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 30.0),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 12.0, horizontal: 20.0),
+                      child: Row(
+                        children: [
+                          Flexible(
+                            child: TextFormField(
+                                keyboardType: TextInputType.number,
+                                controller: dollarController,
+                                decoration: const InputDecoration(
+                                  border: UnderlineInputBorder(),
+                                  hintText: "0",
+                                  icon: Icon(Icons.attach_money,
+                                      color: Colors.black),
+                                ),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return '請輸入金額';
+                                  }
+                                  return null;
+                                }),
+                          ),
+                          const Text("NTD"),
+                        ],
+                      ),
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Flexible(
-                          child: TextFormField(
-                              keyboardType: TextInputType.number,
-                              controller: dollarController,
-                              decoration: const InputDecoration(
-                                border: UnderlineInputBorder(),
-                                hintText: "0",
-                                icon: Icon(Icons.attach_money,
-                                    color: Colors.black),
-                              ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return '請輸入金額';
-                                }
-                                return null;
-                              }),
+                        const Text("日期:", style: TextStyle(fontSize: 15)),
+                        DatePicker(
+                          initialDate: date,
+                          onUpdate: (DateTime? newDate) {
+                            if (newDate != null) {
+                              setState(() {
+                                date = newDate;
+                              });
+                            }
+                          },
                         ),
-                        const Text("NTD"),
                       ],
                     ),
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text("日期:", style: TextStyle(fontSize: 15)),
-                      DatePicker(
-                        initialDate: date,
-                        onUpdate: (DateTime? newDate) {
-                          if (newDate != null) {
-                            setState(() {
-                              date = newDate;
-                            });
-                          }
-                        },
-                      ),
-                    ],
-                  ),
-                  Container(
-                      padding: const EdgeInsets.symmetric(vertical: 12.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text("轉出帳戶:", style: TextStyle(fontSize: 15)),
-                          AccountPicker(
-                            accounts: accountList,
-                            value: accountSrc,
-                            callback: (Account _account) {
-                              setState(() {
-                                accountSrc = _account;
-                              });
-                            },
-                          ),
-                        ],
-                      )),
-                  const Icon(
-                    Icons.arrow_downward,
-                    size: 40,
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text("轉入帳戶:", style: TextStyle(fontSize: 15)),
-                      AccountPicker(
-                        accounts: accountList,
-                        value: accountDst,
-                        callback: (Account _account) {
-                          setState(() {
-                            accountDst = _account;
-                          });
-                        },
-                      ),
-                    ],
-                  ),
-                  Container(
-                      padding: const EdgeInsets.symmetric(vertical: 12.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text("註解:", style: TextStyle(fontSize: 15)),
-                          TextFormField(
-                            controller: commentController,
-                            decoration: const InputDecoration(
-                              border: UnderlineInputBorder(),
-                              hintText: "無",
+                    Container(
+                        padding: const EdgeInsets.symmetric(vertical: 12.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text("轉出帳戶:", style: TextStyle(fontSize: 15)),
+                            AccountPicker(
+                              accounts: accountList,
+                              value: accountSrc,
+                              callback: (Account _account) {
+                                setState(() {
+                                  accountSrc = _account;
+                                });
+                              },
                             ),
-                          ),
-                        ],
-                      )),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      if (args.transfer != null)
-                        TextButton(
-                          onPressed: () => handleDelete(transferProvider),
-                          child: const Text("刪除"),
-                          style: GoldenGoblinThemes.dangerButtonLightStyle,
+                          ],
+                        )),
+                    const Icon(
+                      Icons.arrow_downward,
+                      size: 40,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text("轉入帳戶:", style: TextStyle(fontSize: 15)),
+                        AccountPicker(
+                          accounts: accountList,
+                          value: accountDst,
+                          callback: (Account _account) {
+                            setState(() {
+                              accountDst = _account;
+                            });
+                          },
                         ),
-                      TextButton(
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            handleSave(transferProvider);
-                          }
-                        },
-                        child: const Text("完成"),
-                      ),
-                    ],
-                  ),
-                ]),
+                      ],
+                    ),
+                    Container(
+                        padding: const EdgeInsets.symmetric(vertical: 12.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text("註解:", style: TextStyle(fontSize: 15)),
+                            TextFormField(
+                              controller: commentController,
+                              decoration: const InputDecoration(
+                                border: UnderlineInputBorder(),
+                                hintText: "無",
+                              ),
+                            ),
+                          ],
+                        )),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        if (args.transfer != null)
+                          TextButton(
+                            onPressed: () => handleDelete(transferProvider),
+                            child: const Text("刪除"),
+                            style: GoldenGoblinThemes.dangerButtonLightStyle,
+                          ),
+                        TextButton(
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              handleSave(transferProvider);
+                            }
+                          },
+                          child: const Text("完成"),
+                        ),
+                      ],
+                    ),
+                  ]),
+            ),
           ),
         ));
   }

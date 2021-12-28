@@ -56,7 +56,7 @@ class Sidebar extends StatelessWidget {
                       // ),
                       const Padding(
                         padding: EdgeInsets.symmetric(horizontal: 8.0),
-                        child: Divider(thickness: 2),
+                        child: Divider(thickness: 1),
                       ),
                       const Padding(
                         padding: EdgeInsets.symmetric(
@@ -89,10 +89,8 @@ class Sidebar extends StatelessWidget {
                         onTap: () {
                           print("帳本管理 tapped");
                           Navigator.pop(context);
-                          if (currentRouteName != AccountView.routeName) {
-                            Navigator.restorablePushNamed(
-                                context, AccountView.routeName);
-                          }
+                          if (currentRouteName != AccountView.routeName) {Navigator.restorablePushNamed(
+                              context, AccountView.routeName);}
                         },
                       ),
                       SidebarTile(
@@ -157,9 +155,14 @@ class _Header extends StatelessWidget {
         children: const [
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 8.0),
-            child: Icon(Icons.public),
+            child: Image(image: AssetImage('assets/images/logo.png')),
           ),
-          Text("Golden Goblin"),
+          Text(
+            "Golden Goblin",
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ],
       ),
     );

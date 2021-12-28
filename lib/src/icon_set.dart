@@ -102,6 +102,7 @@ class MyIcons {
     medical,
     invest,
     game,
+    cash,
     wifi,
   ];
 }

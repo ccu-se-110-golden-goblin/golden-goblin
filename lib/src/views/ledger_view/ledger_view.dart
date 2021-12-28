@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:golden_goblin/src/views/ledger_view/ledger_transfer_view.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
@@ -19,6 +20,7 @@ class LedgerView extends StatefulWidget {
 class _LedgerViewState extends State<LedgerView> {
   LedgerViewModel viewModelProvider = LedgerViewModel(now: DateTime.now());
   DateTime _month = DateTime.now();
+
   @override
   void initState() {
     super.initState();
@@ -106,20 +108,14 @@ class _LedgerViewState extends State<LedgerView> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            "${_month.year}年${_month.month}月",
-                            style: const TextStyle(
-                                fontSize: 16.0,
-                                color: Colors.black,
-                                fontWeight: FontWeight.w600),
-                          ),
+                          Text("${_month.year}年${_month.month}月"),
                         ],
                       ),
                     ),
                     Expanded(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
-                        crossAxisAlignment: CrossAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           TextButton(
                             onPressed: () {
@@ -129,32 +125,28 @@ class _LedgerViewState extends State<LedgerView> {
                               });
                             },
                             style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all(
-                                    Colors.grey[300])),
-                            child: const Text(
-                              "<",
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              padding: MaterialStateProperty.all(
+                                  const EdgeInsets.all(0)),
+                              backgroundColor: MaterialStateProperty.all(
+                                  const Color(0x00000000)),
+                              foregroundColor: MaterialStateProperty.all(
+                                  const Color(0xFF000000)),
                             ),
+                            child: const Icon(Icons.navigate_before),
                           ),
                           TextButton(
                             onPressed: () {
                               setMonth(DateTime(_month.year, _month.month + 1));
                             },
                             style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all(
-                                    Colors.grey[300])),
-                            child: const Text(
-                              ">",
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              padding: MaterialStateProperty.all(
+                                  const EdgeInsets.all(0)),
+                              backgroundColor: MaterialStateProperty.all(
+                                  const Color(0x00000000)),
+                              foregroundColor: MaterialStateProperty.all(
+                                  const Color(0xFF000000)),
                             ),
+                            child: const Icon(Icons.navigate_next),
                           ),
                         ],
                       ),
@@ -351,8 +343,7 @@ class _DailyList extends StatelessWidget {
   Widget build(BuildContext context) {
     List<Widget> itemTitlesWidget = getItemLists(itemTitles);
     return Padding(
-      padding:
-          const EdgeInsets.only(left: 0.0, top: 12.0, right: 20.0, bottom: 20),
+      padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -372,6 +363,7 @@ class _DailyList extends StatelessWidget {
                       ),
                     ),
                   ),
+                  const SizedBox(width: 8),
                   SizedBox(
                     width: 45.0,
                     child: Text(

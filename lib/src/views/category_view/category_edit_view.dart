@@ -161,7 +161,13 @@ class _CategoryEditState extends State<CategoryEditView> {
                       items: icons
                           .map(
                             (e) => DropdownMenuItem(
-                              child: Text(e.name),
+                              child: Row(
+                                children: [
+                                  Icon(e.icon),
+                                  const SizedBox(width: 30),
+                                  Text(e.name),
+                                ],
+                              ),
                               value: e.icon,
                             ),
                           )
