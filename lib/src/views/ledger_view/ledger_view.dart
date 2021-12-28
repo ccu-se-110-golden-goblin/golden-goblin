@@ -501,8 +501,6 @@ class _ItemTile extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(5),
           onTap: () {
-            bool isTransfer = (title2 != null) ? true : false;
-
             if (isTransfer) {
               LedgerTransferViewArgs.getFromId(id).then((value) =>
                   Navigator.pushNamed(context, LedgerTransferView.routeName,
