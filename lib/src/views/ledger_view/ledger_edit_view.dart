@@ -212,81 +212,79 @@ class _LedgerEditViewState extends State<LedgerEditView>
               ]
             : null,
       ),
-      body: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 30.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              //dollar
-              Container(
-                padding: const EdgeInsets.symmetric(
-                    vertical: 12.0, horizontal: 20.0),
-                child: Row(
-                  children: [
-                    Flexible(
-                      child: TextFormField(
-                        keyboardType: TextInputType.number,
-                        controller: dollarController,
-                        decoration: const InputDecoration(
-                          border: UnderlineInputBorder(),
-                          hintText: "金額",
-                          icon: Icon(Icons.attach_money, color: Colors.black),
+      body: SingleChildScrollView(
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 30.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                //dollar
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 12.0, horizontal: 20.0),
+                  child: Row(
+                    children: [
+                      Flexible(
+                        child: TextFormField(
+                          keyboardType: TextInputType.number,
+                          controller: dollarController,
+                          decoration: const InputDecoration(
+                            border: UnderlineInputBorder(),
+                            hintText: "金額",
+                            icon: Icon(Icons.attach_money, color: Colors.black),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return '請輸入金額';
+                            }
+                            return null;
+                          },
                         ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return '請輸入金額';
-                          }
-                          return null;
-                        },
                       ),
-                    ),
-                    const Text("NTD"),
-                  ],
-                ),
-              ),
-              //date
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text("日期:", style: TextStyle(fontSize: 15)),
-                  DatePicker(
-                    initialDate: date,
-                    onUpdate: (DateTime? newDate) {
-                      if (newDate != null) {
-                        setState(() {
-                          date = newDate;
-                        });
-                      }
-                    },
+                      const Text("NTD"),
+                    ],
                   ),
-                ],
-              ),
-              //account
-              Container(
-                padding: const EdgeInsets.symmetric(vertical: 12.0),
-                child: Column(
+                ),
+                //date
+                Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text("帳戶:", style: TextStyle(fontSize: 15)),
-                    AccountPicker(
-                      accounts: accountList,
-                      value: account,
-                      callback: (Account _account) {
-                        setState(() {
-                          account = _account;
-                        });
+                    const Text("日期:", style: TextStyle(fontSize: 15)),
+                    DatePicker(
+                      initialDate: date,
+                      onUpdate: (DateTime? newDate) {
+                        if (newDate != null) {
+                          setState(() {
+                            date = newDate;
+                          });
+                        }
                       },
                     ),
                   ],
                 ),
-              ),
-              //category
-              Expanded(
-                // padding: const EdgeInsets.symmetric(vertical: 12.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                //account
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 12.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text("帳戶:", style: TextStyle(fontSize: 15)),
+                      AccountPicker(
+                        accounts: accountList,
+                        value: account,
+                        callback: (Account _account) {
+                          setState(() {
+                            account = _account;
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                //category
+                Column(
                   children: [
                     Row(
                       children: [
@@ -318,82 +316,92 @@ class _LedgerEditViewState extends State<LedgerEditView>
                         ),
                       ],
                     ),
-                    Expanded(
-                      child: GridView.builder(
-                          itemCount: categoryProvider.getCategories
-                              .where((value) => value.type == cateType)
-                              .length,
-                          padding: const EdgeInsets.only(
-                              top: 10, left: 10, right: 10),
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 5,
-                            childAspectRatio: 0.7,
+                    GridView.builder(
+                      primary: false,
+                      shrinkWrap: true,
+                      itemCount: categoryProvider.getCategories
+                          .where((value) => value.type == cateType)
+                          .length,
+                      padding:
+                          const EdgeInsets.only(top: 10, left: 10, right: 10),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 5,
+                        childAspectRatio: 0.7,
+                      ),
+                      itemBuilder: (BuildContext context, int ind) {
+                        Category filterCateItem = categoryProvider.getCategories
+                            .where((value) => value.type == cateType)
+                            .elementAt(ind);
+                        return GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              category = filterCateItem;
+                            });
+                          },
+                          child: _LedgerCategoryItem(
+                            name: filterCateItem.name,
+                            iconData: filterCateItem.iconData,
+                            iconColor: filterCateItem.iconColor,
+                            selected: category == filterCateItem,
                           ),
-                          itemBuilder: (BuildContext context, int ind) {
-                            Category filterCateItem = categoryProvider
-                                .getCategories
-                                .where((value) => value.type == cateType)
-                                .elementAt(ind);
-                            return GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  category = filterCateItem;
-                                });
-                              },
-                              child: _LedgerCategoryItem(
-                                name: filterCateItem.name,
-                                iconData: filterCateItem.iconData,
-                                iconColor: filterCateItem.iconColor,
-                                selected: category == filterCateItem,
-                              ),
-                            );
-                          }),
+                        );
+                      },
                     ),
                   ],
                 ),
-              ),
-              //comment
-              Container(
-                  padding: const EdgeInsets.symmetric(vertical: 12.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text("註解:", style: TextStyle(fontSize: 15)),
-                      TextFormField(
-                        controller: commentController,
-                        decoration: const InputDecoration(
-                          border: UnderlineInputBorder(),
-                          hintText: "無",
+                // Expanded(
+                //   child: Column(
+                //     crossAxisAlignment: CrossAxisAlignment.start,
+                //     children: [
+                //       Expanded(
+                //         child:
+                //       ),
+                //     ],
+                //   ),
+                // ),
+                //comment
+                Container(
+                    padding: const EdgeInsets.symmetric(vertical: 12.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text("註解:", style: TextStyle(fontSize: 15)),
+                        TextFormField(
+                          controller: commentController,
+                          decoration: const InputDecoration(
+                            border: UnderlineInputBorder(),
+                            hintText: "無",
+                          ),
                         ),
-                      ),
-                    ],
-                  )),
+                      ],
+                    )),
 
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TextButton(
-                    onPressed: args.transaction == null
-                        ? null
-                        : () => handleDelete(transactionProvider),
-                    child: const Text("刪除"),
-                    style: GoldenGoblinThemes.dangerButtonLightStyle,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: TextButton(
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          handleSave(transactionProvider);
-                        }
-                      },
-                      child: const Text("完成"),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: args.transaction == null
+                          ? null
+                          : () => handleDelete(transactionProvider),
+                      child: const Text("刪除"),
+                      style: GoldenGoblinThemes.dangerButtonLightStyle,
                     ),
-                  ),
-                ],
-              ),
-            ],
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10),
+                      child: TextButton(
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            handleSave(transactionProvider);
+                          }
+                        },
+                        child: const Text("完成"),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
