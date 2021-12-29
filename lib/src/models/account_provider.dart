@@ -75,6 +75,10 @@ class DBAccountProvider implements AccountProvider {
     var db = await DBHelper.opendb();
 
     await db.delete('accounts', where: 'id = ?', whereArgs: [accountId]);
+    await db
+        .delete('transactions', where: 'account = ?', whereArgs: [accountId]);
+    await db.delete('transfers',
+        where: 'src = ? OR dst = ?', whereArgs: [accountId, accountId]);
 
     await loadAccounts();
   }
