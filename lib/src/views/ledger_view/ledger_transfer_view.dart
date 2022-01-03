@@ -146,7 +146,8 @@ class _LedgerTransferViewState extends State<LedgerTransferView> {
 
   void handleDelete(TransferProvider transferProvider) {
     if (args.transfer != null) {
-      transferProvider.deleteTransfer(args.transfer!.id);
+      transferProvider.deleteTransfer(args.transfer!.id)
+      .then((value) => returnHomePage());
     }
   }
 
