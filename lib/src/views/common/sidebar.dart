@@ -75,7 +75,7 @@ class Sidebar extends StatelessWidget {
                           print("一般 tapped");
                           Navigator.pop(context);
                           if (currentRouteName != SettingsView.routeName) {
-                            Navigator.restorablePushReplacementNamed(
+                            Navigator.restorablePushNamed(
                                 context, SettingsView.routeName);
                           }
                         },
@@ -89,8 +89,10 @@ class Sidebar extends StatelessWidget {
                         onTap: () {
                           print("帳本管理 tapped");
                           Navigator.pop(context);
-                          if (currentRouteName != AccountView.routeName) {Navigator.restorablePushNamed(
-                              context, AccountView.routeName);}
+                          if (currentRouteName != AccountView.routeName) {
+                            Navigator.restorablePushNamed(
+                                context, AccountView.routeName);
+                          }
                         },
                       ),
                       SidebarTile(
@@ -103,7 +105,7 @@ class Sidebar extends StatelessWidget {
                           print("類別管理 tapped");
                           Navigator.pop(context);
                           if (currentRouteName != CategoryView.routeName) {
-                            Navigator.pushReplacementNamed(
+                            Navigator.restorablePushNamed(
                                 context, CategoryView.routeName);
                           }
                         },
